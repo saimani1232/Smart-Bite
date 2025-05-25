@@ -26,6 +26,22 @@
 * 🏡 Simplifies kitchen and pantry management
 * 📢 Increases user engagement with timely alerts and suggestions
 
+## 📁 Project Structure
+
+```
+smart-bite/
+├── .venv/                     # Python virtual environment
+├── instance/                 # Stores SQLite databases
+│   ├── food_items.db
+│   └── freshfood.db
+├── static/
+│   └── uploads/              # Folder for uploaded images
+├── templates/                # HTML templates
+│   ├── index.html
+│   └── saved_items.html
+├── app.py                    # Main Flask application file
+```
+
 ## ⚡ Getting Started
 
 ### ✨ Prerequisites
@@ -60,9 +76,6 @@ python app.py
 
 We welcome all contributions! Fork the repo, submit pull requests, or suggest new features and improvements.
 
-## 🌐 License
-
-This project is licensed under the **MIT License**.
 
 ---
 
