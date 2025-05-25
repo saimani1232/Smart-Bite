@@ -1,0 +1,1 @@
+pycache/ *.pyc .env .DS_Store food_items.db static/uploads/!static/uploads/.gitkeep
