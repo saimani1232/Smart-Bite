@@ -12,6 +12,8 @@
 
 **Smart Bite** is a smart food management system that helps users reduce food waste by automatically detecting and tracking expiry dates of food products through image processing. It stores product details and proactively notifies users about upcoming expiry dates with recipe suggestions.
 
+🔗 **Live Demo**: [https://smart-bite-5xut.onrender.com](https://smart-bite-5xut.onrender.com)
+
 ## 🔹 Features
 
 * 📸 **Image-based Expiry Date Detection**: Utilizes OpenCV and Tesseract OCR to extract expiry dates from food product images.
@@ -29,17 +31,18 @@
 ## 📁 Project Structure
 
 ```
-smart-bite/
-├── .venv/                     # Python virtual environment
-├── instance/                 # Stores SQLite databases
-│   ├── food_items.db
-│   └── freshfood.db
+Smart-Bite/
 ├── static/
 │   └── uploads/              # Folder for uploaded images
+│       └── .gitkeep          # Ensures uploads folder is tracked
 ├── templates/                # HTML templates
 │   ├── index.html
 │   └── saved_items.html
+├── .gitignore                # Git ignore file
 ├── app.py                    # Main Flask application file
+├── Procfile                  # For deployment with Gunicorn
+├── README.md                 # Project documentation
+├── requirements.txt          # Python dependencies
 ```
 
 ## ⚡ Getting Started
@@ -75,7 +78,6 @@ python app.py
 ## 👥 Contributing
 
 We welcome all contributions! Fork the repo, submit pull requests, or suggest new features and improvements.
-
 
 ---
 
