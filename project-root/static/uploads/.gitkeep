@@ -1,0 +1,2 @@
+mkdir -p static/uploads
+touch static/uploads/.gitkeep
