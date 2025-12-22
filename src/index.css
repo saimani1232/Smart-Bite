@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased text-gray-900 font-sans;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdfa 100%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+
+  /* Premium Glass Panel */
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-gray-900/5;
+  }
+
+  /* Input Fields with Focus Glow */
+  .input-field {
+    @apply block w-full rounded-xl border border-gray-200/80 text-sm py-3.5 px-4 bg-white/80 backdrop-blur-sm transition-all duration-300 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white placeholder:text-gray-400;
+  }
+
+  /* Primary Button with Gradient */
+  .btn-primary {
+    @apply w-full flex justify-center items-center py-4 px-6 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 hover:from-emerald-600 hover:to-teal-600 active:scale-[0.98] transition-all duration-200;
+  }
+
+  /* Premium Card Styles */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm shadow-gray-900/5 border border-gray-100/80 transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/10 hover:-translate-y-0.5;
+  }
+
+  .card-fresh {
+    @apply bg-gradient-to-br from-white to-emerald-50/50 border-emerald-100;
+  }
+
+  .card-warning {
+    @apply bg-gradient-to-br from-white to-amber-50/50 border-amber-200;
+  }
+
+  .card-danger {
+    @apply bg-gradient-to-br from-white to-rose-50/50 border-rose-200;
+  }
+
+  /* Badge Styles */
+  .badge {
+    @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .badge-fresh {
+    @apply bg-gradient-to-r from-emerald-500 to-teal-500 text-white;
+  }
+
+  .badge-warning {
+    @apply bg-gradient-to-r from-amber-400 to-orange-400 text-white;
+  }
+
+  .badge-danger {
+    @apply bg-gradient-to-r from-rose-500 to-red-500 text-white;
+  }
+
+  /* Stat Card */
+  .stat-card {
+    @apply bg-white rounded-2xl p-6 shadow-sm shadow-gray-900/5 border border-gray-100/80 transition-all duration-300 hover:shadow-md;
+  }
+
+  /* Floating Action Button */
+  .fab {
+    @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 md:hidden z-40;
+  }
+}
+
+@layer utilities {
+
+  /* Animated gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent;
+  }
+
+  /* Subtle pulse animation for badges */
+  .pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-subtle {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  /* Glow effect */
+  .glow-emerald {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+  }
+
+  .glow-amber {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+  }
+
+  .glow-rose {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
+  }
+}
