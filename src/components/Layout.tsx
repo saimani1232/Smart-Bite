@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Leaf, Bell, Settings, Home, BarChart2, Book } from 'lucide-react';
+import { SettingsPanel } from './SettingsPanel';
 
 interface LayoutProps {
     children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+    const [showSettings, setShowSettings] = useState(false);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
             {/* Header */}
@@ -46,7 +49,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                             <Bell size={20} className="text-gray-600" />
                             <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
                         </button>
-                        <button className="p-2 hover:bg-white/50 rounded-full transition-colors">
+                        <button
+                            onClick={() => setShowSettings(true)}
+                            className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                        >
                             <Settings size={20} className="text-gray-600" />
                         </button>
                     </div>
@@ -55,6 +61,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Main Content */}
             <main>{children}</main>
+
+            {/* Settings Panel */}
+            <SettingsPanel isOpen={showSettings} onClose={() => setShowSettings(false)} />
         </div>
     );
 };

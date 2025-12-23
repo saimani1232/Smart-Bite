@@ -51,40 +51,56 @@ export const calculateExpiryStatus = (item: InventoryItem): InventoryItem['statu
 
 /**
  * Calculates the new expiry date when an item is opened.
- * Dairy: +4 days
- * Sauces (mapped to Other or specific category if added): +30 days (Assuming 'Other' for sauces for now or added logic)
- * Grains: No change
- *
- * Note: The prompt specifies "Sauces" but the type definition has 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Other'.
- * I will treat 'Other' as catching sauces or potentially add a check if we expand categories.
- * For now, I'll implement logic based on the prompt's intent.
+ * Category-based rules:
+ * - Dairy: openedDate + 4 days (milk, yogurt spoil quickly)
+ * - Meat: openedDate + 3 days (raw meat is very perishable)
+ * - Vegetable: openedDate + 5 days (cut veggies last a bit longer)
+ * - Grain: No change (sealed grains stay fresh)
+ * - Other: openedDate + 7 days (default for packaged foods, sauces, etc.)
  */
 export const getOpenedExpiryDate = (
     openedDateStr: string,
-    category: InventoryItem['category']
+    category: InventoryItem['category'],
+    originalExpiry?: string
 ): string | null => {
     const openedDate = new Date(openedDateStr);
+    openedDate.setHours(0, 0, 0, 0);
     const newExpiry = new Date(openedDate);
+
+    // Calculate days to add based on category
+    let daysToAdd: number | null = null;
 
     switch (category) {
         case 'Dairy':
-            newExpiry.setDate(openedDate.getDate() + 4);
+            daysToAdd = 4; // Milk, yogurt, cheese - short shelf life once opened
             break;
-        // logic.ts: "Sauces: New Expiry = openedDate + 30 days"
-        // Since 'Sauces' isn't a strict category in the Type yet, we might use 'Other' or just handle it if we add it.
-        // For this prototype, let's assume 'Other' might contain sauces, or we add 'Sauce' to type.
-        // Let's stick to the prompt's categories: 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Other'.
-        // If we can't distinguish sauces, maybe we should update the type or just enable it for 'Other' for now as a catch-all?
-        // Or better, let's strictly follow the "Dairy", "Grains" rules.
-        // "Grains: No change".
-        // "Sauces": I will add a comment that this requires a 'Sauce' category or specific name check.
-        // For now I'll just return null if no change is needed (Grains, etc), allowing the caller to keep original date.
+        case 'Meat':
+            daysToAdd = 3; // Raw meat is very perishable
+            break;
+        case 'Vegetable':
+            daysToAdd = 5; // Cut vegetables
+            break;
         case 'Grain':
-            return null;
+            return null; // Grains, flour, rice - no change needed
+        case 'Other':
         default:
-            // For other categories, we might not override, or maybe 'Other' implies Sauces for this demo?
-            // Let's being safe and only override Dairy for now unless name contains "Sauce".
-            return null;
+            daysToAdd = 7; // Packaged foods, sauces, snacks
+            break;
+    }
+
+    if (daysToAdd === null) {
+        return null;
+    }
+
+    newExpiry.setDate(openedDate.getDate() + daysToAdd);
+
+    // If original expiry is sooner than the new calculated one, use the original
+    if (originalExpiry) {
+        const origDate = new Date(originalExpiry);
+        origDate.setHours(0, 0, 0, 0);
+        if (origDate < newExpiry) {
+            return originalExpiry;
+        }
     }
 
     return newExpiry.toISOString().split('T')[0];
@@ -92,5 +108,17 @@ export const getOpenedExpiryDate = (
 
 // Helper to check if we should override expiry
 export const shouldOverrideExpiryOnOpen = (category: InventoryItem['category']): boolean => {
-    return category === 'Dairy'; // extendable
-}
+    return category !== 'Grain'; // All categories except Grain get adjusted
+};
+
+// Get the number of days added when opening an item of this category
+export const getOpenedExpiryDays = (category: InventoryItem['category']): number | null => {
+    switch (category) {
+        case 'Dairy': return 4;
+        case 'Meat': return 3;
+        case 'Vegetable': return 5;
+        case 'Other': return 7;
+        default: return null;
+    }
+};
+

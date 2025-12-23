@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useInventory } from '../context/InventoryContext';
 import { CameraModal } from './CameraModal';
-import { Calendar, Save, Upload, Camera, Loader, Sparkles, Barcode } from 'lucide-react';
+import { Calendar, Save, Upload, Camera, Loader, Sparkles, Barcode, Bell, Mail } from 'lucide-react';
 import { isBulkItem } from '../utils/logic';
 import type { InventoryItem } from '../types';
 import { extractTextFromImage, extractExpiryDate, detectBarcode, lookupProduct } from '../services/visionService';
@@ -24,12 +24,25 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const [activeCameraType, setActiveCameraType] = useState<'product' | 'expiry'>('product');
     const [detectedBarcode, setDetectedBarcode] = useState<string>('');
 
+    // Reminder settings
+    const [reminderDays, setReminderDays] = useState<number>(3);
+    const [reminderEmail, setReminderEmail] = useState<string>('');
+
     const isBulk = isBulkItem(quantity, unit);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!name || !expiryDate) return;
-        addItem({ name, quantity, unit, expiryDate, category, image: '' });
+        addItem({
+            name,
+            quantity,
+            unit,
+            expiryDate,
+            category,
+            image: '',
+            reminderDays,
+            reminderEmail: reminderEmail || undefined
+        });
         onClose();
     };
 
@@ -314,6 +327,48 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <option value="Meat">Meat</option>
                         <option value="Other">Other</option>
                     </select>
+                </div>
+
+                {/* Reminder Settings */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Bell size={18} className="text-violet-600" />
+                        <span className="text-sm font-bold text-gray-700">Expiry Reminder</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Remind Before</label>
+                            <select
+                                value={reminderDays}
+                                onChange={e => setReminderDays(Number(e.target.value))}
+                                className="input-field text-sm"
+                            >
+                                <option value="0">No Reminder</option>
+                                <option value="1">1 day</option>
+                                <option value="3">3 days</option>
+                                <option value="5">5 days</option>
+                                <option value="7">7 days</option>
+                                <option value="14">14 days</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                                <Mail size={12} className="inline mr-1" />Email
+                            </label>
+                            <input
+                                type="email"
+                                value={reminderEmail}
+                                onChange={e => setReminderEmail(e.target.value)}
+                                className="input-field text-sm"
+                                placeholder="your@email.com"
+                            />
+                        </div>
+                    </div>
+
+                    {reminderDays > 0 && !reminderEmail && (
+                        <p className="text-xs text-violet-600 mt-2">💡 Enter email to receive recipe suggestions when item is expiring</p>
+                    )}
                 </div>
 
                 <button type="submit" className="btn-primary mt-6">

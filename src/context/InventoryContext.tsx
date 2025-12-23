@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { InventoryItem } from '../types';
 import { calculateExpiryStatus, getOpenedExpiryDate } from '../utils/logic';
+import { findBestRecipes } from '../services/recipeService';
+import { sendExpiryReminder } from '../services/emailService';
 
 // Fallback for UUID since we didn't install the package
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -12,11 +14,12 @@ type InventoryContextType = {
     removeItem: (id: string) => void;
     toggleOpened: (id: string) => void;
     refreshStatus: () => void;
+    checkReminders: () => Promise<void>;
 };
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
-// Mock Data
+// Mock Data - updated with reminder fields
 const INITIAL_ITEMS: InventoryItem[] = [
     {
         id: '1',
@@ -27,6 +30,7 @@ const INITIAL_ITEMS: InventoryItem[] = [
         category: 'Dairy',
         isOpened: false,
         status: 'Good',
+        reminderDays: 3,
     },
     {
         id: '2',
@@ -37,6 +41,7 @@ const INITIAL_ITEMS: InventoryItem[] = [
         category: 'Grain',
         isOpened: false,
         status: 'Good',
+        reminderDays: 7,
     },
     {
         id: '3',
@@ -44,9 +49,10 @@ const INITIAL_ITEMS: InventoryItem[] = [
         expiryDate: new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0], // 2 days
         quantity: 2,
         unit: 'pkg',
-        category: 'Vegetable', // or Other
+        category: 'Vegetable',
         isOpened: false,
         status: 'Expiring Soon',
+        reminderDays: 3,
     }
 ];
 
@@ -70,7 +76,49 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         refreshStatus();
+        // Check reminders on app load
+        checkReminders();
     }, []);
+
+    // Check all items for reminders that need to be sent
+    const checkReminders = async () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const itemsToRemind = items.filter(item => {
+            // Skip if no reminder set, no email, or already sent
+            if (item.reminderDays === 0 || !item.reminderEmail || item.reminderSent) {
+                return false;
+            }
+
+            const expiry = new Date(item.expiryDate);
+            expiry.setHours(0, 0, 0, 0);
+            const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+            // Remind if within reminder window
+            return daysUntilExpiry <= item.reminderDays && daysUntilExpiry > 0;
+        });
+
+        console.log('Items needing reminder:', itemsToRemind.map(i => i.name));
+
+        for (const item of itemsToRemind) {
+            // Get all inventory item names for recipe matching
+            const allItemNames = items.map(i => i.name);
+
+            // Find best recipes using the expiring item + other inventory
+            const recipes = await findBestRecipes(item.name, allItemNames);
+
+            // Send email reminder
+            const success = await sendExpiryReminder(item, recipes);
+
+            if (success) {
+                // Mark reminder as sent
+                setItems(prev => prev.map(i =>
+                    i.id === item.id ? { ...i, reminderSent: true } : i
+                ));
+            }
+        }
+    };
 
     const addItem = (newItem: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => {
         const item: InventoryItem = {
@@ -78,6 +126,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             id: generateId(),
             isOpened: false,
             status: 'Good', // temporary, will be recalculated
+            reminderSent: false,
         };
         item.status = calculateExpiryStatus(item);
         setItems(prev => [...prev, item]);
@@ -110,7 +159,8 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
                     ...item,
                     isOpened: true,
                     openedDate,
-                    expiryDate: newExpiry || item.expiryDate // Use new expiry if logic dictates, else keep original
+                    expiryDate: newExpiry || item.expiryDate,
+                    reminderSent: false, // Reset reminder for new expiry
                 };
                 updated.status = calculateExpiryStatus(updated);
                 return updated;
@@ -120,7 +170,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <InventoryContext.Provider value={{ items, addItem, updateItem, removeItem, toggleOpened, refreshStatus }}>
+        <InventoryContext.Provider value={{ items, addItem, updateItem, removeItem, toggleOpened, refreshStatus, checkReminders }}>
             {children}
         </InventoryContext.Provider>
     );
