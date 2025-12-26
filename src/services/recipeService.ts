@@ -1,7 +1,7 @@
 // Spoonacular API - Premium Recipe Database
 // https://spoonacular.com/food-api
 
-const SPOONACULAR_API_KEY = '1d69c0ef9f3b465fb2f3beee47ab7de2';
+const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY || '';
 const BASE_URL = 'https://api.spoonacular.com';
 
 export interface Recipe {

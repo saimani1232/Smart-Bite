@@ -4,10 +4,10 @@
 import type { InventoryItem } from '../types';
 import type { Recipe } from './recipeService';
 
-// EmailJS Configuration - User should update these
-const EMAILJS_SERVICE_ID = 'service_2dzjphm';  // Get from EmailJS dashboard
-const EMAILJS_TEMPLATE_ID = 'template_vokttut'; // Create email template
-const EMAILJS_PUBLIC_KEY = 'VhEb3ulPQVN0NBDz-';   // Get from EmailJS dashboard
+// EmailJS Configuration - Read from environment variables
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
 
 interface EmailParams {
     to_email: string;
@@ -27,9 +27,7 @@ interface EmailParams {
 
 // Check if EmailJS is configured
 export function isEmailConfigured(): boolean {
-    return (EMAILJS_SERVICE_ID as string) !== 'YOUR_SERVICE_ID' &&
-        (EMAILJS_TEMPLATE_ID as string) !== 'YOUR_TEMPLATE_ID' &&
-        (EMAILJS_PUBLIC_KEY as string) !== 'YOUR_PUBLIC_KEY';
+    return Boolean(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
 }
 
 // Send expiry reminder email with recipe suggestions
