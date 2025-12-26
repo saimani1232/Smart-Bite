@@ -438,19 +438,3 @@ function getEstimatedExpiryDays(category: ProductInfo['category'], categories: s
     }
 }
 
-// Estimate product info from barcode country prefix if no database match
-function estimateFromBarcode(barcode: string): ProductInfo {
-    // Common prefixes:
-    // 890 = India
-    // 400-440 = Germany
-    // 00-13 = USA/Canada
-
-    // For Indian products (890), could add specific logic
-    // For now, return generic info
-    return {
-        name: 'Unknown Product',
-        category: 'Other',
-        estimatedExpiryDays: 30,
-        barcode: barcode
-    };
-}
