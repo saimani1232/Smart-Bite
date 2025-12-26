@@ -127,6 +127,7 @@ export function extractExpiryDate(ocrText: string): string | null {
     const ignoreKeywords = ['pkd', 'mfg', 'mfd', 'packed', 'manufacturing', 'mrp'];
 
     // Date pattern: DD/MM/YY or DD/MM/YYYY or DD-MM-YY etc.
+    // eslint-disable-next-line no-useless-escape
     const datePattern = /(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/g;
 
     // First, try to find date on lines with expiry keywords
@@ -195,11 +196,12 @@ export function extractExpiryDate(ocrText: string): string | null {
 
 // Parse date string to YYYY-MM-DD format
 function parseDate(dateStr: string): string | null {
+    // eslint-disable-next-line no-useless-escape
     const match = dateStr.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
     if (!match) return null;
 
-    let day = parseInt(match[1]);
-    let month = parseInt(match[2]);
+    const day = parseInt(match[1]);
+    const month = parseInt(match[2]);
     let year = parseInt(match[3]);
 
     // Fix 2-digit year
@@ -466,7 +468,8 @@ function getEstimatedExpiryDays(category: ProductInfo['category'], categories: s
 }
 
 // Estimate product info from barcode country prefix if no database match
-function estimateFromBarcode(barcode: string): ProductInfo {
+
+export function estimateFromBarcode(barcode: string): ProductInfo {
     // Common prefixes:
     // 890 = India
     // 400-440 = Germany

@@ -74,12 +74,6 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         })));
     };
 
-    useEffect(() => {
-        refreshStatus();
-        // Check reminders on app load
-        checkReminders();
-    }, []);
-
     // Check all items for reminders that need to be sent
     const checkReminders = async () => {
         const today = new Date();
@@ -119,6 +113,13 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             }
         }
     };
+
+    useEffect(() => {
+        refreshStatus();
+        // Check reminders on app load
+        checkReminders();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const addItem = (newItem: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => {
         const item: InventoryItem = {

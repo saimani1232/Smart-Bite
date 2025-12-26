@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/upcitemdb/:match*",
+      "destination": "https://api.upcitemdb.com/:match*"
+    },
+    {
+      "source": "/api/openfoodfacts/:match*",
+      "destination": "https://world.openfoodfacts.org/api/v0/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
