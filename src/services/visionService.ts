@@ -297,43 +297,97 @@ export async function detectBarcode(base64Image: string): Promise<string | null>
     return null;
 }
 
-// Look up product by barcode using Open Food Facts API
+// Waterfall barcode lookup: Open Food Facts → UPCitemdb → Unknown (manual entry)
 export async function lookupProduct(barcode: string): Promise<ProductInfo | null> {
+    // Clean barcode (remove spaces)
+    const cleanBarcode = barcode.replace(/\s/g, '');
+    console.log('🔍 Looking up barcode:', cleanBarcode);
+
+    // Create a timeout promise
+    const timeout = (ms: number) => new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), ms)
+    );
+
+    // Step 1: Try Open Food Facts first (better for food products)
+    console.log('Step 1: Checking Open Food Facts...');
     try {
-        // Clean barcode (remove spaces)
-        const cleanBarcode = barcode.replace(/\s/g, '');
+        const response = await Promise.race([
+            fetch(`/api/openfoodfacts/product/${cleanBarcode}.json`),
+            timeout(5000)
+        ]) as Response;
 
-        console.log('Looking up barcode:', cleanBarcode);
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Open Food Facts Response:', data);
 
-        const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${cleanBarcode}.json`);
-        const data = await response.json();
+            if (data.status === 1 && data.product) {
+                const product = data.product;
+                const productName = product.product_name || product.generic_name;
 
-        console.log('Open Food Facts Response:', data);
+                if (productName) {
+                    const categories = (product.categories_tags || []).join(' ').toLowerCase();
+                    const category = mapToCategory(categories, productName);
+                    const expiryDays = getEstimatedExpiryDays(category, categories);
 
-        if (data.status === 1 && data.product) {
-            const product = data.product;
-            const productName = product.product_name || product.generic_name || 'Unknown Product';
-            const categories = (product.categories_tags || []).join(' ').toLowerCase();
-
-            // Map to our category types
-            const category = mapToCategory(categories, productName);
-            const expiryDays = getEstimatedExpiryDays(category, categories);
-
-            return {
-                name: productName,
-                category: category,
-                estimatedExpiryDays: expiryDays,
-                barcode: cleanBarcode
-            };
+                    console.log('✅ Found in Open Food Facts:', productName);
+                    return {
+                        name: productName,
+                        category: category,
+                        estimatedExpiryDays: expiryDays,
+                        barcode: cleanBarcode
+                    };
+                }
+            }
         }
-
-        // If not found in Open Food Facts, try to estimate from barcode prefix
-        return estimateFromBarcode(cleanBarcode);
-
+        console.log('❌ Not found in Open Food Facts');
     } catch (error) {
-        console.error('Product lookup error:', error);
-        return estimateFromBarcode(barcode);
+        console.log('⏱️ Open Food Facts timeout/error:', error);
     }
+
+    // Step 2: Try UPCitemdb as fallback
+    console.log('Step 2: Checking UPCitemdb...');
+    try {
+        const response = await Promise.race([
+            fetch(`/api/upcitemdb/prod/trial/lookup?upc=${cleanBarcode}`),
+            timeout(5000)
+        ]) as Response;
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('UPCitemdb Response:', data);
+
+            if (data.items && data.items.length > 0) {
+                const item = data.items[0];
+                const productName = item.title || item.brand;
+
+                if (productName) {
+                    const categoryStr = (item.category || '').toLowerCase();
+                    const category = mapToCategory(categoryStr, productName);
+                    const expiryDays = getEstimatedExpiryDays(category, categoryStr);
+
+                    console.log('✅ Found in UPCitemdb:', productName);
+                    return {
+                        name: productName,
+                        category: category,
+                        estimatedExpiryDays: expiryDays,
+                        barcode: cleanBarcode
+                    };
+                }
+            }
+        }
+        console.log('❌ Not found in UPCitemdb');
+    } catch (error) {
+        console.log('⏱️ UPCitemdb timeout/error:', error);
+    }
+
+    // Step 3: Return null to signal "Unknown Item" - user types name manually
+    console.log('📝 Product not found - user will enter name manually');
+    return {
+        name: '', // Empty name signals manual entry needed
+        category: 'Other',
+        estimatedExpiryDays: 30,
+        barcode: cleanBarcode
+    };
 }
 
 // Map Open Food Facts categories to our categories
