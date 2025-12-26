@@ -2,36 +2,9 @@ import * as jose from 'jose';
 
 // Service Account Credentials
 const SERVICE_ACCOUNT = {
-    client_email: "cloud-236@gen-lang-client-0283998814.iam.gserviceaccount.com",
-    private_key: `-----BEGIN PRIVATE KEY-----
-MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDmTYRh+1mVvMjW
-BHpiEGSvp/oLumly/lGg2H7SJ6b+3bNVutPoVcqBLUpN6vllgMS8x7omW3lkFSg5
-c+GdkXCaSqW+BOhZYnofY/T8xtijaYBRVxqKI36hVyaMVGXud/aaB+QFcr+iIBDM
-1YONfMinJgarqbp0gPCP4DuNPkgMiJqO4Jy6ZiL+J9QpwgMWo30Sa89sBzeXtrQg
-reOJ6gpKbMifLPgTT83HsbVbDSysn9uLJqYP63j8CaJFdviONhn9dAa/Il2kVlRk
-Ss/lGZVQMCgOxwaBIU+1hxhimSIS72ijp7mS1BorwJjgSgVAy8Ft9OGQkR6aHw+9
-r/2IyyR3AgMBAAECggEAIQXAyOCRbg2Vn052vUShff3Fi6n36ykOoP7PYdNADZp8
-16WZiLPIfNuheb5gHWRTPB3IEi5FSosCwLOI3cmYI5+MLXd8WNjB2b9rm6qS2gz2
-J8j9bAz+is7kHvS5GvJboKbR/3qpLMDmonWueSVei3fB4W/NuwfZYUqjRLOcrCMi
-og+x9BPbS/tYT7H5uiClLmg4zL1dbTjzNjYiETurMCGd5AoPkRkwKfdPwxsxEucT
-FTkQqIeYHp0FEhxZ58JpSUXWxC7fWoPOsJh3jTmjLaZXMhE8cK9GH4YYU93v3XHk
-lIvskXJaJtW+K5spMm3jS5UcrT4h8wpqaYVBW80KGQKBgQD1KxAwD1Zed76BXCv7
-L3bku9p2q0a1tD0ZWYuE3bZL3SL2bup137WFhN6aSSF+EEtNvPZDDRB/W7/rBzJC
-/31u7D167S0xshh0k62NTDE/mxHhDlI3cKmSN6IlfKC1rzNEQraLlo6a4FDikFYt
-cJOrDPjBFWsLc2y/R73lRphFvwKBgQDwelIpKLVCOtCZlPbcbRZEI9c9ebRI4bwg
-n62WmsrdAwRhQ9754/+WzQCnMoNAyRXUO2980zz09kiNkEY1BDaO2AKP9drLrgN9
-EaROrbTXKfgHZe5WGg9s/xWz8B65ZvFHBf07MBV4lDLidTz2STDHxtP5TAnXkVAS
-KNBSe5r/SQKBgQDOGhOTs3ESHWwjZ475rN8wTtPK6xWYbxrmEqb9XT2A7TgVHw0v
-Zo883YQdA9mKFryXb4E+wN7bkg/2zqfsNsgF1cehbX2Ox39TkUpW/HRyWjRflCB9
-xtJmvyoqhWi9E7nvan33PuxHOsgEjv5DWN5q7463EwBYMgJ7kx4KfpxIFQKBgQDF
-DgcbcR8u2VEsONQdBkrzpUbwOjWQb2GgfhhZzBgmCR3isiIaNUmwgeZiG9NQGDcK
-BXYzHEncFaCYWDwfn4cxgDKBUx5qPvre1sEEM/V3Rw3WyiEGby5qy5A2NbKHjKJz
-56V9hcZiW1ZjGVzOGGWfnv7+Tt/VxF6PsuAaZu04+QKBgQDTBFRcd++6lhBOM64L
-bcjGmPIT1R/GV/kt4j6e2RBfxlBjC8bV61ZqTedbQkbykcQvz4oT0MLfygAmZ20/
-x6ssSRebPB77MnwLvqzpySdoe9alljjdufxH6dBJCHLtU7opDVCEGTZyQur4hnfj
-fAGT0Lh7JFfj73pHxcimORj5Qg==
------END PRIVATE KEY-----`,
-    token_uri: "https://oauth2.googleapis.com/token"
+    client_email: import.meta.env.VITE_GOOGLE_CLIENT_EMAIL,
+    private_key: import.meta.env.VITE_GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    token_uri: import.meta.env.VITE_GOOGLE_TOKEN_URI
 };
 
 let cachedToken: { token: string; expiry: number } | null = null;
