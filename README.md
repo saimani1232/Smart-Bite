@@ -12,7 +12,7 @@
 
 **Smart Bite** is a smart food management system that helps users reduce food waste by automatically detecting and tracking expiry dates of food products through image processing. It stores product details and proactively notifies users about upcoming expiry dates with recipe suggestions.
 
-🔗 **Live Demo**: [https://smart-bite-5xut.onrender.com](https://smart-bite-5xut.onrender.com)
+🔗 **Live Demo**: [https://smart-bite-beryl.vercel.app/](https://smart-bite-beryl.vercel.app/)
 
 ## 🔹 Features
 
