@@ -149,20 +149,20 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-3 mb-6">
                 <div className="flex gap-3">
                     <div className="flex-1 relative">
-                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                         <input
                             type="text"
                             placeholder="Search inventory..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 shadow-sm"
+                            className="w-full pl-11 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 shadow-sm"
                         />
                     </div>
                     <button
                         onClick={() => setShowFilters(!showFilters)}
                         className={`flex items-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all ${showFilters || activeFiltersCount > 0
-                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-                                : 'bg-white border border-gray-200 text-gray-600 hover:border-emerald-300'
+                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
+                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300 dark:hover:border-emerald-600'
                             }`}
                     >
                         <Filter size={18} />
@@ -185,22 +185,22 @@ export const Dashboard: React.FC = () => {
 
                 {/* Filter Panel */}
                 {showFilters && (
-                    <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm animate-fade-in">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm animate-fade-in">
                         <div className="flex flex-wrap gap-4">
                             {/* Status Filter */}
                             <div className="flex-1 min-w-[150px]">
-                                <label className="text-xs font-medium text-gray-500 mb-2 block">Status</label>
+                                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Status</label>
                                 <div className="flex flex-wrap gap-2">
                                     {(['all', 'expired', 'expiring', 'fresh'] as StatusFilter[]).map(status => (
                                         <button
                                             key={status}
                                             onClick={() => setStatusFilter(status)}
                                             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${statusFilter === status
-                                                    ? status === 'expired' ? 'bg-rose-500 text-white'
-                                                        : status === 'expiring' ? 'bg-amber-500 text-white'
-                                                            : status === 'fresh' ? 'bg-emerald-500 text-white'
-                                                                : 'bg-gray-800 text-white'
-                                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                ? status === 'expired' ? 'bg-rose-500 text-white'
+                                                    : status === 'expiring' ? 'bg-amber-500 text-white'
+                                                        : status === 'fresh' ? 'bg-emerald-500 text-white'
+                                                            : 'bg-gray-800 text-white'
+                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                                 }`}
                                         >
                                             {status === 'all' ? 'All' : status === 'expiring' ? 'Expiring Soon' : status.charAt(0).toUpperCase() + status.slice(1)}
@@ -211,15 +211,15 @@ export const Dashboard: React.FC = () => {
 
                             {/* Category Filter */}
                             <div className="flex-1 min-w-[150px]">
-                                <label className="text-xs font-medium text-gray-500 mb-2 block">Category</label>
+                                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Category</label>
                                 <div className="flex flex-wrap gap-2">
                                     {(['all', 'Dairy', 'Grain', 'Vegetable', 'Meat', 'Other'] as CategoryFilter[]).map(cat => (
                                         <button
                                             key={cat}
                                             onClick={() => setCategoryFilter(cat)}
                                             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${categoryFilter === cat
-                                                    ? 'bg-emerald-500 text-white'
-                                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                ? 'bg-emerald-500 text-white'
+                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                                 }`}
                                         >
                                             {cat === 'all' ? 'All' : cat}
@@ -230,11 +230,11 @@ export const Dashboard: React.FC = () => {
 
                             {/* Sort */}
                             <div className="min-w-[120px]">
-                                <label className="text-xs font-medium text-gray-500 mb-2 block">Sort by</label>
+                                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Sort by</label>
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value as SortOption)}
-                                    className="w-full px-3 py-2 bg-gray-100 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                                    className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                                 >
                                     <option value="expiry">Expiry Date</option>
                                     <option value="name">Name</option>
@@ -261,8 +261,8 @@ export const Dashboard: React.FC = () => {
                         <span className="text-xs text-gray-500">Active filters:</span>
                         {statusFilter !== 'all' && (
                             <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${statusFilter === 'expired' ? 'bg-rose-100 text-rose-700'
-                                    : statusFilter === 'expiring' ? 'bg-amber-100 text-amber-700'
-                                        : 'bg-emerald-100 text-emerald-700'
+                                : statusFilter === 'expiring' ? 'bg-amber-100 text-amber-700'
+                                    : 'bg-emerald-100 text-emerald-700'
                                 }`}>
                                 {statusFilter === 'expiring' ? 'Expiring Soon' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
                                 <button onClick={() => setStatusFilter('all')} className="hover:bg-black/10 rounded-full p-0.5">
@@ -284,19 +284,19 @@ export const Dashboard: React.FC = () => {
 
             {/* Results Count */}
             {(searchQuery || activeFiltersCount > 0) && (
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                     Showing {filteredItems.length} of {items.length} items
                 </p>
             )}
 
             {/* Inventory Grid */}
             {filteredItems.length === 0 ? (
-                <div className="text-center py-16 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
                     <div className="text-6xl mb-4">{activeFiltersCount > 0 ? '🔍' : '🥗'}</div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
                         {activeFiltersCount > 0 ? 'No matching items' : 'No items yet!'}
                     </h3>
-                    <p className="text-gray-500 mb-6">
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">
                         {activeFiltersCount > 0
                             ? 'Try adjusting your filters'
                             : 'Add your first item to start tracking'
@@ -305,7 +305,7 @@ export const Dashboard: React.FC = () => {
                     {activeFiltersCount > 0 ? (
                         <button
                             onClick={() => { setStatusFilter('all'); setCategoryFilter('all'); setSearchQuery(''); }}
-                            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-2xl font-semibold hover:bg-gray-300 transition-all"
+                            className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
                         >
                             Clear Filters
                         </button>
@@ -341,17 +341,17 @@ export const Dashboard: React.FC = () => {
 
             {/* Add Item Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative">
+                <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                            <h2 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
                                 Add New Item
                             </h2>
                             <button
                                 onClick={() => setShowAddModal(false)}
-                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                             >
-                                <X size={20} className="text-gray-500" />
+                                <X size={20} className="text-gray-500 dark:text-gray-400" />
                             </button>
                         </div>
                         <AddItemForm onClose={() => setShowAddModal(false)} />

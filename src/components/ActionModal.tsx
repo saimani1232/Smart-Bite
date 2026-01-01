@@ -81,8 +81,8 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
     ];
 
     return (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-3xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
+        <div className="fixed inset-0 bg-gray-900/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
                 {/* Header */}
                 <div className={`p-6 text-white ${isBulk ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-gradient-to-r from-amber-500 to-orange-500'}`}>
                     <div className="flex justify-between items-start">
@@ -112,7 +112,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
 
                 {/* Content */}
                 <div className="p-6 overflow-y-auto flex-1">
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
                         {isBulk
                             ? "You have a lot! Here are ways to preserve it."
                             : "Don't let it go to waste! Here are some delicious recipes you can make."
@@ -125,32 +125,32 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                             preservationOptions.map((opt, idx) => (
                                 <button
                                     key={idx}
-                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all group"
+                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-2xl transition-all group"
                                 >
                                     <div className={`p-3 rounded-xl bg-gradient-to-br ${opt.color} text-white shadow-lg`}>
                                         {opt.icon}
                                     </div>
                                     <div className="flex-1 text-left">
-                                        <h4 className="font-bold text-gray-900">{opt.title}</h4>
-                                        <p className="text-sm text-gray-500">{opt.desc}</p>
+                                        <h4 className="font-bold text-gray-900 dark:text-gray-100">{opt.title}</h4>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{opt.desc}</p>
                                     </div>
-                                    <ArrowRight size={18} className="text-gray-300 group-hover:text-gray-500 group-hover:translate-x-1 transition-all" />
+                                    <ArrowRight size={18} className="text-gray-300 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300 group-hover:translate-x-1 transition-all" />
                                 </button>
                             ))
                         ) : loading ? (
                             // Loading state
                             <div className="text-center py-12">
                                 <Loader size={32} className="animate-spin text-amber-500 mx-auto mb-4" />
-                                <p className="text-gray-500">Finding delicious recipes...</p>
+                                <p className="text-gray-500 dark:text-gray-400">Finding delicious recipes...</p>
                             </div>
                         ) : error ? (
                             // Error state
                             <div className="text-center py-12">
-                                <ChefHat size={40} className="text-gray-300 mx-auto mb-4" />
-                                <p className="text-gray-500">{error}</p>
+                                <ChefHat size={40} className="text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                                <p className="text-gray-500 dark:text-gray-400">{error}</p>
                                 <button
                                     onClick={handleRefresh}
-                                    className="mt-4 text-amber-600 hover:text-amber-700 font-medium text-sm"
+                                    className="mt-4 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium text-sm"
                                 >
                                     Try Again
                                 </button>
@@ -163,10 +163,10 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                                     href={recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.name.toLowerCase().replace(/\s+/g, '-')}-${recipe.id}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full flex items-start gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all group"
+                                    className="w-full flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-2xl transition-all group"
                                 >
                                     {/* Recipe Image */}
-                                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-200 flex-shrink-0">
+                                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-600 flex-shrink-0">
                                         {recipe.image ? (
                                             <img
                                                 src={recipe.image}
@@ -185,9 +185,9 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
 
                                     {/* Recipe Info */}
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-bold text-gray-900 truncate">{recipe.name}</h4>
+                                        <h4 className="font-bold text-gray-900 dark:text-gray-100 truncate">{recipe.name}</h4>
 
-                                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
                                             {recipe.readyInMinutes && (
                                                 <span className="flex items-center gap-1">
                                                     <Clock size={12} />
@@ -218,7 +218,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
 
                     <button
                         onClick={onClose}
-                        className="w-full mt-6 py-3.5 text-gray-500 font-medium text-sm hover:text-gray-700 transition-colors"
+                        className="w-full mt-6 py-3.5 text-gray-500 dark:text-gray-400 font-medium text-sm hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                     >
                         Close
                     </button>

@@ -173,7 +173,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <form onSubmit={handleSubmit} className="space-y-6 relative">
                 {/* AI Mode Banner */}
                 <div className="absolute -top-10 left-0 right-0 text-center">
-                    <span className="text-[10px] px-3 py-1 rounded-full font-medium inline-flex items-center gap-1 bg-violet-100 text-violet-700">
+                    <span className="text-[10px] px-3 py-1 rounded-full font-medium inline-flex items-center gap-1 bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300">
                         <Sparkles size={10} /> Cloud Vision AI + Smart Parsing
                     </span>
                 </div>
@@ -181,10 +181,10 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 {/* Scanner Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Product/Barcode Scanner */}
-                    <div className={`p-4 rounded-2xl border transition-all ${name ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100'}`}>
+                    <div className={`p-4 rounded-2xl border transition-all ${name ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-100 dark:border-gray-600'}`}>
                         <div className="flex items-center gap-2 mb-3">
-                            <Barcode size={18} className={name ? "text-emerald-600" : "text-gray-500"} />
-                            <span className="text-sm font-bold text-gray-700">Scan Barcode</span>
+                            <Barcode size={18} className={name ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-gray-400"} />
+                            <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Scan Barcode</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -192,10 +192,10 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 type="button"
                                 onClick={() => openCamera('product')}
                                 disabled={!!scanningType}
-                                className="flex flex-col items-center justify-center p-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 shadow-sm text-center active:scale-95 disabled:opacity-50"
+                                className="flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 shadow-sm text-center active:scale-95 disabled:opacity-50"
                             >
-                                <Camera size={20} className="text-emerald-600 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 uppercase">Camera</span>
+                                <Camera size={20} className="text-emerald-600 dark:text-emerald-400 mb-1" />
+                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Camera</span>
                             </button>
 
                             <label className={`flex flex-col items-center justify-center p-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -226,10 +226,10 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </div>
 
                     {/* Expiry Scanner */}
-                    <div className={`p-4 rounded-2xl border transition-all ${expiryDate ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'}`}>
+                    <div className={`p-4 rounded-2xl border transition-all ${expiryDate ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-100 dark:border-gray-600'}`}>
                         <div className="flex items-center gap-2 mb-3">
-                            <Calendar size={18} className={expiryDate ? "text-amber-600" : "text-gray-500"} />
-                            <span className="text-sm font-bold text-gray-700">Expiry Date</span>
+                            <Calendar size={18} className={expiryDate ? "text-amber-600 dark:text-amber-400" : "text-gray-500 dark:text-gray-400"} />
+                            <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Expiry Date</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -267,7 +267,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                 {/* Form Fields */}
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Product Name</label>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Product Name</label>
                     <input
                         type="text"
                         value={name}

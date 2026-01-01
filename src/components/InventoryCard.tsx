@@ -11,15 +11,15 @@ interface InventoryCardProps {
 const getCategoryConfig = (category: InventoryItem['category']) => {
     switch (category) {
         case 'Dairy':
-            return { emoji: '🥛', bg: 'from-blue-50 to-sky-50', border: 'border-blue-100', accent: 'text-blue-600' };
+            return { emoji: '🥛', bg: 'from-blue-50 to-sky-50 dark:from-blue-900/30 dark:to-sky-900/30', border: 'border-blue-100 dark:border-blue-800/50', accent: 'text-blue-600 dark:text-blue-400' };
         case 'Grain':
-            return { emoji: '🌾', bg: 'from-amber-50 to-yellow-50', border: 'border-amber-100', accent: 'text-amber-600' };
+            return { emoji: '🌾', bg: 'from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30', border: 'border-amber-100 dark:border-amber-800/50', accent: 'text-amber-600 dark:text-amber-400' };
         case 'Vegetable':
-            return { emoji: '🥬', bg: 'from-green-50 to-emerald-50', border: 'border-green-100', accent: 'text-green-600' };
+            return { emoji: '🥬', bg: 'from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30', border: 'border-green-100 dark:border-green-800/50', accent: 'text-green-600 dark:text-green-400' };
         case 'Meat':
-            return { emoji: '🍖', bg: 'from-red-50 to-rose-50', border: 'border-red-100', accent: 'text-red-600' };
+            return { emoji: '🍖', bg: 'from-red-50 to-rose-50 dark:from-red-900/30 dark:to-rose-900/30', border: 'border-red-100 dark:border-red-800/50', accent: 'text-red-600 dark:text-red-400' };
         default:
-            return { emoji: '📦', bg: 'from-gray-50 to-slate-50', border: 'border-gray-100', accent: 'text-gray-600' };
+            return { emoji: '📦', bg: 'from-gray-50 to-slate-50 dark:from-gray-700/50 dark:to-slate-700/50', border: 'border-gray-100 dark:border-gray-700', accent: 'text-gray-600 dark:text-gray-400' };
     }
 };
 
@@ -60,8 +60,8 @@ const EditModal: React.FC<{
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-gray-900/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="p-5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
                     <div className="flex justify-between items-center">
@@ -79,14 +79,14 @@ const EditModal: React.FC<{
                 <div className="p-5 space-y-4">
                     {/* Name */}
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                             Product Name
                         </label>
                         <input
                             type="text"
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
-                            className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300"
+                            className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 dark:focus:border-emerald-500"
                             placeholder="Enter name"
                         />
                     </div>
@@ -94,26 +94,26 @@ const EditModal: React.FC<{
                     {/* Quantity & Unit */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                                 Quantity
                             </label>
                             <input
                                 type="number"
                                 value={editQuantity}
                                 onChange={(e) => setEditQuantity(e.target.value)}
-                                className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300"
+                                className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 dark:focus:border-emerald-500"
                                 min="0"
                                 step="0.1"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                                 Unit
                             </label>
                             <select
                                 value={editUnit}
                                 onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
-                                className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                                className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                             >
                                 {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                             </select>
@@ -122,13 +122,13 @@ const EditModal: React.FC<{
 
                     {/* Category */}
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                             Category
                         </label>
                         <select
                             value={editCategory}
                             onChange={(e) => setEditCategory(e.target.value as InventoryItem['category'])}
-                            className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                            className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                         >
                             {CATEGORIES.map(cat => (
                                 <option key={cat} value={cat}>
@@ -140,14 +140,14 @@ const EditModal: React.FC<{
 
                     {/* Expiry Date */}
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                             Expiry Date
                         </label>
                         <input
                             type="date"
                             value={editExpiry}
                             onChange={(e) => setEditExpiry(e.target.value)}
-                            className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300"
+                            className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 dark:focus:border-emerald-500"
                         />
                     </div>
 
@@ -162,7 +162,7 @@ const EditModal: React.FC<{
                         </button>
                         <button
                             onClick={onClose}
-                            className="px-6 py-3.5 bg-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-300 transition-colors"
+                            className="px-6 py-3.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         >
                             Cancel
                         </button>
@@ -194,38 +194,38 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
         if (left < 0) return {
             gradient: 'from-rose-500 via-red-500 to-rose-600',
             bg: 'bg-rose-500',
-            bgLight: 'bg-rose-50',
-            text: 'text-rose-600',
+            bgLight: 'bg-rose-50 dark:bg-rose-900/30',
+            text: 'text-rose-600 dark:text-rose-400',
             label: 'Expired',
             icon: <AlertTriangle size={14} />,
-            glow: 'shadow-rose-200'
+            glow: 'shadow-rose-200 dark:shadow-rose-900/30'
         };
         if (left <= 3) return {
             gradient: 'from-orange-400 via-amber-500 to-orange-500',
             bg: 'bg-orange-500',
-            bgLight: 'bg-orange-50',
-            text: 'text-orange-600',
+            bgLight: 'bg-orange-50 dark:bg-orange-900/30',
+            text: 'text-orange-600 dark:text-orange-400',
             label: 'Expiring',
             icon: <Timer size={14} />,
-            glow: 'shadow-orange-200'
+            glow: 'shadow-orange-200 dark:shadow-orange-900/30'
         };
         if (left <= 7) return {
             gradient: 'from-amber-400 via-yellow-500 to-amber-500',
             bg: 'bg-amber-500',
-            bgLight: 'bg-amber-50',
-            text: 'text-amber-600',
+            bgLight: 'bg-amber-50 dark:bg-amber-900/30',
+            text: 'text-amber-600 dark:text-amber-400',
             label: 'Use Soon',
             icon: <Clock size={14} />,
-            glow: 'shadow-amber-200'
+            glow: 'shadow-amber-200 dark:shadow-amber-900/30'
         };
         return {
             gradient: 'from-emerald-400 via-green-500 to-teal-500',
             bg: 'bg-emerald-500',
-            bgLight: 'bg-emerald-50',
-            text: 'text-emerald-600',
+            bgLight: 'bg-emerald-50 dark:bg-emerald-900/30',
+            text: 'text-emerald-600 dark:text-emerald-400',
             label: 'Fresh',
             icon: <CheckCircle2 size={14} />,
-            glow: 'shadow-emerald-200'
+            glow: 'shadow-emerald-200 dark:shadow-emerald-900/30'
         };
     };
 
@@ -256,10 +256,10 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
             )}
 
             <div
-                className={`relative bg-white rounded-2xl overflow-hidden transition-all duration-300 
+                className={`relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden transition-all duration-300 
                     ${isHovered ? 'shadow-xl scale-[1.02]' : 'shadow-lg'} 
                     ${config.glow}
-                    border border-gray-100/50`}
+                    border border-gray-100/50 dark:border-gray-700`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
@@ -271,16 +271,16 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                     {/* Edit Button - Top Left */}
                     <button
                         onClick={() => setShowEditModal(true)}
-                        className="p-2 bg-white/90 backdrop-blur shadow-md rounded-xl hover:bg-gray-100 transition-all hover:scale-105"
+                        className="p-2 bg-white/90 dark:bg-gray-700/90 backdrop-blur shadow-md rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-all hover:scale-105"
                         title="Edit item"
                     >
-                        <Edit3 size={16} className="text-gray-600" />
+                        <Edit3 size={16} className="text-gray-600 dark:text-gray-300" />
                     </button>
 
                     {/* Delete Button - Top Right */}
                     <button
                         onClick={() => removeItem(item.id)}
-                        className="p-2 bg-white/90 backdrop-blur shadow-md rounded-xl hover:bg-rose-50 transition-all hover:scale-105"
+                        className="p-2 bg-white/90 dark:bg-gray-700/90 backdrop-blur shadow-md rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/50 transition-all hover:scale-105"
                         title="Delete item"
                     >
                         <Trash2 size={16} className="text-rose-500" />
@@ -297,14 +297,14 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                         </div>
 
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-lg font-bold text-gray-900 truncate leading-tight">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate leading-tight">
                                 {item.name}
                             </h3>
-                            <p className="text-sm text-gray-500 flex items-center gap-1 flex-wrap">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 flex-wrap">
                                 <span className="font-medium">{item.quantity}</span>
                                 <span>{item.unit}</span>
                                 {item.isOpened && (
-                                    <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-semibold rounded-md">
+                                    <span className="ml-1 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-[10px] font-semibold rounded-md">
                                         OPENED
                                     </span>
                                 )}
@@ -322,7 +322,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                     <div className="mb-4">
                         {/* Date and Countdown Row */}
                         <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-1.5 text-gray-500 text-sm">
+                            <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-sm">
                                 <Calendar size={14} />
                                 <span>{formatDate(item.expiryDate)}</span>
                             </div>
@@ -337,7 +337,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                             <div
                                 className={`h-full rounded-full bg-gradient-to-r ${config.gradient} transition-all duration-700 ease-out`}
                                 style={{ width: `${progressPercent}%` }}
@@ -351,7 +351,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                         {!item.isOpened && left >= 0 && (
                             <button
                                 onClick={() => toggleOpened(item.id)}
-                                className="flex-1 py-2.5 px-3 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all flex items-center justify-center gap-1.5"
+                                className="flex-1 py-2.5 px-3 text-xs font-semibold bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all flex items-center justify-center gap-1.5"
                                 title={getOpenedExpiryInfo(item.category)}
                             >
                                 <Package size={14} />
@@ -373,7 +373,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                         {/* Used Up */}
                         <button
                             onClick={() => removeItem(item.id)}
-                            className="flex-1 py-2.5 px-3 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl transition-all flex items-center justify-center gap-1.5"
+                            className="flex-1 py-2.5 px-3 text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 rounded-xl transition-all flex items-center justify-center gap-1.5"
                         >
                             <Sparkles size={14} />
                             <span>Used</span>
