@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import { Leaf, Bell, Settings, Home, BarChart2, Book } from 'lucide-react';
 import { SettingsPanel } from './SettingsPanel';
+import { NotificationsPanel, getNotificationCount } from './NotificationsPanel';
+import { useInventory } from '../context/InventoryContext';
 
 interface LayoutProps {
     children: React.ReactNode;
+    onOpenRecipes?: (itemId: string) => void;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, onOpenRecipes }) => {
     const [showSettings, setShowSettings] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const { items } = useInventory();
+
+    const notificationCount = getNotificationCount(items);
+
+    const handleOpenRecipes = (itemId: string) => {
+        setShowNotifications(false);
+        if (onOpenRecipes) {
+            onOpenRecipes(itemId);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
@@ -45,10 +59,20 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-2">
-                        <button className="relative p-2 hover:bg-white/50 rounded-full transition-colors">
+                        {/* Notifications Button */}
+                        <button
+                            onClick={() => setShowNotifications(true)}
+                            className="relative p-2 hover:bg-white/50 rounded-full transition-colors"
+                        >
                             <Bell size={20} className="text-gray-600" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
+                            {notificationCount > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-gradient-to-r from-rose-500 to-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-md">
+                                    {notificationCount > 9 ? '9+' : notificationCount}
+                                </span>
+                            )}
                         </button>
+
+                        {/* Settings Button */}
                         <button
                             onClick={() => setShowSettings(true)}
                             className="p-2 hover:bg-white/50 rounded-full transition-colors"
@@ -64,6 +88,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Settings Panel */}
             <SettingsPanel isOpen={showSettings} onClose={() => setShowSettings(false)} />
+
+            {/* Notifications Panel */}
+            <NotificationsPanel
+                isOpen={showNotifications}
+                onClose={() => setShowNotifications(false)}
+                onOpenRecipes={handleOpenRecipes}
+            />
         </div>
     );
 };
