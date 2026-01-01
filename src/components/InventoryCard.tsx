@@ -36,16 +36,147 @@ const getOpenedExpiryInfo = (category: InventoryItem['category']): string => {
 const CATEGORIES: InventoryItem['category'][] = ['Dairy', 'Grain', 'Vegetable', 'Meat', 'Other'];
 const UNITS: InventoryItem['unit'][] = ['kg', 'l', 'pkg', 'pcs', 'g', 'ml'];
 
-export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }) => {
-    const { removeItem, toggleOpened, updateItem } = useInventory();
-    const [isEditing, setIsEditing] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-
+// Edit Modal Component
+const EditModal: React.FC<{
+    item: InventoryItem;
+    onSave: (updates: Partial<InventoryItem>) => void;
+    onClose: () => void;
+}> = ({ item, onSave, onClose }) => {
     const [editName, setEditName] = useState(item.name);
     const [editQuantity, setEditQuantity] = useState(item.quantity.toString());
     const [editUnit, setEditUnit] = useState(item.unit);
     const [editCategory, setEditCategory] = useState(item.category);
     const [editExpiry, setEditExpiry] = useState(item.expiryDate);
+
+    const handleSave = () => {
+        onSave({
+            name: editName.trim() || item.name,
+            quantity: parseFloat(editQuantity) || item.quantity,
+            unit: editUnit,
+            category: editCategory,
+            expiryDate: editExpiry || item.expiryDate
+        });
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                {/* Header */}
+                <div className="p-5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <p className="text-white/80 text-sm font-medium">Edit Item</p>
+                            <h2 className="text-xl font-bold">{item.name}</h2>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+                            <X size={20} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Form */}
+                <div className="p-5 space-y-4">
+                    {/* Name */}
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                            Product Name
+                        </label>
+                        <input
+                            type="text"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300"
+                            placeholder="Enter name"
+                        />
+                    </div>
+
+                    {/* Quantity & Unit */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                                Quantity
+                            </label>
+                            <input
+                                type="number"
+                                value={editQuantity}
+                                onChange={(e) => setEditQuantity(e.target.value)}
+                                className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300"
+                                min="0"
+                                step="0.1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                                Unit
+                            </label>
+                            <select
+                                value={editUnit}
+                                onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
+                                className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                            >
+                                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                            Category
+                        </label>
+                        <select
+                            value={editCategory}
+                            onChange={(e) => setEditCategory(e.target.value as InventoryItem['category'])}
+                            className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                        >
+                            {CATEGORIES.map(cat => (
+                                <option key={cat} value={cat}>
+                                    {getCategoryConfig(cat).emoji} {cat}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Expiry Date */}
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                            Expiry Date
+                        </label>
+                        <input
+                            type="date"
+                            value={editExpiry}
+                            onChange={(e) => setEditExpiry(e.target.value)}
+                            className="w-full px-4 py-3 text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300"
+                        />
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3 pt-2">
+                        <button
+                            onClick={handleSave}
+                            className="flex-1 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                        >
+                            <Check size={18} />
+                            Save Changes
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="px-6 py-3.5 bg-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-300 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }) => {
+    const { removeItem, toggleOpened, updateItem } = useInventory();
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     const daysLeft = () => {
         const expiry = new Date(item.expiryDate);
@@ -100,24 +231,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
 
     const config = getStatusConfig();
 
-    const handleSave = () => {
-        updateItem(item.id, {
-            name: editName.trim() || item.name,
-            quantity: parseFloat(editQuantity) || item.quantity,
-            unit: editUnit,
-            category: editCategory,
-            expiryDate: editExpiry || item.expiryDate
-        });
-        setIsEditing(false);
-    };
-
-    const handleCancel = () => {
-        setEditName(item.name);
-        setEditQuantity(item.quantity.toString());
-        setEditUnit(item.unit);
-        setEditCategory(item.category);
-        setEditExpiry(item.expiryDate);
-        setIsEditing(false);
+    const handleSaveEdit = (updates: Partial<InventoryItem>) => {
+        updateItem(item.id, updates);
     };
 
     // Format expiry date nicely
@@ -130,131 +245,80 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
     const progressPercent = Math.max(0, Math.min(100, (left / 30) * 100));
 
     return (
-        <div
-            className={`relative bg-white rounded-2xl overflow-hidden transition-all duration-300 
-                ${isHovered ? 'shadow-xl scale-[1.02]' : 'shadow-lg'} 
-                ${config.glow}
-                border border-gray-100/50`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            {/* Premium Status Indicator Bar */}
-            <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+        <>
+            {/* Edit Modal */}
+            {showEditModal && (
+                <EditModal
+                    item={item}
+                    onSave={handleSaveEdit}
+                    onClose={() => setShowEditModal(false)}
+                />
+            )}
 
-            {/* Main Content */}
-            <div className="p-4">
-                {/* Header Row */}
-                <div className="flex items-start justify-between mb-3">
-                    {/* Left: Category Icon + Name */}
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
+            <div
+                className={`relative bg-white rounded-2xl overflow-hidden transition-all duration-300 
+                    ${isHovered ? 'shadow-xl scale-[1.02]' : 'shadow-lg'} 
+                    ${config.glow}
+                    border border-gray-100/50`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                {/* Premium Status Indicator Bar */}
+                <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+
+                {/* Top Corner Buttons - Edit (Left) & Delete (Right) */}
+                <div className="absolute top-3 left-3 right-3 flex justify-between z-10">
+                    {/* Edit Button - Top Left */}
+                    <button
+                        onClick={() => setShowEditModal(true)}
+                        className="p-2 bg-white/90 backdrop-blur shadow-md rounded-xl hover:bg-gray-100 transition-all hover:scale-105"
+                        title="Edit item"
+                    >
+                        <Edit3 size={16} className="text-gray-600" />
+                    </button>
+
+                    {/* Delete Button - Top Right */}
+                    <button
+                        onClick={() => removeItem(item.id)}
+                        className="p-2 bg-white/90 backdrop-blur shadow-md rounded-xl hover:bg-rose-50 transition-all hover:scale-105"
+                        title="Delete item"
+                    >
+                        <Trash2 size={16} className="text-rose-500" />
+                    </button>
+                </div>
+
+                {/* Main Content */}
+                <div className="p-4 pt-14">
+                    {/* Header Row */}
+                    <div className="flex items-start gap-3 mb-3">
                         {/* Category Badge */}
                         <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${categoryConfig.bg} ${categoryConfig.border} border flex items-center justify-center text-xl flex-shrink-0 shadow-sm`}>
                             {categoryConfig.emoji}
                         </div>
 
                         <div className="min-w-0 flex-1">
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    value={editName}
-                                    onChange={(e) => setEditName(e.target.value)}
-                                    className="w-full px-2 py-1 text-lg font-semibold bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                                    placeholder="Item name"
-                                    autoFocus
-                                />
-                            ) : (
-                                <>
-                                    <h3 className="text-lg font-bold text-gray-900 truncate leading-tight">
-                                        {item.name}
-                                    </h3>
-                                    <p className="text-sm text-gray-500 flex items-center gap-1">
-                                        <span className="font-medium">{item.quantity}</span>
-                                        <span>{item.unit}</span>
-                                        {item.isOpened && (
-                                            <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-semibold rounded-md">
-                                                OPENED
-                                            </span>
-                                        )}
-                                    </p>
-                                </>
-                            )}
+                            <h3 className="text-lg font-bold text-gray-900 truncate leading-tight">
+                                {item.name}
+                            </h3>
+                            <p className="text-sm text-gray-500 flex items-center gap-1 flex-wrap">
+                                <span className="font-medium">{item.quantity}</span>
+                                <span>{item.unit}</span>
+                                {item.isOpened && (
+                                    <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-semibold rounded-md">
+                                        OPENED
+                                    </span>
+                                )}
+                            </p>
                         </div>
-                    </div>
 
-                    {/* Right: Status Badge or Edit Controls */}
-                    {isEditing ? (
-                        <div className="flex gap-1.5">
-                            <button
-                                onClick={handleSave}
-                                className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-                            >
-                                <Check size={16} />
-                            </button>
-                            <button
-                                onClick={handleCancel}
-                                className="p-2 bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300 transition-colors"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-                    ) : (
-                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bgLight} ${config.text} text-xs font-bold`}>
+                        {/* Status Badge */}
+                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bgLight} ${config.text} text-xs font-bold flex-shrink-0`}>
                             {config.icon}
                             <span>{config.label}</span>
                         </div>
-                    )}
-                </div>
-
-                {/* Edit Form Fields */}
-                {isEditing && (
-                    <div className="space-y-3 mb-4 p-3 bg-gray-50 rounded-xl">
-                        <div className="grid grid-cols-3 gap-2">
-                            <div>
-                                <label className="text-[10px] font-semibold text-gray-400 uppercase">Qty</label>
-                                <input
-                                    type="number"
-                                    value={editQuantity}
-                                    onChange={(e) => setEditQuantity(e.target.value)}
-                                    className="w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                                    min="0"
-                                    step="0.1"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[10px] font-semibold text-gray-400 uppercase">Unit</label>
-                                <select
-                                    value={editUnit}
-                                    onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
-                                    className="w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none"
-                                >
-                                    {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-[10px] font-semibold text-gray-400 uppercase">Category</label>
-                                <select
-                                    value={editCategory}
-                                    onChange={(e) => setEditCategory(e.target.value as InventoryItem['category'])}
-                                    className="w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none"
-                                >
-                                    {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label className="text-[10px] font-semibold text-gray-400 uppercase">Expiry Date</label>
-                            <input
-                                type="date"
-                                value={editExpiry}
-                                onChange={(e) => setEditExpiry(e.target.value)}
-                                className="w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                            />
-                        </div>
                     </div>
-                )}
 
-                {/* Expiry Progress Section */}
-                {!isEditing && (
+                    {/* Expiry Progress Section */}
                     <div className="mb-4">
                         {/* Date and Countdown Row */}
                         <div className="flex items-center justify-between mb-2">
@@ -280,19 +344,17 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                             />
                         </div>
                     </div>
-                )}
 
-                {/* Action Buttons */}
-                {!isEditing && (
+                    {/* Action Buttons - Only core actions */}
                     <div className="flex gap-2">
                         {/* Mark Opened */}
                         {!item.isOpened && left >= 0 && (
                             <button
                                 onClick={() => toggleOpened(item.id)}
-                                className="flex-1 py-2 px-3 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all flex items-center justify-center gap-1.5 group"
+                                className="flex-1 py-2.5 px-3 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all flex items-center justify-center gap-1.5"
                                 title={getOpenedExpiryInfo(item.category)}
                             >
-                                <Package size={14} className="group-hover:scale-110 transition-transform" />
+                                <Package size={14} />
                                 <span>Opened</span>
                             </button>
                         )}
@@ -301,7 +363,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                         {left >= 0 && left <= 7 && onPreserve && (
                             <button
                                 onClick={() => onPreserve(item)}
-                                className={`flex-1 py-2 px-3 text-xs font-bold text-white bg-gradient-to-r ${config.gradient} rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]`}
+                                className={`flex-1 py-2.5 px-3 text-xs font-bold text-white bg-gradient-to-r ${config.gradient} rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5`}
                             >
                                 <ChefHat size={14} />
                                 <span>Recipes</span>
@@ -311,32 +373,14 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                         {/* Used Up */}
                         <button
                             onClick={() => removeItem(item.id)}
-                            className="flex-1 py-2 px-3 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl transition-all flex items-center justify-center gap-1.5 group"
+                            className="flex-1 py-2.5 px-3 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl transition-all flex items-center justify-center gap-1.5"
                         >
-                            <Sparkles size={14} className="group-hover:scale-110 transition-transform" />
+                            <Sparkles size={14} />
                             <span>Used</span>
                         </button>
-
-                        {/* Delete */}
-                        <button
-                            onClick={() => removeItem(item.id)}
-                            className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-xl transition-all hover:scale-105"
-                            title="Delete item"
-                        >
-                            <Trash2 size={14} />
-                        </button>
-
-                        {/* Edit - always visible */}
-                        <button
-                            onClick={() => setIsEditing(true)}
-                            className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-all hover:scale-105"
-                            title="Edit item"
-                        >
-                            <Edit3 size={14} />
-                        </button>
                     </div>
-                )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
