@@ -288,7 +288,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                 </div>
 
                 {/* Main Content */}
-                <div className="p-4 pt-14">
+                <div className="p-4">
                     {/* Header Row */}
                     <div className="flex items-start gap-3 mb-3">
                         {/* Category Badge */}
