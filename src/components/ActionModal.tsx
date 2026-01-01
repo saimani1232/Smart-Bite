@@ -115,7 +115,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                     <p className="text-gray-600 mb-6">
                         {isBulk
                             ? "You have a lot! Here are ways to preserve it."
-                            : "Let's use this before it expires. Here are some recipe ideas from Spoonacular."
+                            : "Don't let it go to waste! Here are some delicious recipes you can make."
                         }
                     </p>
 
@@ -142,7 +142,6 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                             <div className="text-center py-12">
                                 <Loader size={32} className="animate-spin text-amber-500 mx-auto mb-4" />
                                 <p className="text-gray-500">Finding delicious recipes...</p>
-                                <p className="text-xs text-gray-400 mt-1">Powered by Spoonacular</p>
                             </div>
                         ) : error ? (
                             // Error state

@@ -266,8 +266,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                 {/* Premium Status Indicator Bar */}
                 <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
 
-                {/* Top Corner Buttons - Edit (Left) & Delete (Right) */}
-                <div className="absolute top-3 left-3 right-3 flex justify-between z-10">
+                {/* Top Corner Buttons - Edit (Left) & Delete (Right) - Only visible on hover */}
+                <div className={`absolute top-3 left-3 right-3 flex justify-between z-10 transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
                     {/* Edit Button - Top Left */}
                     <button
                         onClick={() => setShowEditModal(true)}
