@@ -34,7 +34,7 @@
 
   /* Input Fields with Focus Glow */
   .input-field {
-    @apply block w-full rounded-xl border border-gray-200/80 dark:border-gray-600 text-sm py-3.5 px-4 bg-white/80 dark:bg-gray-700/80 dark:text-gray-100 backdrop-blur-sm transition-all duration-300 outline-none focus:border-emerald-400 dark:focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 dark:focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500;
+    @apply block w-full rounded-xl border border-gray-200/80 dark:border-gray-600 text-sm py-3.5 px-4 bg-white/80 dark:bg-gray-700/80 dark:text-gray-100 backdrop-blur-sm transition-all duration-300 outline-none focus:border-emerald-400 dark:focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 dark:focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-400;
   }
 
   /* Primary Button with Gradient */

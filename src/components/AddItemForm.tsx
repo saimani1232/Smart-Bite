@@ -198,7 +198,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Camera</span>
                             </button>
 
-                            <label className={`flex flex-col items-center justify-center p-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <label className={`flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
                                 <input
                                     ref={productFileRef}
                                     type="file"
@@ -206,8 +206,8 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                     className="hidden"
                                     onChange={(e) => handleFileUpload(e, 'product')}
                                 />
-                                <Upload size={20} className="text-gray-500 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 uppercase">Upload</span>
+                                <Upload size={20} className="text-gray-500 dark:text-gray-300 mb-1" />
+                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Upload</span>
                             </label>
                         </div>
 
@@ -237,13 +237,13 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 type="button"
                                 onClick={() => openCamera('expiry')}
                                 disabled={!!scanningType}
-                                className="flex flex-col items-center justify-center p-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 shadow-sm text-center active:scale-95 disabled:opacity-50"
+                                className="flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 shadow-sm text-center active:scale-95 disabled:opacity-50"
                             >
-                                <Camera size={20} className="text-amber-600 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 uppercase">Camera</span>
+                                <Camera size={20} className="text-amber-600 dark:text-amber-400 mb-1" />
+                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Camera</span>
                             </button>
 
-                            <label className={`flex flex-col items-center justify-center p-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <label className={`flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
                                 <input
                                     ref={expiryFileRef}
                                     type="file"
@@ -251,8 +251,8 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                     className="hidden"
                                     onChange={(e) => handleFileUpload(e, 'expiry')}
                                 />
-                                <Upload size={20} className="text-gray-500 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 uppercase">Upload</span>
+                                <Upload size={20} className="text-gray-500 dark:text-gray-300 mb-1" />
+                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Upload</span>
                             </label>
                         </div>
 
@@ -308,7 +308,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 )}
 
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Expiration</label>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Expiration</label>
                     <input
                         type="date"
                         value={expiryDate}
@@ -319,7 +319,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Category</label>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Category</label>
                     <select value={category} onChange={e => setCategory(e.target.value as any)} className="input-field">
                         <option value="Dairy">Dairy</option>
                         <option value="Grain">Grain</option>
@@ -330,15 +330,15 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
                 {/* Reminder Settings */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200">
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 border border-violet-200 dark:border-violet-700">
                     <div className="flex items-center gap-2 mb-3">
-                        <Bell size={18} className="text-violet-600" />
-                        <span className="text-sm font-bold text-gray-700">Expiry Reminder</span>
+                        <Bell size={18} className="text-violet-600 dark:text-violet-400" />
+                        <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Expiry Reminder</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Remind Before</label>
+                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Remind Before</label>
                             <select
                                 value={reminderDays}
                                 onChange={e => setReminderDays(Number(e.target.value))}
@@ -353,7 +353,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                                 <Mail size={12} className="inline mr-1" />Email
                             </label>
                             <input
@@ -367,7 +367,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </div>
 
                     {reminderDays > 0 && !reminderEmail && (
-                        <p className="text-xs text-violet-600 mt-2">💡 Enter email to receive recipe suggestions when item is expiring</p>
+                        <p className="text-xs text-violet-600 dark:text-violet-400 mt-2">💡 Enter email to receive recipe suggestions when item is expiring</p>
                     )}
                 </div>
 
