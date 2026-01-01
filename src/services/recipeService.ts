@@ -1,8 +1,5 @@
-// Spoonacular API - Premium Recipe Database
-// https://spoonacular.com/food-api
-
-const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY || '';
-const BASE_URL = 'https://api.spoonacular.com';
+// TheMealDB API - Free Recipe Database (No API key required!)
+// https://www.themealdb.com/api.php
 
 export interface Recipe {
     id: string;
@@ -19,87 +16,107 @@ export interface Recipe {
     sourceUrl?: string;
 }
 
-interface SpoonacularRecipe {
-    id: number;
-    title: string;
-    image: string;
-    imageType: string;
-    usedIngredientCount: number;
-    missedIngredientCount: number;
-    usedIngredients: Array<{ name: string }>;
-    missedIngredients: Array<{ name: string }>;
+interface MealDBRecipe {
+    idMeal: string;
+    strMeal: string;
+    strCategory: string;
+    strArea: string;
+    strInstructions: string;
+    strMealThumb: string;
+    strSource?: string;
+    strYoutube?: string;
+    // Ingredients and measures come as strIngredient1-20 and strMeasure1-20
+    [key: string]: string | undefined;
 }
 
-interface SpoonacularRecipeDetails {
-    id: number;
-    title: string;
-    image: string;
-    readyInMinutes: number;
-    servings: number;
-    sourceUrl: string;
-    instructions: string;
-    cuisines: string[];
-    dishTypes: string[];
-    extendedIngredients: Array<{ name: string }>;
+// Extract ingredients from MealDB recipe format
+function extractIngredients(meal: MealDBRecipe): string[] {
+    const ingredients: string[] = [];
+    for (let i = 1; i <= 20; i++) {
+        const ingredient = meal[`strIngredient${i}`];
+        if (ingredient && ingredient.trim()) {
+            ingredients.push(ingredient.trim().toLowerCase());
+        }
+    }
+    return ingredients;
 }
 
-// Get recipes that use specific ingredients
+// Convert MealDB recipe to our Recipe format
+function convertToRecipe(meal: MealDBRecipe, matchedIngredients: string[] = []): Recipe {
+    const ingredients = extractIngredients(meal);
+
+    return {
+        id: meal.idMeal,
+        name: meal.strMeal,
+        image: meal.strMealThumb,
+        category: meal.strCategory || 'Main Course',
+        area: meal.strArea || 'International',
+        instructions: meal.strInstructions || '',
+        ingredients: ingredients,
+        matchedIngredients: matchedIngredients.length > 0 ? matchedIngredients : ingredients.slice(0, 3),
+        matchScore: matchedIngredients.length,
+        readyInMinutes: 30, // MealDB doesn't provide this, estimate
+        servings: 4, // MealDB doesn't provide this, estimate
+        sourceUrl: meal.strSource || `https://www.themealdb.com/meal/${meal.idMeal}`
+    };
+}
+
+// Search recipes by main ingredient
 export async function getRecipesByIngredient(ingredient: string): Promise<Recipe[]> {
     try {
+        console.log('🔍 Searching TheMealDB for:', ingredient);
+
         const response = await fetch(
-            `${BASE_URL}/recipes/findByIngredients?apiKey=${SPOONACULAR_API_KEY}&ingredients=${encodeURIComponent(ingredient)}&number=10&ranking=1&ignorePantry=true`
+            `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ingredient)}`
         );
 
         if (!response.ok) {
             throw new Error(`API error: ${response.status}`);
         }
 
-        const data: SpoonacularRecipe[] = await response.json();
+        const data = await response.json();
 
-        return data.map((recipe) => ({
-            id: recipe.id.toString(),
-            name: recipe.title,
-            image: recipe.image,
-            category: '',
-            area: '',
-            instructions: '',
-            ingredients: [],
-            matchedIngredients: recipe.usedIngredients.map(i => i.name),
-            matchScore: recipe.usedIngredientCount
-        }));
+        if (!data.meals) {
+            console.log('No meals found for:', ingredient);
+            return [];
+        }
+
+        // Get basic recipe info, then fetch full details for top 5
+        const meals = data.meals.slice(0, 5);
+        const recipes: Recipe[] = [];
+
+        for (const meal of meals) {
+            const fullRecipe = await getRecipeById(meal.idMeal);
+            if (fullRecipe) {
+                recipes.push(fullRecipe);
+            }
+        }
+
+        return recipes;
     } catch (error) {
-        console.error('Error fetching recipes from Spoonacular:', error);
+        console.error('Error fetching recipes from TheMealDB:', error);
         return [];
     }
 }
 
-// Get full recipe details
-export async function getRecipeDetails(recipeId: string): Promise<Recipe | null> {
+// Get full recipe details by ID
+export async function getRecipeById(id: string): Promise<Recipe | null> {
     try {
         const response = await fetch(
-            `${BASE_URL}/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`
+            `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
         );
 
         if (!response.ok) {
             throw new Error(`API error: ${response.status}`);
         }
 
-        const recipe: SpoonacularRecipeDetails = await response.json();
+        const data = await response.json();
 
-        return {
-            id: recipe.id.toString(),
-            name: recipe.title,
-            image: recipe.image,
-            category: recipe.dishTypes?.[0] || 'Main Course',
-            area: recipe.cuisines?.[0] || 'International',
-            instructions: recipe.instructions || '',
-            ingredients: recipe.extendedIngredients.map(i => i.name.toLowerCase()),
-            matchedIngredients: [],
-            matchScore: 0,
-            readyInMinutes: recipe.readyInMinutes,
-            servings: recipe.servings,
-            sourceUrl: recipe.sourceUrl
-        };
+        if (!data.meals || data.meals.length === 0) {
+            return null;
+        }
+
+        return convertToRecipe(data.meals[0]);
     } catch (error) {
         console.error('Error fetching recipe details:', error);
         return null;
@@ -111,79 +128,95 @@ export async function findBestRecipes(
     expiringItemName: string,
     allInventoryItems: string[]
 ): Promise<Recipe[]> {
-    console.log('Finding recipes for:', expiringItemName, 'with inventory:', allInventoryItems);
+    console.log('🍳 Finding recipes for:', expiringItemName, 'with inventory:', allInventoryItems);
 
     // Normalize ingredient names
     const normalize = (s: string) => s.toLowerCase().trim();
+    const expiringNormalized = normalize(expiringItemName);
     const inventoryNormalized = allInventoryItems.map(normalize);
 
-    // Combine expiring item with other inventory items for better results
-    const searchIngredients = [expiringItemName, ...allInventoryItems.slice(0, 4)].join(',');
-
     try {
-        const response = await fetch(
-            `${BASE_URL}/recipes/findByIngredients?apiKey=${SPOONACULAR_API_KEY}&ingredients=${encodeURIComponent(searchIngredients)}&number=10&ranking=2&ignorePantry=true`
-        );
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const recipes: SpoonacularRecipe[] = await response.json();
+        // Search by main ingredient
+        const recipes = await getRecipesByIngredient(expiringItemName);
 
         if (recipes.length === 0) {
-            console.log('No recipes found for:', expiringItemName);
-            return [];
-        }
+            // Try searching by first word (e.g., "Whole Milk" -> "Milk")
+            const firstWord = expiringItemName.split(' ').pop() || expiringItemName;
+            console.log('Trying search with:', firstWord);
+            const altRecipes = await getRecipesByIngredient(firstWord);
 
-        // Get details for top recipes
-        const detailedRecipes: Recipe[] = [];
-        const recipesToCheck = recipes.slice(0, 5);
-
-        for (const recipe of recipesToCheck) {
-            const details = await getRecipeDetails(recipe.id.toString());
-            if (details) {
-                // Calculate how many inventory items this recipe uses
-                const matchedIngredients = details.ingredients.filter(ing =>
-                    inventoryNormalized.some(inv =>
-                        ing.includes(inv) || inv.includes(ing)
-                    )
-                );
-
-                // Include the main ingredient
-                const expiringNormalized = normalize(expiringItemName);
-                if (!matchedIngredients.includes(expiringNormalized)) {
-                    matchedIngredients.push(expiringNormalized);
-                }
-
-                details.matchedIngredients = matchedIngredients;
-                details.matchScore = recipe.usedIngredientCount;
-                detailedRecipes.push(details);
+            if (altRecipes.length === 0) {
+                // Try getting a random recipe as fallback
+                console.log('No specific recipes found, getting suggestions...');
+                return await getRandomRecipes(3);
             }
+
+            return processRecipes(altRecipes, expiringNormalized, inventoryNormalized);
         }
 
-        // Sort by match score
-        detailedRecipes.sort((a, b) => b.matchScore - a.matchScore);
-
-        console.log('Found recipes:', detailedRecipes.map(r => ({
-            name: r.name,
-            matched: r.matchedIngredients,
-            score: r.matchScore,
-            readyIn: r.readyInMinutes
-        })));
-
-        return detailedRecipes.slice(0, 3);
+        return processRecipes(recipes, expiringNormalized, inventoryNormalized);
     } catch (error) {
         console.error('Error finding best recipes:', error);
         return [];
     }
 }
 
-// Get a random recipe for testing/display
+// Process recipes to calculate match scores
+function processRecipes(
+    recipes: Recipe[],
+    expiringItem: string,
+    inventory: string[]
+): Recipe[] {
+    return recipes.map(recipe => {
+        // Find which inventory items match this recipe's ingredients
+        const matchedIngredients = recipe.ingredients.filter(ing =>
+            inventory.some(inv =>
+                ing.includes(inv) || inv.includes(ing)
+            )
+        );
+
+        // Make sure the main ingredient is included
+        if (!matchedIngredients.some(m => m.includes(expiringItem) || expiringItem.includes(m))) {
+            matchedIngredients.unshift(expiringItem);
+        }
+
+        return {
+            ...recipe,
+            matchedIngredients: matchedIngredients.slice(0, 5),
+            matchScore: matchedIngredients.length
+        };
+    }).sort((a, b) => b.matchScore - a.matchScore).slice(0, 3);
+}
+
+// Get random recipes (fallback when no specific matches)
+export async function getRandomRecipes(count: number = 3): Promise<Recipe[]> {
+    const recipes: Recipe[] = [];
+
+    try {
+        for (let i = 0; i < count; i++) {
+            const response = await fetch(
+                'https://www.themealdb.com/api/json/v1/1/random.php'
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.meals && data.meals[0]) {
+                    recipes.push(convertToRecipe(data.meals[0]));
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching random recipes:', error);
+    }
+
+    return recipes;
+}
+
+// Get a single random recipe
 export async function getRandomRecipe(): Promise<Recipe | null> {
     try {
         const response = await fetch(
-            `${BASE_URL}/recipes/random?apiKey=${SPOONACULAR_API_KEY}&number=1`
+            'https://www.themealdb.com/api/json/v1/1/random.php'
         );
 
         if (!response.ok) {
@@ -191,26 +224,38 @@ export async function getRandomRecipe(): Promise<Recipe | null> {
         }
 
         const data = await response.json();
-        const recipe = data.recipes?.[0];
 
-        if (!recipe) return null;
+        if (!data.meals || data.meals.length === 0) {
+            return null;
+        }
 
-        return {
-            id: recipe.id.toString(),
-            name: recipe.title,
-            image: recipe.image,
-            category: recipe.dishTypes?.[0] || 'Main Course',
-            area: recipe.cuisines?.[0] || 'International',
-            instructions: recipe.instructions || '',
-            ingredients: recipe.extendedIngredients?.map((i: { name: string }) => i.name.toLowerCase()) || [],
-            matchedIngredients: [],
-            matchScore: 0,
-            readyInMinutes: recipe.readyInMinutes,
-            servings: recipe.servings,
-            sourceUrl: recipe.sourceUrl
-        };
+        return convertToRecipe(data.meals[0]);
     } catch (error) {
         console.error('Error fetching random recipe:', error);
         return null;
+    }
+}
+
+// Search recipes by name
+export async function searchRecipesByName(query: string): Promise<Recipe[]> {
+    try {
+        const response = await fetch(
+            `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(query)}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.meals) {
+            return [];
+        }
+
+        return data.meals.slice(0, 5).map((meal: MealDBRecipe) => convertToRecipe(meal));
+    } catch (error) {
+        console.error('Error searching recipes:', error);
+        return [];
     }
 }
