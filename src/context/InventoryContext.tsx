@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import type { InventoryItem } from '../types';
 import { calculateExpiryStatus, getOpenedExpiryDate } from '../utils/logic';
 import { findBestRecipes } from '../services/recipeService';
-import { sendExpiryReminder } from '../services/emailService';
+import { sendExpiryReminder, isEmailConfigured } from '../services/emailService';
 
 // Fallback for UUID since we didn't install the package
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -15,6 +15,7 @@ type InventoryContextType = {
     toggleOpened: (id: string) => void;
     refreshStatus: () => void;
     checkReminders: () => Promise<void>;
+    sendTestReminder: (itemId: string) => Promise<boolean>;
 };
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -61,27 +62,30 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         const saved = localStorage.getItem('smart-bite-inventory');
         return saved ? JSON.parse(saved) : INITIAL_ITEMS;
     });
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('smart-bite-inventory', JSON.stringify(items));
     }, [items]);
 
     // Recalculate status on mount or when items change
-    const refreshStatus = () => {
+    const refreshStatus = useCallback(() => {
         setItems(prev => prev.map(item => ({
             ...item,
             status: calculateExpiryStatus(item)
         })));
-    };
-
-    useEffect(() => {
-        refreshStatus();
-        // Check reminders on app load
-        checkReminders();
     }, []);
 
     // Check all items for reminders that need to be sent
-    const checkReminders = async () => {
+    const checkReminders = useCallback(async () => {
+        console.log('🔔 Checking reminders...');
+        console.log('📧 Email configured:', isEmailConfigured());
+
+        if (!isEmailConfigured()) {
+            console.warn('⚠️ EmailJS not configured! Please set VITE_EMAILJS_* environment variables.');
+            return;
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -95,30 +99,90 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             expiry.setHours(0, 0, 0, 0);
             const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
+            console.log(`📦 ${item.name}: ${daysUntilExpiry} days until expiry, remind at ${item.reminderDays} days`);
+
             // Remind if within reminder window
             return daysUntilExpiry <= item.reminderDays && daysUntilExpiry > 0;
         });
 
-        console.log('Items needing reminder:', itemsToRemind.map(i => i.name));
+        console.log('📬 Items needing reminder:', itemsToRemind.map(i => `${i.name} → ${i.reminderEmail}`));
 
         for (const item of itemsToRemind) {
+            console.log(`🍳 Fetching recipes for ${item.name}...`);
+
             // Get all inventory item names for recipe matching
             const allItemNames = items.map(i => i.name);
 
             // Find best recipes using the expiring item + other inventory
             const recipes = await findBestRecipes(item.name, allItemNames);
+            console.log(`✅ Found ${recipes.length} recipes for ${item.name}`);
 
             // Send email reminder
+            console.log(`📧 Sending email to ${item.reminderEmail}...`);
             const success = await sendExpiryReminder(item, recipes);
 
             if (success) {
+                console.log(`✅ Email sent successfully to ${item.reminderEmail}`);
                 // Mark reminder as sent
                 setItems(prev => prev.map(i =>
                     i.id === item.id ? { ...i, reminderSent: true } : i
                 ));
+            } else {
+                console.error(`❌ Failed to send email to ${item.reminderEmail}`);
             }
         }
-    };
+
+        if (itemsToRemind.length === 0) {
+            console.log('✨ No items need reminders right now.');
+        }
+    }, [items]);
+
+    // Send a test reminder for a specific item (for debugging)
+    const sendTestReminder = useCallback(async (itemId: string): Promise<boolean> => {
+        const item = items.find(i => i.id === itemId);
+        if (!item) {
+            console.error('Item not found:', itemId);
+            return false;
+        }
+
+        if (!item.reminderEmail) {
+            console.error('No email set for item:', item.name);
+            return false;
+        }
+
+        console.log(`🧪 Sending test reminder for ${item.name} to ${item.reminderEmail}...`);
+
+        const allItemNames = items.map(i => i.name);
+        const recipes = await findBestRecipes(item.name, allItemNames);
+
+        console.log(`Found ${recipes.length} recipes:`, recipes.map(r => r.name));
+
+        const success = await sendExpiryReminder(item, recipes);
+
+        if (success) {
+            console.log('✅ Test reminder sent successfully!');
+        } else {
+            console.error('❌ Test reminder failed');
+        }
+
+        return success;
+    }, [items]);
+
+    useEffect(() => {
+        refreshStatus();
+        setIsInitialized(true);
+    }, [refreshStatus]);
+
+    // Run checkReminders after initialization
+    useEffect(() => {
+        if (isInitialized) {
+            // Small delay to ensure items are loaded
+            const timer = setTimeout(() => {
+                checkReminders();
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [isInitialized, checkReminders]);
 
     const addItem = (newItem: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => {
         const item: InventoryItem = {
@@ -137,6 +201,10 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             if (item.id === id) {
                 const updated = { ...item, ...updates };
                 updated.status = calculateExpiryStatus(updated);
+                // Reset reminderSent if expiry date changes
+                if (updates.expiryDate && updates.expiryDate !== item.expiryDate) {
+                    updated.reminderSent = false;
+                }
                 return updated;
             }
             return item;
@@ -170,7 +238,16 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <InventoryContext.Provider value={{ items, addItem, updateItem, removeItem, toggleOpened, refreshStatus, checkReminders }}>
+        <InventoryContext.Provider value={{
+            items,
+            addItem,
+            updateItem,
+            removeItem,
+            toggleOpened,
+            refreshStatus,
+            checkReminders,
+            sendTestReminder
+        }}>
             {children}
         </InventoryContext.Provider>
     );

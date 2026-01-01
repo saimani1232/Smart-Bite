@@ -1,0 +1,2697 @@
+[Skip to main content](https://cloud.google.com/vision/docs/ocr#main-content)
+[Technology areas](https://docs.cloud.google.com/docs)
+- 
+                  [AI and ML](https://docs.cloud.google.com/docs/ai-ml)
+
+- 
+                  [Application development](https://docs.cloud.google.com/docs/application-development)
+
+- 
+                  [Application hosting](https://docs.cloud.google.com/docs/application-hosting)
+
+- 
+                  [Compute](https://docs.cloud.google.com/docs/compute-area)
+
+- 
+                  [Data analytics and pipelines](https://docs.cloud.google.com/docs/data)
+
+- 
+                  [Databases](https://docs.cloud.google.com/docs/databases)
+
+- 
+                  [Distributed, hybrid, and multicloud](https://docs.cloud.google.com/docs/dhm-cloud)
+
+- 
+                  [Generative AI](https://docs.cloud.google.com/docs/generative-ai)
+
+- 
+                  [Industry solutions](https://docs.cloud.google.com/docs/industry)
+
+- 
+                  [Networking](https://docs.cloud.google.com/docs/networking)
+
+- 
+                  [Observability and monitoring](https://docs.cloud.google.com/docs/observability)
+
+- 
+                  [Security](https://docs.cloud.google.com/docs/security)
+
+- 
+                  [Storage](https://docs.cloud.google.com/docs/storage)
+
+[AI and ML](https://docs.cloud.google.com/docs/ai-ml)
+[Application development](https://docs.cloud.google.com/docs/application-development)
+[Application hosting](https://docs.cloud.google.com/docs/application-hosting)
+[Compute](https://docs.cloud.google.com/docs/compute-area)
+[Data analytics and pipelines](https://docs.cloud.google.com/docs/data)
+[Databases](https://docs.cloud.google.com/docs/databases)
+[Distributed, hybrid, and multicloud](https://docs.cloud.google.com/docs/dhm-cloud)
+[Generative AI](https://docs.cloud.google.com/docs/generative-ai)
+[Industry solutions](https://docs.cloud.google.com/docs/industry)
+[Networking](https://docs.cloud.google.com/docs/networking)
+[Observability and monitoring](https://docs.cloud.google.com/docs/observability)
+[Security](https://docs.cloud.google.com/docs/security)
+[Storage](https://docs.cloud.google.com/docs/storage)
+[Cross-product tools](https://docs.cloud.google.com/docs/cross-product-overviews)
+- 
+                  [Access and resources management](https://docs.cloud.google.com/docs/access-resources)
+
+- 
+                  [Costs and usage management](https://docs.cloud.google.com/docs/costs-usage)
+
+- 
+                  [Infrastructure as code](https://docs.cloud.google.com/docs/iac)
+
+- 
+                  [Migration](https://docs.cloud.google.com/docs/migration)
+
+- 
+                  [SDK, languages, frameworks, and tools](https://docs.cloud.google.com/docs/devtools)
+
+[Access and resources management](https://docs.cloud.google.com/docs/access-resources)
+[Costs and usage management](https://docs.cloud.google.com/docs/costs-usage)
+[Infrastructure as code](https://docs.cloud.google.com/docs/iac)
+[Migration](https://docs.cloud.google.com/docs/migration)
+[SDK, languages, frameworks, and tools](https://docs.cloud.google.com/docs/devtools)
+[Console](https://console.cloud.google.com/)
+- 
+      [English](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Deutsch](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Español](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Español – América Latina](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Français](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Indonesia](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Italiano](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Português](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Português – Brasil](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [中文 – 简体](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [中文 – 繁體](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [日本語](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [한국어](https://cloud.google.com/vision/docs/ocr)
+
+[English](https://cloud.google.com/vision/docs/ocr)
+[Deutsch](https://cloud.google.com/vision/docs/ocr)
+[Español](https://cloud.google.com/vision/docs/ocr)
+[Español – América Latina](https://cloud.google.com/vision/docs/ocr)
+[Français](https://cloud.google.com/vision/docs/ocr)
+[Indonesia](https://cloud.google.com/vision/docs/ocr)
+[Italiano](https://cloud.google.com/vision/docs/ocr)
+[Português](https://cloud.google.com/vision/docs/ocr)
+
+[Português – Brasil](https://cloud.google.com/vision/docs/ocr)
+[中文 – 简体](https://cloud.google.com/vision/docs/ocr)
+[中文 – 繁體](https://cloud.google.com/vision/docs/ocr)
+[日本語](https://cloud.google.com/vision/docs/ocr)
+[한국어](https://cloud.google.com/vision/docs/ocr)
+- 
+
+
+
+
+
+  [Cloud Vision API](https://docs.cloud.google.com/vision/docs)
+
+
+
+
+[Cloud Vision API](https://docs.cloud.google.com/vision/docs)
+[Start free](https://console.cloud.google.com/freetrial)
+[Overview](https://docs.cloud.google.com/vision/docs)
+[Guides](https://docs.cloud.google.com/vision/docs/features-list)
+[Reference](https://docs.cloud.google.com/vision/docs/apis)
+[Samples](https://docs.cloud.google.com/vision/docs/samples)
+[Support](https://docs.cloud.google.com/vision/docs/support)
+[Resources](https://docs.cloud.google.com/vision/docs/resources)
+- 
+
+
+  [Technology areas](https://cloud.google.com/docs)
+
+
+
+
+
+
+
+
+
+
+
+      More
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  [Overview](https://cloud.google.com/vision/docs)
+
+
+
+
+
+
+
+
+
+
+
+  [Guides](https://cloud.google.com/vision/docs/features-list)
+
+
+
+
+
+
+
+
+
+
+
+  [Reference](https://cloud.google.com/vision/docs/apis)
+
+
+
+
+
+
+
+
+
+
+
+  [Samples](https://cloud.google.com/vision/docs/samples)
+
+
+
+
+
+
+
+
+
+
+
+  [Support](https://cloud.google.com/vision/docs/support)
+
+
+
+
+
+
+
+
+
+
+
+  [Resources](https://cloud.google.com/vision/docs/resources)
+
+
+
+
+
+
+
+
+- 
+
+
+
+
+
+      More
+
+
+
+
+
+
+
+
+
+
+- 
+
+
+  [Overview](https://cloud.google.com/vision/docs)
+
+
+
+
+- 
+
+
+  [Guides](https://cloud.google.com/vision/docs/features-list)
+
+
+
+
+- 
+
+
+  [Reference](https://cloud.google.com/vision/docs/apis)
+
+
+
+
+- 
+
+
+  [Samples](https://cloud.google.com/vision/docs/samples)
+
+
+
+
+- 
+
+
+  [Support](https://cloud.google.com/vision/docs/support)
+
+
+
+
+- 
+
+
+  [Resources](https://cloud.google.com/vision/docs/resources)
+
+
+
+
+- 
+
+
+  [Cross-product tools](https://cloud.google.com/docs/cross-product-overviews)
+
+
+
+
+
+
+
+
+
+
+
+      More
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- 
+
+
+
+
+
+      More
+
+
+
+
+
+
+
+
+
+
+- 
+
+
+  [Console](https://console.cloud.google.com/)
+
+
+
+[Technology areas](https://cloud.google.com/docs)
+- 
+
+
+
+
+
+      More
+
+
+
+
+
+
+
+
+
+
+- 
+
+
+  [Overview](https://cloud.google.com/vision/docs)
+
+
+
+
+- 
+
+
+  [Guides](https://cloud.google.com/vision/docs/features-list)
+
+
+
+
+- 
+
+
+  [Reference](https://cloud.google.com/vision/docs/apis)
+
+
+
+
+- 
+
+
+  [Samples](https://cloud.google.com/vision/docs/samples)
+
+
+
+
+- 
+
+
+  [Support](https://cloud.google.com/vision/docs/support)
+
+
+
+
+- 
+
+
+  [Resources](https://cloud.google.com/vision/docs/resources)
+
+
+
+
+[Overview](https://cloud.google.com/vision/docs)
+[Guides](https://cloud.google.com/vision/docs/features-list)
+[Reference](https://cloud.google.com/vision/docs/apis)
+[Samples](https://cloud.google.com/vision/docs/samples)
+[Support](https://cloud.google.com/vision/docs/support)
+[Resources](https://cloud.google.com/vision/docs/resources)
+[Cross-product tools](https://cloud.google.com/docs/cross-product-overviews)
+- 
+
+
+
+
+
+      More
+
+
+
+
+
+
+
+
+
+
+[Console](https://console.cloud.google.com/)
+- 
+        Vision API
+
+- [Product overview](https://cloud.google.com/vision)
+- [Features list](https://cloud.google.com/vision/docs/features-list)
+- [Try it!](https://cloud.google.com/vision/docs/drag-and-drop)
+- 
+        Basics and quickstarts
+
+- [All Quickstarts](https://cloud.google.com/vision/docs/quickstarts)
+- [Setup and cleanup](https://cloud.google.com/vision/docs/setup)
+- [Authentication](https://cloud.google.com/vision/docs/authentication)
+- [Use client libraries](https://cloud.google.com/vision/docs/detect-labels-image-client-libraries)
+- [Use the command line](https://cloud.google.com/vision/docs/detect-labels-image-command-line)
+- [Use the API explorer](https://cloud.google.com/vision/docs/detect-labels-image-api)
+- https://cloud.google.com/vision/docs/ocr
+
+        Cloud Shell Editor (console) quickstarts
+
+[Get started (REST and command line)](https://console.cloud.google.com/?walkthrough_id=vision--vision-api-curl-request)[Get started (Java)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-java)[Get started (Go)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-go)[Get started (Node.js)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-nodejs)[Get started (Python)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-python)[Analyze images with the Vision API and Cloud Functions](https://console.cloud.google.com/?walkthrough_id=vision--vision_api_cloud_functions)
+- [Get started (REST and command line)](https://console.cloud.google.com/?walkthrough_id=vision--vision-api-curl-request)
+- [Get started (Java)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-java)
+- [Get started (Go)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-go)
+- [Get started (Node.js)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-nodejs)
+- [Get started (Python)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-python)
+- [Analyze images with the Vision API and Cloud Functions](https://console.cloud.google.com/?walkthrough_id=vision--vision_api_cloud_functions)
+- 
+        Samples
+
+- [All Vision API code samples](https://cloud.google.com/vision/docs/samples)
+- [Code samples for all products](https://cloud.google.com/docs/samples)
+- 
+        How-to Guides
+
+- [All How-to guides](https://cloud.google.com/vision/docs/how-to)
+- [Before you begin](https://cloud.google.com/vision/docs/before-you-begin)
+- https://cloud.google.com/vision/docs/ocr
+
+        Optical character recognition (OCR)
+      [Detect text in images](https://cloud.google.com/vision/docs/ocr)[Detect handwriting in images](https://cloud.google.com/vision/docs/handwriting)[Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- [Detect text in images](https://cloud.google.com/vision/docs/ocr)
+- [Detect handwriting in images](https://cloud.google.com/vision/docs/handwriting)
+- [Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- [Detect crop hints](https://cloud.google.com/vision/docs/detecting-crop-hints)
+- [Detect faces](https://cloud.google.com/vision/docs/detecting-faces)
+- [Detect image properties](https://cloud.google.com/vision/docs/detecting-properties)
+- [Detect labels](https://cloud.google.com/vision/docs/labels)
+- [Detect landmarks](https://cloud.google.com/vision/docs/detecting-landmarks)
+- [Detect logos](https://cloud.google.com/vision/docs/detecting-logos)
+- [Detect multiple objects](https://cloud.google.com/vision/docs/object-localizer)
+- [Detect explicit content (SafeSearch)](https://cloud.google.com/vision/docs/detecting-safe-search)
+- [Detect Web entities and pages](https://cloud.google.com/vision/docs/detecting-web)
+- https://cloud.google.com/vision/docs/ocrhttps://cloud.google.com/vision/docs/ocrhttps://cloud.google.com/vision/docs/ocr
+
+        Batch feature detection
+
+
+        Images
+      [Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+
+        Files (PDF/TIFF/GIF)
+      [Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)[Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- https://cloud.google.com/vision/docs/ocr
+
+        Images
+      [Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+- [Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+- https://cloud.google.com/vision/docs/ocr
+
+        Files (PDF/TIFF/GIF)
+      [Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)[Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- [Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)
+- [Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- [Using Vision with Spring framework](https://cloud.google.com/vision/docs/adding-spring)
+- [Base64 encode](https://cloud.google.com/vision/docs/base64)
+- https://cloud.google.com/vision/docs/ocr
+
+        Restricted access
+      [Celebrity recognition](https://cloud.google.com/vision/docs/celebrity-recognition)
+
+- [Celebrity recognition](https://cloud.google.com/vision/docs/celebrity-recognition)
+- 
+        Tutorials
+
+- [All tutorials](https://cloud.google.com/vision/docs/tutorials)
+- [Crop hints tutorial](https://cloud.google.com/vision/docs/crop-hints)
+- [Dense document text detection tutorial](https://cloud.google.com/vision/docs/fulltext-annotations)
+- [Face detection tutorial](https://cloud.google.com/vision/docs/face-tutorial)
+- [Web detection tutorial](https://cloud.google.com/vision/docs/internet-detection)
+- [Detect and translate image text with Cloud Storage, Vision, Translation, Cloud Functions, and Pub/Sub](https://cloud.google.com/functions/docs/tutorials/ocr)
+- [Translating and speaking text from a photo](https://cloud.google.com/translate/docs/hybrid-glossaries-tutorial)
+- [Codelab: Use the Vision API with C# (label, text/OCR, landmark, and face detection)](https://codelabs.developers.google.com/codelabs/cloud-vision-api-csharp#0)
+- [Codelab: Use the Vision API with Python (label, text/OCR, landmark, and face detection)](https://codelabs.developers.google.com/codelabs/cloud-vision-api-python#0)
+- [Sample applications](https://cloud.google.com/vision/docs/sample-applications)
+- 
+        Monitoring and security
+
+- [Cloud audit logs](https://cloud.google.com/vision/docs/audit-logging)
+[Product overview](https://cloud.google.com/vision)
+[Features list](https://cloud.google.com/vision/docs/features-list)
+[Try it!](https://cloud.google.com/vision/docs/drag-and-drop)
+[All Quickstarts](https://cloud.google.com/vision/docs/quickstarts)
+[Setup and cleanup](https://cloud.google.com/vision/docs/setup)
+[Authentication](https://cloud.google.com/vision/docs/authentication)
+[Use client libraries](https://cloud.google.com/vision/docs/detect-labels-image-client-libraries)
+[Use the command line](https://cloud.google.com/vision/docs/detect-labels-image-command-line)
+[Use the API explorer](https://cloud.google.com/vision/docs/detect-labels-image-api)
+- [Get started (REST and command line)](https://console.cloud.google.com/?walkthrough_id=vision--vision-api-curl-request)
+- [Get started (Java)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-java)
+- [Get started (Go)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-go)
+- [Get started (Node.js)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-nodejs)
+- [Get started (Python)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-python)
+- [Analyze images with the Vision API and Cloud Functions](https://console.cloud.google.com/?walkthrough_id=vision--vision_api_cloud_functions)
+[Get started (REST and command line)](https://console.cloud.google.com/?walkthrough_id=vision--vision-api-curl-request)
+[Get started (Java)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-java)
+[Get started (Go)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-go)
+[Get started (Node.js)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-nodejs)
+[Get started (Python)](https://console.cloud.google.com/?tutorial=vision--detect-labels-image-client-libraries-python)
+[Analyze images with the Vision API and Cloud Functions](https://console.cloud.google.com/?walkthrough_id=vision--vision_api_cloud_functions)
+[All Vision API code samples](https://cloud.google.com/vision/docs/samples)
+[Code samples for all products](https://cloud.google.com/docs/samples)
+[All How-to guides](https://cloud.google.com/vision/docs/how-to)
+[Before you begin](https://cloud.google.com/vision/docs/before-you-begin)
+- [Detect text in images](https://cloud.google.com/vision/docs/ocr)
+- [Detect handwriting in images](https://cloud.google.com/vision/docs/handwriting)
+- [Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+[Detect text in images](https://cloud.google.com/vision/docs/ocr)
+[Detect handwriting in images](https://cloud.google.com/vision/docs/handwriting)
+[Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+[Detect crop hints](https://cloud.google.com/vision/docs/detecting-crop-hints)
+[Detect faces](https://cloud.google.com/vision/docs/detecting-faces)
+[Detect image properties](https://cloud.google.com/vision/docs/detecting-properties)
+[Detect labels](https://cloud.google.com/vision/docs/labels)
+
+[Detect landmarks](https://cloud.google.com/vision/docs/detecting-landmarks)
+[Detect logos](https://cloud.google.com/vision/docs/detecting-logos)
+[Detect multiple objects](https://cloud.google.com/vision/docs/object-localizer)
+[Detect explicit content (SafeSearch)](https://cloud.google.com/vision/docs/detecting-safe-search)
+[Detect Web entities and pages](https://cloud.google.com/vision/docs/detecting-web)
+- https://cloud.google.com/vision/docs/ocr
+
+        Images
+      [Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+- [Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+- https://cloud.google.com/vision/docs/ocr
+
+        Files (PDF/TIFF/GIF)
+      [Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)[Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- [Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)
+- [Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+- [Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+[Batch image annotation offline](https://cloud.google.com/vision/docs/batch)
+- [Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)
+- [Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+[Small batch file annotation online](https://cloud.google.com/vision/docs/file-small-batch)
+[Detect text in files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf)
+[Using Vision with Spring framework](https://cloud.google.com/vision/docs/adding-spring)
+[Base64 encode](https://cloud.google.com/vision/docs/base64)
+- [Celebrity recognition](https://cloud.google.com/vision/docs/celebrity-recognition)
+[Celebrity recognition](https://cloud.google.com/vision/docs/celebrity-recognition)
+[All tutorials](https://cloud.google.com/vision/docs/tutorials)
+[Crop hints tutorial](https://cloud.google.com/vision/docs/crop-hints)
+[Dense document text detection tutorial](https://cloud.google.com/vision/docs/fulltext-annotations)
+[Face detection tutorial](https://cloud.google.com/vision/docs/face-tutorial)
+[Web detection tutorial](https://cloud.google.com/vision/docs/internet-detection)
+[Detect and translate image text with Cloud Storage, Vision, Translation, Cloud Functions, and Pub/Sub](https://cloud.google.com/functions/docs/tutorials/ocr)
+[Translating and speaking text from a photo](https://cloud.google.com/translate/docs/hybrid-glossaries-tutorial)
+[Codelab: Use the Vision API with C# (label, text/OCR, landmark, and face detection)](https://codelabs.developers.google.com/codelabs/cloud-vision-api-csharp#0)
+[Codelab: Use the Vision API with Python (label, text/OCR, landmark, and face detection)](https://codelabs.developers.google.com/codelabs/cloud-vision-api-python#0)
+[Sample applications](https://cloud.google.com/vision/docs/sample-applications)
+[Cloud audit logs](https://cloud.google.com/vision/docs/audit-logging)
+- 
+
+
+  [AI and ML](https://cloud.google.com/docs/ai-ml)
+
+
+
+- 
+
+
+  [Application development](https://cloud.google.com/docs/application-development)
+
+
+
+- 
+
+
+  [Application hosting](https://cloud.google.com/docs/application-hosting)
+
+
+
+- 
+
+
+  [Compute](https://cloud.google.com/docs/compute-area)
+
+
+
+- 
+
+
+  [Data analytics and pipelines](https://cloud.google.com/docs/data)
+
+
+
+- 
+
+
+  [Databases](https://cloud.google.com/docs/databases)
+
+
+
+- 
+
+
+  [Distributed, hybrid, and multicloud](https://cloud.google.com/docs/dhm-cloud)
+
+
+
+- 
+
+
+  [Generative AI](https://cloud.google.com/docs/generative-ai)
+
+
+
+- 
+
+
+  [Industry solutions](https://cloud.google.com/docs/industry)
+
+
+
+- 
+
+
+  [Networking](https://cloud.google.com/docs/networking)
+
+
+
+- 
+
+
+  [Observability and monitoring](https://cloud.google.com/docs/observability)
+
+
+
+- 
+
+
+  [Security](https://cloud.google.com/docs/security)
+
+
+
+- 
+
+
+  [Storage](https://cloud.google.com/docs/storage)
+
+
+
+[AI and ML](https://cloud.google.com/docs/ai-ml)
+[Application development](https://cloud.google.com/docs/application-development)
+[Application hosting](https://cloud.google.com/docs/application-hosting)
+[Compute](https://cloud.google.com/docs/compute-area)
+[Data analytics and pipelines](https://cloud.google.com/docs/data)
+[Databases](https://cloud.google.com/docs/databases)
+[Distributed, hybrid, and multicloud](https://cloud.google.com/docs/dhm-cloud)
+[Generative AI](https://cloud.google.com/docs/generative-ai)
+
+[Industry solutions](https://cloud.google.com/docs/industry)
+[Networking](https://cloud.google.com/docs/networking)
+[Observability and monitoring](https://cloud.google.com/docs/observability)
+[Security](https://cloud.google.com/docs/security)
+[Storage](https://cloud.google.com/docs/storage)
+- 
+
+
+  [Access and resources management](https://cloud.google.com/docs/access-resources)
+
+
+
+- 
+
+
+  [Costs and usage management](https://cloud.google.com/docs/costs-usage)
+
+
+
+- 
+
+
+  [Infrastructure as code](https://cloud.google.com/docs/iac)
+
+
+
+- 
+
+
+  [Migration](https://cloud.google.com/docs/migration)
+
+
+
+- 
+
+
+  [SDK, languages, frameworks, and tools](https://cloud.google.com/docs/devtools)
+
+
+
+[Access and resources management](https://cloud.google.com/docs/access-resources)
+[Costs and usage management](https://cloud.google.com/docs/costs-usage)
+[Infrastructure as code](https://cloud.google.com/docs/iac)
+[Migration](https://cloud.google.com/docs/migration)
+[SDK, languages, frameworks, and tools](https://cloud.google.com/docs/devtools)
+- 
+
+
+
+
+
+  [Home](https://docs.cloud.google.com/)
+
+
+
+
+- 
+
+
+
+
+
+
+
+
+  [Documentation](https://docs.cloud.google.com/docs)
+
+
+
+
+- 
+
+
+
+
+
+
+
+
+  [AI and ML](https://docs.cloud.google.com/docs/ai-ml)
+
+
+
+
+- 
+
+
+
+
+
+
+
+
+  [Cloud Vision API](https://docs.cloud.google.com/vision/docs)
+
+
+
+
+- 
+
+
+
+
+
+
+
+
+  [Guides](https://docs.cloud.google.com/vision/docs/features-list)
+
+
+
+
+[Home](https://docs.cloud.google.com/)
+[Documentation](https://docs.cloud.google.com/docs)
+[AI and ML](https://docs.cloud.google.com/docs/ai-ml)
+[Cloud Vision API](https://docs.cloud.google.com/vision/docs)
+[Guides](https://docs.cloud.google.com/vision/docs/features-list)
+
+# Detect text in images Stay organized with collections Save and categorize content based on your preferences.
+
+[Document AI](https://cloud.google.com/document-ai/docs/overview)
+[Document AI Toolbox](https://cloud.google.com/document-ai/docs/handle-response#toolbox)
+[Firebase Machine Learning](https://firebase.google.com/docs/ml)
+[ML Kit](https://developers.google.com/ml-kit)
+
+## Optical Character Recognition (OCR)
+The Vision API can detect and extract text from images. There are two annotation features that support optical character recognition (OCR):
+- TEXT_DETECTION detects and extracts text from any image. For example, a
+photograph might contain a street sign or traffic sign. The JSON includes
+the entire extracted string, as well as individual words, and their bounding
+boxes.
+
+
+- DOCUMENT_TEXT_DETECTION also extracts text from an image, but the response
+is optimized for dense text and documents. The JSON includes page, block,
+paragraph, word, and break information.
+
+
+
+Learn more about DOCUMENT_TEXT_DETECTION for
+[handwriting extraction](https://cloud.google.com/vision/docs/handwriting) and [text extraction
+from files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf).
+TEXT_DETECTION detects and extracts text from any image. For example, a photograph might contain a street sign or traffic sign. The JSON includes the entire extracted string, as well as individual words, and their bounding boxes.
+
+```
+TEXT_DETECTION
+```
+
+DOCUMENT_TEXT_DETECTION also extracts text from an image, but the response is optimized for dense text and documents. The JSON includes page, block, paragraph, word, and break information.
+
+```
+DOCUMENT_TEXT_DETECTION
+```
+
+Learn more about DOCUMENT_TEXT_DETECTION for [handwriting extraction](https://cloud.google.com/vision/docs/handwriting) and [text extraction from files (PDF/TIFF)](https://cloud.google.com/vision/docs/pdf).
+
+```
+DOCUMENT_TEXT_DETECTION
+```
+
+## Try it for yourself
+If you're new to Google Cloud, create an account to evaluate how Cloud Vision performs in real-world scenarios. New customers also get $300 in free credits to run, test, and deploy workloads.
+[Try Cloud Vision free](https://console.cloud.google.com/freetrial)
+
+## Text detection requests
+[Offline batch image annotation](https://cloud.google.com/vision/docs/batch)
+
+### Set up your Google Cloud project and authentication
+
+If you have not created a Google Cloud project, do so now. Expand this section for instructions.
+1. 
+
+
+
+        Sign in to your Google Cloud account. If you're new to
+        Google Cloud, [create an account](https://console.cloud.google.com/freetrial) to evaluate how our products perform in
+        real-world scenarios. New customers also get $300 in free credits to
+        run, test, and deploy workloads.
+
+
+
+2. 
+
+
+
+        In the Google Cloud console, on the project selector page,
+          select or create a Google Cloud project.
+
+
+  Roles required to select or create a project
+
+
+      Select a project: Selecting a project doesn't require a specific
+      IAM role—you can select any project that you've been
+      granted a role on.
+
+
+      Create a project: To create a project, you need the Project Creator role
+      (roles/resourcemanager.projectCreator), which contains the
+      resourcemanager.projects.create permission. [Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+
+
+
+
+
+  Note: If you don't plan to keep the
+    resources that you create in this procedure, create a project instead of
+    selecting an existing project. After you finish these steps, you can
+    delete the project, removing all resources associated with the project.
+
+
+        [Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
+
+
+
+
+3. 
+      Select a project: Selecting a project doesn't require a specific
+      IAM role—you can select any project that you've been
+      granted a role on.
+
+4. 
+      Create a project: To create a project, you need the Project Creator role
+      (roles/resourcemanager.projectCreator), which contains the
+      resourcemanager.projects.create permission. [Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+5. 
+
+
+      [Verify that billing is enabled for your Google Cloud project](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#confirm_billing_is_enabled_on_a_project).
+
+
+
+6. 
+
+
+
+
+
+
+
+              Enable the Vision API.
+
+
+
+      Roles required to enable APIs
+          To enable APIs, you need the Service Usage Admin IAM
+          role (roles/serviceusage.serviceUsageAdmin), which
+          contains the serviceusage.services.enable permission. [Learn how to grant
+          roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+        [Enable the API](https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com)
+
+
+
+
+7. 
+
+        [Install](https://cloud.google.com/sdk/docs/install) the Google Cloud CLI.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8. 
+          If you're using an external identity provider (IdP), you must first
+            [sign in to the gcloud CLI with your federated identity](https://cloud.google.com/iam/docs/workforce-log-in-gcloud).
+
+
+9. 
+
+          To [initialize](https://cloud.google.com/sdk/docs/initializing) the gcloud CLI, run the following command:
+
+        gcloud init
+
+
+
+
+
+
+
+
+
+10. 
+
+
+
+        In the Google Cloud console, on the project selector page,
+          select or create a Google Cloud project.
+
+
+  Roles required to select or create a project
+
+
+      Select a project: Selecting a project doesn't require a specific
+      IAM role—you can select any project that you've been
+      granted a role on.
+
+
+      Create a project: To create a project, you need the Project Creator role
+      (roles/resourcemanager.projectCreator), which contains the
+      resourcemanager.projects.create permission. [Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+
+
+
+
+
+  Note: If you don't plan to keep the
+    resources that you create in this procedure, create a project instead of
+    selecting an existing project. After you finish these steps, you can
+    delete the project, removing all resources associated with the project.
+
+
+        [Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
+
+
+
+
+11. 
+      Select a project: Selecting a project doesn't require a specific
+      IAM role—you can select any project that you've been
+      granted a role on.
+
+12. 
+      Create a project: To create a project, you need the Project Creator role
+      (roles/resourcemanager.projectCreator), which contains the
+      resourcemanager.projects.create permission. [Learn how to grant
+
+### Set up your Google Cloud project and authentication
+
+roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+13. 
+
+
+      [Verify that billing is enabled for your Google Cloud project](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#confirm_billing_is_enabled_on_a_project).
+
+
+
+14. 
+
+
+
+
+
+
+
+              Enable the Vision API.
+
+
+
+      Roles required to enable APIs
+          To enable APIs, you need the Service Usage Admin IAM
+          role (roles/serviceusage.serviceUsageAdmin), which
+          contains the serviceusage.services.enable permission. [Learn how to grant
+          roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+        [Enable the API](https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com)
+
+
+
+
+15. 
+
+        [Install](https://cloud.google.com/sdk/docs/install) the Google Cloud CLI.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+16. 
+          If you're using an external identity provider (IdP), you must first
+            [sign in to the gcloud CLI with your federated identity](https://cloud.google.com/iam/docs/workforce-log-in-gcloud).
+
+
+17. 
+
+          To [initialize](https://cloud.google.com/sdk/docs/initializing) the gcloud CLI, run the following command:
+
+        gcloud init
+
+
+
+
+
+
+
+
+
+[create an account](https://console.cloud.google.com/freetrial)
+In the Google Cloud console, on the project selector page, select or create a Google Cloud project.
+Roles required to select or create a project
+- 
+      Select a project: Selecting a project doesn't require a specific
+      IAM role—you can select any project that you've been
+      granted a role on.
+
+- 
+      Create a project: To create a project, you need the Project Creator role
+      (roles/resourcemanager.projectCreator), which contains the
+      resourcemanager.projects.create permission. [Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+
+```
+roles/resourcemanager.projectCreator
+```
+
+
+```
+resourcemanager.projects.create
+```
+
+[Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access)
+[Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
+[Verify that billing is enabled for your Google Cloud project](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#confirm_billing_is_enabled_on_a_project).
+Enable the Vision API.
+Roles required to enable APIs
+To enable APIs, you need the Service Usage Admin IAM role (roles/serviceusage.serviceUsageAdmin), which contains the serviceusage.services.enable permission. [Learn how to grant roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+```
+roles/serviceusage.serviceUsageAdmin
+```
+
+
+```
+serviceusage.services.enable
+```
+
+[Enable the API](https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com)
+[Install](https://cloud.google.com/sdk/docs/install) the Google Cloud CLI.
+If you're using an external identity provider (IdP), you must first [sign in to the gcloud CLI with your federated identity](https://cloud.google.com/iam/docs/workforce-log-in-gcloud).
+To [initialize](https://cloud.google.com/sdk/docs/initializing) the gcloud CLI, run the following command:
+
+```
+gcloud init
+```
+
+In the Google Cloud console, on the project selector page, select or create a Google Cloud project.
+Roles required to select or create a project
+- 
+      Select a project: Selecting a project doesn't require a specific
+      IAM role—you can select any project that you've been
+      granted a role on.
+
+- 
+      Create a project: To create a project, you need the Project Creator role
+      (roles/resourcemanager.projectCreator), which contains the
+      resourcemanager.projects.create permission. [Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+
+```
+roles/resourcemanager.projectCreator
+```
+
+
+```
+resourcemanager.projects.create
+```
+
+[Learn how to grant
+      roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access)
+[Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
+[Verify that billing is enabled for your Google Cloud project](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#confirm_billing_is_enabled_on_a_project).
+Enable the Vision API.
+Roles required to enable APIs
+
+### Set up your Google Cloud project and authentication
+To enable APIs, you need the Service Usage Admin IAM role (roles/serviceusage.serviceUsageAdmin), which contains the serviceusage.services.enable permission. [Learn how to grant roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access).
+
+```
+roles/serviceusage.serviceUsageAdmin
+```
+
+
+```
+serviceusage.services.enable
+```
+
+[Enable the API](https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com)
+[Install](https://cloud.google.com/sdk/docs/install) the Google Cloud CLI.
+If you're using an external identity provider (IdP), you must first [sign in to the gcloud CLI with your federated identity](https://cloud.google.com/iam/docs/workforce-log-in-gcloud).
+To [initialize](https://cloud.google.com/sdk/docs/initializing) the gcloud CLI, run the following command:
+
+```
+gcloud init
+```
+
+### Detect text in a local image
+You can use the Vision API to perform feature detection on a local image file.
+For REST requests, send the contents of the image file as a [base64 encoded](https://cloud.google.com/vision/docs/base64) string in the body of your request.
+For gcloud and client library requests, specify the path to a local image in your request.
+
+```
+gcloud
+```
+
+### gcloud
+To perform text detection, use the [gcloud ml vision detect-text](https://cloud.google.com/sdk/gcloud/reference/ml/vision/detect-text) command as shown in the following example:
+
+```
+gcloud ml vision detect-text
+```
+
+
+```
+gcloud ml vision detect-text ./path/to/local/file.jpg
+```
+
+### REST
+
+Before using any of the request data, make the following replacements:
+- BASE64_ENCODED_IMAGE: The base64
+  representation (ASCII string) of your binary image data. This string should look similar to the
+  following string:
+
+    /9j/4QAYRXhpZgAA...9tAVx/zDQDlGxn//2Q==
+
+  Visit the [base64 encode](https://cloud.google.com/vision/docs/base64) topic for more information.
+- /9j/4QAYRXhpZgAA...9tAVx/zDQDlGxn//2Q==
+- PROJECT_ID: Your Google Cloud project ID.
+- /9j/4QAYRXhpZgAA...9tAVx/zDQDlGxn//2Q==
+
+```
+/9j/4QAYRXhpZgAA...9tAVx/zDQDlGxn//2Q==
+```
+
+[base64 encode](https://cloud.google.com/vision/docs/base64)
+HTTP method and URL:
+
+```
+POST https://vision.googleapis.com/v1/images:annotate
+```
+
+Request JSON body:
+
+```
+{ "requests": [ { "image": { "content": "BASE64_ENCODED_IMAGE" }, "features": [ { "type": "TEXT_DETECTION" } ] } ] }
+```
+
+To send your request, choose one of these options:
+
+#### curl
+
+```
+gcloud
+```
+
+[gcloud init](https://cloud.google.com/sdk/gcloud/reference/init)
+
+```
+gcloud init
+```
+
+[gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+
+```
+gcloud auth login
+```
+
+[Cloud Shell](https://cloud.google.com/shell/docs)
+
+```
+gcloud
+```
+
+[gcloud auth list](https://cloud.google.com/sdk/gcloud/reference/auth/list)
+
+```
+gcloud auth list
+```
+
+Save the request body in a file named request.json, and execute the following command:
+
+```
+request.json
+```
+
+
+```
+curl -X POST \ -H "Authorization: Bearer $(gcloud auth print-access-token)" \ -H "x-goog-user-project: PROJECT_ID" \ -H "Content-Type: application/json; charset=utf-8" \ -d @request.json \ "https://vision.googleapis.com/v1/images:annotate"
+```
+
+
+#### PowerShell
+
+```
+gcloud
+```
+
+[gcloud init](https://cloud.google.com/sdk/gcloud/reference/init)
+
+```
+gcloud init
+```
+
+[gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+
+```
+gcloud auth login
+```
+
+[gcloud auth list](https://cloud.google.com/sdk/gcloud/reference/auth/list)
+
+```
+gcloud auth list
+```
+
+Save the request body in a file named request.json, and execute the following command:
+
+```
+request.json
+```
+
+
+```
+$cred = gcloud auth print-access-token$headers = @{ "Authorization" = "Bearer $cred"; "x-goog-user-project" = "PROJECT_ID" }Invoke-WebRequest ` -Method POST ` -Headers $headers ` -ContentType: "application/json; charset=utf-8" ` -InFile request.json ` -Uri "https://vision.googleapis.com/v1/images:annotate" | Select-Object -Expand Content
+```
+
+If the request is successful, the server returns a 200 OK HTTP status code and the response in JSON format.
+
+```
+200 OK
+```
+
+A TEXT_DETECTION response includes the detected phrase, its bounding box, and individual words and their bounding boxes.
+
+```
+TEXT_DETECTION
+```
+
+[API Reference documentation](https://cloud.google.com/vision/docs/reference/rest/v1/images/annotate#boundingpoly)
+
+#### Response
+
+```
+{ "responses": [ { "textAnnotations": [ { "locale": "en", "description": "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE\n", "boundingPoly": { "vertices": [ { "x": 341, "y": 828 }, { "x": 2249, "y": 828 }, { "x": 2249, "y": 1993 }, { "x": 341, "y": 1993 } ] } }, { "description": "WAITING?", "boundingPoly": { "vertices": [ { "x": 352, "y": 828 }, { "x": 2248, "y": 911 }, { "x": 2238, "y": 1148 }, { "x": 342, "y": 1065 } ] } }, { "description": "PLEASE", "boundingPoly": { "vertices": [ { "x": 1210, "y": 1233 }, { "x": 1907, "y": 1263 }, { "x": 1902, "y": 1383 }, { "x": 1205, "y": 1353 } ] } }, { "description": "TURN", "boundingPoly": { "vertices": [ { "x": 1210, "y": 1418 }, { "x": 1730, "y": 1441 }, { "x": 1724, "y": 1564 }, { "x": 1205, "y": 1541 } ] } }, { "description": "OFF", "boundingPoly": { "vertices": [ { "x": 1792, "y": 1443 }, { "x": 2128, "y": 1458 }, { "x": 2122, "y": 1581 }, { "x": 1787, "y": 1566 } ] } }, { "description": "YOUR", "boundingPoly": { "vertices": [ { "x": 1219, "y": 1603 }, { "x": 1746, "y": 1629 }, { "x": 1740, "y": 1759 }, { "x": 1213, "y": 1733 } ] } }, { "description": "ENGINE", "boundingPoly": { "vertices": [ { "x": 1222, "y": 1771 }, { "x": 1944, "y": 1834 }, { "x": 1930, "y": 1992 }, { "x": 1208, "y": 1928 } ] } } ], "fullTextAnnotation": { "pages": [ ... ] }, "paragraphs": [ ... ] }, "words": [ ... }, "symbols": [ ... } ] } ], "blockType": "TEXT" }, ... ] } ], "text": "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE\n" } } ] }
+```
+
+### Go
+Before trying this sample, follow the Go setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Go API reference documentation](https://godoc.org/cloud.google.com/go/vision/apiv1).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+// detectText gets text from the Vision API for an image at the given file path. func detectText(w io.Writer, file string) error { ctx := context.Background() client, err := vision.NewImageAnnotatorClient(ctx) if err != nil { return err } f, err := os.Open(file) if err != nil { return err } defer f.Close() image, err := vision.NewImageFromReader(f) if err != nil { return err } annotations, err := client.DetectTexts(ctx, image, nil, 10) if err != nil { return err } if len(annotations) == 0 { fmt.Fprintln(w, "No text found.") } else { fmt.Fprintln(w, "Text:") for _, annotation := range annotations { fmt.Fprintf(w, "%q\n", annotation.Description) } } return nil }
+```
+
+
+```
+// detectText gets text from the Vision API for an image at the given file path. func detectText(w io.Writer, file string) error { ctx := context.Background() client, err := vision.NewImageAnnotatorClient(ctx) if err != nil { return err } f, err := os.Open(file) if err != nil { return err } defer f.Close() image, err := vision.NewImageFromReader(f) if err != nil { return err } annotations, err := client.DetectTexts(ctx, image, nil, 10) if err != nil { return err } if len(annotations) == 0 { fmt.Fprintln(w, "No text found.") } else { fmt.Fprintln(w, "Text:") for _, annotation := range annotations { fmt.Fprintf(w, "%q\n", annotation.Description) } } return nil }
+```
+
+### Java
+Before trying this sample, follow the Java setup instructions in the [Vision API Quickstart Using Client Libraries](https://cloud.google.com/vision/docs/detect-labels-image-client-libraries). For more information, see the [Vision API Java reference documentation](https://cloud.google.com/java/docs/reference/google-cloud-vision/latest/overview).
+[Spring Cloud Google Cloud](https://cloud.google.com/vision/docs/adding-spring)
+
+### Java
+
+```
+import com.google.cloud.vision.v1.[Annotate[[[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)Request](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.[[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html).html); import com.google.cloud.vision.v1.[[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html); import com.google.cloud.vision.v1.[[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html); import com.google.cloud.vision.v1.[[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html); import com.google.cloud.vision.v1.[[[[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html); import com.google.cloud.vision.v1.Image; import com.google.cloud.vision.v1.[[[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html); import com.google.protobuf.[[[ByteString](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html); import java.io.FileInputStream; import java.io.IOException; import java.util.ArrayList; import java.util.List; public class DetectText { public static void detectText() throws IOException { // TODO(developer): Replace these variables before running the sample. String filePath = "path/to/your/image/file.jpg"; detectText(filePath); } // Detects text in the specified image. public static void detectText(String filePath) throws IOException { List<AnnotateImageRequest> requests = new ArrayList<>(); ByteString imgBytes = ByteString.[readFrom](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html#com_google_protobuf_ByteString_readFrom_java_io_InputStream_)(new FileInputStream(filePath)); Image img = Image.newBuilder().setContent(imgBytes).build(); Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build(); AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build(); requests.add(request); // Initialize client that will be used to send requests. This client only needs to be created // once, and can be reused for multiple requests. After completing all of your requests, call // the "close" method on the client to safely clean up any remaining background resources. try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) { BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests); List<AnnotateImageResponse> responses = response.[getResponsesList](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html#com_google_cloud_vision_v1_BatchAnnotateImagesResponse_getResponsesList__)(); for (AnnotateImageResponse res : responses) { if (res.hasError()) { System.out.format("Error: %s%n", res.getError().getMessage()); return; } // For full list of available annotations, see http://g.co/cloud/vision/docs for (EntityAnnotation annotation : res.getTextAnnotationsList()) { System.out.format("Text: %s%n", annotation.getDescription()); System.out.format("Position : %s%n", annotation.getBoundingPoly()); } } } } }
+```
+
+### Java
+
+```
+import com.google.cloud.vision.v1.[Annotate[[[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)Request](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.[[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html).html); import com.google.cloud.vision.v1.[[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html); import com.google.cloud.vision.v1.[[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html); import com.google.cloud.vision.v1.[[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html); import com.google.cloud.vision.v1.[[[[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html); import com.google.cloud.vision.v1.Image; import com.google.cloud.vision.v1.[[[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html); import com.google.protobuf.[[[ByteString](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html); import java.io.FileInputStream; import java.io.IOException; import java.util.ArrayList; import java.util.List; public class DetectText { public static void detectText() throws IOException { // TODO(developer): Replace these variables before running the sample. String filePath = "path/to/your/image/file.jpg"; detectText(filePath); } // Detects text in the specified image. public static void detectText(String filePath) throws IOException { List<AnnotateImageRequest> requests = new ArrayList<>(); ByteString imgBytes = ByteString.[readFrom](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html#com_google_protobuf_ByteString_readFrom_java_io_InputStream_)(new FileInputStream(filePath)); Image img = Image.newBuilder().setContent(imgBytes).build(); Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build(); AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build(); requests.add(request); // Initialize client that will be used to send requests. This client only needs to be created // once, and can be reused for multiple requests. After completing all of your requests, call // the "close" method on the client to safely clean up any remaining background resources. try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) { BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests); List<AnnotateImageResponse> responses = response.[getResponsesList](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html#com_google_cloud_vision_v1_BatchAnnotateImagesResponse_getResponsesList__)(); for (AnnotateImageResponse res : responses) { if (res.hasError()) { System.out.format("Error: %s%n", res.getError().getMessage()); return; } // For full list of available annotations, see http://g.co/cloud/vision/docs for (EntityAnnotation annotation : res.getTextAnnotationsList()) { System.out.format("Text: %s%n", annotation.getDescription()); System.out.format("Position : %s%n", annotation.getBoundingPoly()); } } } } }
+```
+
+### Java
+
+[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)
+[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)
+[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)
+[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)
+[ByteString](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)
+[ByteString](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)
+[ByteString](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html)
+[readFrom](https://docs.cloud.google.com/java/docs/reference/protobuf/latest/com.google.protobuf.ByteString.html#com_google_protobuf_ByteString_readFrom_java_io_InputStream_)
+[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)
+[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)
+[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)
+[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)
+[getResponsesList](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html#com_google_cloud_vision_v1_BatchAnnotateImagesResponse_getResponsesList__)
+[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)
+[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)
+
+### Node.js
+
+Before trying this sample, follow the Node.js setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Node.js API reference documentation](https://googleapis.dev/nodejs/vision/latest).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+const vision = require('[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)'); // Creates a client const client = new vision.[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)(); /** * TODO(developer): Uncomment the following line before running the sample. */ // const fileName = 'Local image file, e.g. /path/to/image.png'; // Performs text detection on the local file const [[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)] = await client.textDetection(fileName); const detections = result.textAnnotations; console.log('Text:'); detections.forEach(text => console.log(text));
+```
+
+
+```
+const vision = require('[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)'); // Creates a client const client = new vision.[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)(); /** * TODO(developer): Uncomment the following line before running the sample. */ // const fileName = 'Local image file, e.g. /path/to/image.png'; // Performs text detection on the local file const [[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)] = await client.textDetection(fileName); const detections = result.textAnnotations; console.log('Text:'); detections.forEach(text => console.log(text));
+```
+
+[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)
+[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)
+
+### Python
+Before trying this sample, follow the Python setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Python API reference documentation](https://cloud.google.com/python/docs/reference/vision/latest).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+def detect_text(path): """Detects text in the file.""" from google.cloud import vision client = vision.[[Image](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.types.Image.html)AnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)() with open(path, "rb") as image_file: content = image_file.read() image = vision.Image(content=content) response = client.text_detection(image=image) texts = response.text_annotations print("Texts:") for text in texts: print(f'\n"{text.description}"') vertices = [ f"({vertex.x},{vertex.y})" for vertex in text.bounding_poly.vertices ] print("bounds: {}".format(",".join(vertices))) if response.error.message: raise Exception( "{}\nFor more info on error messages, check: " "https://cloud.google.com/apis/design/errors".format(response.error.message) )
+```
+
+
+```
+def detect_text(path): """Detects text in the file.""" from google.cloud import vision client = vision.[[Image](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.types.Image.html)AnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)() with open(path, "rb") as image_file: content = image_file.read() image = vision.Image(content=content) response = client.text_detection(image=image) texts = response.text_annotations print("Texts:") for text in texts: print(f'\n"{text.description}"') vertices = [ f"({vertex.x},{vertex.y})" for vertex in text.bounding_poly.vertices ] print("bounds: {}".format(",".join(vertices))) if response.error.message: raise Exception( "{}\nFor more info on error messages, check: " "https://cloud.google.com/apis/design/errors".format(response.error.message) )
+```
+
+[ImageAnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)
+[Image](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.types.Image.html)
+
+### Additional languages
+C#: Please follow the [C# setup instructions](https://cloud.google.com/vision/docs/libraries) on the client libraries page and then visit the [Vision reference documentation for .NET.](https://googleapis.dev/dotnet/Google.Apis.Vision.v1/latest/api/Google.Apis.Vision.v1.html)
+PHP: Please follow the [PHP setup instructions](https://cloud.google.com/vision/docs/libraries) on the client libraries page and then visit the [Vision reference documentation for PHP.](https://cloud.google.com/php/docs/reference/cloud-vision/latest)
+Ruby: Please follow the [Ruby setup instructions](https://cloud.google.com/vision/docs/libraries) on the client libraries page and then visit the [Vision reference documentation for Ruby.](https://googleapis.dev/ruby/google-cloud-vision/latest/Google/Cloud/Vision.html)
+
+### Detect text in a remote image
+You can use the Vision API to perform feature detection on a remote image file that is located in Cloud Storage or on the Web. To send a remote file request, specify the file's Web URL or Cloud Storage URI in the request body.
+[DoS](https://en.wikipedia.org/wiki/Denial-of-service_attack)
+
+### gcloud
+To perform text detection, use the [gcloud ml vision detect-text](https://cloud.google.com/sdk/gcloud/reference/ml/vision/detect-text) command as shown in the following example:
+
+```
+gcloud ml vision detect-text
+```
+
+
+```
+gcloud ml vision detect-text gs://cloud-samples-data/vision/ocr/sign.jpg
+```
+
+### REST
+
+Before using any of the request data, make the following replacements:
+- CLOUD_STORAGE_IMAGE_URI: the path to a valid
+  image file in a Cloud Storage bucket. You must at least have read privileges to the file.
+  Example:
+
+
+      gs://cloud-samples-data/vision/ocr/sign.jpg
+
+
+
+- gs://cloud-samples-data/vision/ocr/sign.jpg
+- PROJECT_ID: Your Google Cloud project ID.
+- gs://cloud-samples-data/vision/ocr/sign.jpg
+
+```
+gs://cloud-samples-data/vision/ocr/sign.jpg
+```
+
+HTTP method and URL:
+
+```
+POST https://vision.googleapis.com/v1/images:annotate
+```
+
+Request JSON body:
+
+```
+{ "requests": [ { "image": { "source": { "imageUri": "CLOUD_STORAGE_IMAGE_URI" } }, "features": [ { "type": "TEXT_DETECTION" } ] } ] }
+```
+
+To send your request, choose one of these options:
+
+#### curl
+
+```
+gcloud
+```
+
+[gcloud init](https://cloud.google.com/sdk/gcloud/reference/init)
+
+```
+gcloud init
+```
+
+[gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+
+```
+gcloud auth login
+```
+
+[Cloud Shell](https://cloud.google.com/shell/docs)
+
+```
+gcloud
+```
+
+[gcloud auth list](https://cloud.google.com/sdk/gcloud/reference/auth/list)
+
+```
+gcloud auth list
+```
+
+Save the request body in a file named request.json, and execute the following command:
+
+```
+request.json
+```
+
+
+```
+curl -X POST \ -H "Authorization: Bearer $(gcloud auth print-access-token)" \ -H "x-goog-user-project: PROJECT_ID" \ -H "Content-Type: application/json; charset=utf-8" \ -d @request.json \ "https://vision.googleapis.com/v1/images:annotate"
+```
+
+
+#### PowerShell
+
+```
+gcloud
+```
+
+[gcloud init](https://cloud.google.com/sdk/gcloud/reference/init)
+
+```
+gcloud init
+```
+
+[gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+
+```
+gcloud auth login
+```
+
+[gcloud auth list](https://cloud.google.com/sdk/gcloud/reference/auth/list)
+
+```
+gcloud auth list
+```
+
+Save the request body in a file named request.json, and execute the following command:
+
+```
+request.json
+```
+
+
+```
+$cred = gcloud auth print-access-token$headers = @{ "Authorization" = "Bearer $cred"; "x-goog-user-project" = "PROJECT_ID" }Invoke-WebRequest ` -Method POST ` -Headers $headers ` -ContentType: "application/json; charset=utf-8" ` -InFile request.json ` -Uri "https://vision.googleapis.com/v1/images:annotate" | Select-Object -Expand Content
+```
+
+If the request is successful, the server returns a 200 OK HTTP status code and the response in JSON format.
+
+```
+200 OK
+```
+
+A TEXT_DETECTION response includes the detected phrase, its bounding box, and individual words and their bounding boxes.
+
+```
+TEXT_DETECTION
+```
+
+[API Reference documentation](https://cloud.google.com/vision/docs/reference/rest/v1/images/annotate#boundingpoly)
+
+#### Response
+
+```
+{ "responses": [ { "textAnnotations": [ { "locale": "en", "description": "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE\n", "boundingPoly": { "vertices": [ { "x": 341, "y": 828 }, { "x": 2249, "y": 828 }, { "x": 2249, "y": 1993 }, { "x": 341, "y": 1993 } ] } }, { "description": "WAITING?", "boundingPoly": { "vertices": [ { "x": 352, "y": 828 }, { "x": 2248, "y": 911 }, { "x": 2238, "y": 1148 }, { "x": 342, "y": 1065 } ] } }, { "description": "PLEASE", "boundingPoly": { "vertices": [ { "x": 1210, "y": 1233 }, { "x": 1907, "y": 1263 }, { "x": 1902, "y": 1383 }, { "x": 1205, "y": 1353 } ] } }, { "description": "TURN", "boundingPoly": { "vertices": [ { "x": 1210, "y": 1418 }, { "x": 1730, "y": 1441 }, { "x": 1724, "y": 1564 }, { "x": 1205, "y": 1541 } ] } }, { "description": "OFF", "boundingPoly": { "vertices": [ { "x": 1792, "y": 1443 }, { "x": 2128, "y": 1458 }, { "x": 2122, "y": 1581 }, { "x": 1787, "y": 1566 } ] } }, { "description": "YOUR", "boundingPoly": { "vertices": [ { "x": 1219, "y": 1603 }, { "x": 1746, "y": 1629 }, { "x": 1740, "y": 1759 }, { "x": 1213, "y": 1733 } ] } }, { "description": "ENGINE", "boundingPoly": { "vertices": [ { "x": 1222, "y": 1771 }, { "x": 1944, "y": 1834 }, { "x": 1930, "y": 1992 }, { "x": 1208, "y": 1928 } ] } } ], "fullTextAnnotation": { "pages": [ ... ] }, "paragraphs": [ ... ] }, "words": [ ... }, "symbols": [ ... } ] } ], "blockType": "TEXT" }, ... ] } ], "text": "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE\n" } } ] }
+```
+
+### Go
+Before trying this sample, follow the Go setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Go API reference documentation](https://godoc.org/cloud.google.com/go/vision/apiv1).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+// detectText gets text from the Vision API for an image at the given file path. func detectTextURI(w io.Writer, file string) error { ctx := context.Background() client, err := vision.NewImageAnnotatorClient(ctx) if err != nil { return err } image := vision.NewImageFromURI(file) annotations, err := client.DetectTexts(ctx, image, nil, 10) if err != nil { return err } if len(annotations) == 0 { fmt.Fprintln(w, "No text found.") } else { fmt.Fprintln(w, "Text:") for _, annotation := range annotations { fmt.Fprintf(w, "%q\n", annotation.Description) } } return nil }
+```
+
+
+```
+// detectText gets text from the Vision API for an image at the given file path. func detectTextURI(w io.Writer, file string) error { ctx := context.Background() client, err := vision.NewImageAnnotatorClient(ctx) if err != nil { return err } image := vision.NewImageFromURI(file) annotations, err := client.DetectTexts(ctx, image, nil, 10) if err != nil { return err } if len(annotations) == 0 { fmt.Fprintln(w, "No text found.") } else { fmt.Fprintln(w, "Text:") for _, annotation := range annotations { fmt.Fprintf(w, "%q\n", annotation.Description) } } return nil }
+```
+
+### Java
+Before trying this sample, follow the Java setup instructions in the [Vision API Quickstart Using Client Libraries](https://cloud.google.com/vision/docs/detect-labels-image-client-libraries). For more information, see the [Vision API Java reference documentation](https://cloud.google.com/java/docs/reference/google-cloud-vision/latest/overview).
+[Spring Cloud Google Cloud](https://cloud.google.com/vision/docs/adding-spring)
+
+### Java
+
+```
+import com.google.cloud.vision.v1.[Annotate[[[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)Request](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.[[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html).html); import com.google.cloud.vision.v1.[[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html); import com.google.cloud.vision.v1.[[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html); import com.google.cloud.vision.v1.[[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html); import com.google.cloud.vision.v1.[[[[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html); import com.google.cloud.vision.v1.Image; import com.google.cloud.vision.v1.[[[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html); import com.google.cloud.vision.v1.[[[ImageSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html); import java.io.IOException; import java.util.ArrayList; import java.util.List; public class DetectTextGcs { public static void detectTextGcs() throws IOException { // TODO(developer): Replace these variables before running the sample. String filePath = "gs://your-gcs-bucket/path/to/image/file.jpg"; detectTextGcs(filePath); } // Detects text in the specified remote image on Google Cloud Storage. public static void detectTextGcs(String gcsPath) throws IOException { List<AnnotateImageRequest> requests = new ArrayList<>(); ImageSource imgSource = ImageSource.newBuilder().[setGcsImageUri](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.Builder.html#com_google_cloud_vision_v1_ImageSource_Builder_setGcsImageUri_java_lang_String_)(gcsPath).build(); Image img = Image.newBuilder().[setSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.Builder.html#com_google_cloud_vision_v1_Image_Builder_setSource_com_google_cloud_vision_v1_ImageSource_)(imgSource).build(); Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build(); AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build(); requests.add(request); // Initialize client that will be used to send requests. This client only needs to be created // once, and can be reused for multiple requests. After completing all of your requests, call // the "close" method on the client to safely clean up any remaining background resources. try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) { BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests); List<AnnotateImageResponse> responses = response.[getResponsesList](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html#com_google_cloud_vision_v1_BatchAnnotateImagesResponse_getResponsesList__)(); for (AnnotateImageResponse res : responses) { if (res.hasError()) { System.out.format("Error: %s%n", res.getError().getMessage()); return; } // For full list of available annotations, see http://g.co/cloud/vision/docs for (EntityAnnotation annotation : res.getTextAnnotationsList()) { System.out.format("Text: %s%n", annotation.getDescription()); System.out.format("Position : %s%n", annotation.getBoundingPoly()); } } } } }
+```
+
+### Java
+
+```
+import com.google.cloud.vision.v1.[Annotate[[[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)Request](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.[[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html).html); import com.google.cloud.vision.v1.[[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html); import com.google.cloud.vision.v1.[[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html); import com.google.cloud.vision.v1.[[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html); import com.google.cloud.vision.v1.[[[[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html); import com.google.cloud.vision.v1.Image; import com.google.cloud.vision.v1.[[[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html); import com.google.cloud.vision.v1.[[[ImageSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html); import java.io.IOException; import java.util.ArrayList; import java.util.List; public class DetectTextGcs { public static void detectTextGcs() throws IOException { // TODO(developer): Replace these variables before running the sample. String filePath = "gs://your-gcs-bucket/path/to/image/file.jpg"; detectTextGcs(filePath); } // Detects text in the specified remote image on Google Cloud Storage. public static void detectTextGcs(String gcsPath) throws IOException { List<AnnotateImageRequest> requests = new ArrayList<>(); ImageSource imgSource = ImageSource.newBuilder().[setGcsImageUri](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.Builder.html#com_google_cloud_vision_v1_ImageSource_Builder_setGcsImageUri_java_lang_String_)(gcsPath).build(); Image img = Image.newBuilder().[setSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.Builder.html#com_google_cloud_vision_v1_Image_Builder_setSource_com_google_cloud_vision_v1_ImageSource_)(imgSource).build(); Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build(); AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build(); requests.add(request); // Initialize client that will be used to send requests. This client only needs to be created // once, and can be reused for multiple requests. After completing all of your requests, call // the "close" method on the client to safely clean up any remaining background resources. try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) { BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests); List<AnnotateImageResponse> responses = response.[getResponsesList](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html#com_google_cloud_vision_v1_BatchAnnotateImagesResponse_getResponsesList__)(); for (AnnotateImageResponse res : responses) { if (res.hasError()) { System.out.format("Error: %s%n", res.getError().getMessage()); return; } // For full list of available annotations, see http://g.co/cloud/vision/docs for (EntityAnnotation annotation : res.getTextAnnotationsList()) { System.out.format("Text: %s%n", annotation.getDescription()); System.out.format("Position : %s%n", annotation.getBoundingPoly()); } } } } }
+```
+
+### Java
+
+[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)
+[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)
+[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)
+[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)
+[ImageSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)
+[ImageSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)
+[ImageSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.html)
+[setGcsImageUri](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageSource.Builder.html#com_google_cloud_vision_v1_ImageSource_Builder_setGcsImageUri_java_lang_String_)
+[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)
+[Image](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.html)
+[setSource](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Image.Builder.html#com_google_cloud_vision_v1_Image_Builder_setSource_com_google_cloud_vision_v1_ImageSource_)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[Feature](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.Feature.html)
+[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)
+[AnnotateImageRequest](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageRequest.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.ImageAnnotatorClient.html)
+[BatchAnnotateImagesResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html)
+[getResponsesList](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.BatchAnnotateImagesResponse.html#com_google_cloud_vision_v1_BatchAnnotateImagesResponse_getResponsesList__)
+[AnnotateImageResponse](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.AnnotateImageResponse.html)
+[EntityAnnotation](https://docs.cloud.google.com/java/docs/reference/google-cloud-vision/latest/com.google.cloud.vision.v1.EntityAnnotation.html)
+
+### Node.js
+
+Before trying this sample, follow the Node.js setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Node.js API reference documentation](https://googleapis.dev/nodejs/vision/latest).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+// Imports the Google Cloud client libraries const vision = require('[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)'); // Creates a client const client = new vision.[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)(); /** * TODO(developer): Uncomment the following lines before running the sample. */ // const bucketName = 'Bucket where the file resides, e.g. my-bucket'; // const fileName = 'Path to file within bucket, e.g. path/to/image.png'; // Performs text detection on the gcs file const [[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)] = await client.textDetection(`gs://${bucketName}/${fileName}`); const detections = result.textAnnotations; console.log('Text:'); detections.forEach(text => console.log(text));
+```
+
+
+```
+// Imports the Google Cloud client libraries const vision = require('[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)'); // Creates a client const client = new vision.[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)(); /** * TODO(developer): Uncomment the following lines before running the sample. */ // const bucketName = 'Bucket where the file resides, e.g. my-bucket'; // const fileName = 'Path to file within bucket, e.g. path/to/image.png'; // Performs text detection on the gcs file const [[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)] = await client.textDetection(`gs://${bucketName}/${fileName}`); const detections = result.textAnnotations; console.log('Text:'); detections.forEach(text => console.log(text));
+```
+
+[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)
+[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)
+
+### Python
+Before trying this sample, follow the Python setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Python API reference documentation](https://cloud.google.com/python/docs/reference/vision/latest).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+def detect_text_uri(uri): """Detects text in the file located in Google Cloud Storage or on the Web.""" from google.cloud import vision client = vision.[[Image](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.types.Image.html)AnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)() image = vision.Image() image.source.image_uri = uri response = client.text_detection(image=image) texts = response.text_annotations print("Texts:") for text in texts: print(f'\n"{text.description}"') vertices = [ f"({vertex.x},{vertex.y})" for vertex in text.bounding_poly.vertices ] print("bounds: {}".format(",".join(vertices))) if response.error.message: raise Exception( "{}\nFor more info on error messages, check: " "https://cloud.google.com/apis/design/errors".format(response.error.message) )
+```
+
+
+```
+def detect_text_uri(uri): """Detects text in the file located in Google Cloud Storage or on the Web.""" from google.cloud import vision client = vision.[[Image](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.types.Image.html)AnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)() image = vision.Image() image.source.image_uri = uri response = client.text_detection(image=image) texts = response.text_annotations print("Texts:") for text in texts: print(f'\n"{text.description}"') vertices = [ f"({vertex.x},{vertex.y})" for vertex in text.bounding_poly.vertices ] print("bounds: {}".format(",".join(vertices))) if response.error.message: raise Exception( "{}\nFor more info on error messages, check: " "https://cloud.google.com/apis/design/errors".format(response.error.message) )
+```
+
+[ImageAnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)
+[Image](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.types.Image.html)
+
+### Additional languages
+C#: Please follow the [C# setup instructions](https://cloud.google.com/vision/docs/libraries) on the client libraries page and then visit the [Vision reference documentation for .NET.](https://googleapis.dev/dotnet/Google.Apis.Vision.v1/latest/api/Google.Apis.Vision.v1.html)
+PHP: Please follow the [PHP setup instructions](https://cloud.google.com/vision/docs/libraries) on the client libraries page and then visit the [Vision reference documentation for PHP.](https://cloud.google.com/php/docs/reference/cloud-vision/latest)
+Ruby: Please follow the [Ruby setup instructions](https://cloud.google.com/vision/docs/libraries) on the client libraries page and then visit the [Vision reference documentation for Ruby.](https://googleapis.dev/ruby/google-cloud-vision/latest/Google/Cloud/Vision.html)
+
+### Specify the language (optional)
+
+Both types of OCR requests support one or more languageHints that specify the language of any text in the image. However, an empty value usually yields the best results, because omitting a value enables automatic language detection. For languages based on the Latin alphabet, setting languageHints is not needed. In rare cases, when the language of the text in the image is known, setting a hint helps get better results (although it can be a significant hindrance if the hint is wrong). Text detection returns an error if one or more of the specified languages is not one of the [supported languages](https://cloud.google.com/vision/docs/languages).
+
+```
+languageHints
+```
+
+
+```
+languageHints
+```
+
+If you choose to provide a language hint, modify the body of your request (request.json file) to provide the string of one of the supported languages in the imageContext.languageHints field as shown in the following sample:
+
+```
+request.json
+```
+
+
+```
+imageContext.languageHints
+```
+
+
+```
+{ "requests": [ { "image": { "source": { "imageUri": "IMAGE_URL" } }, "features": [ { "type": "DOCUMENT_TEXT_DETECTION" } ], "imageContext": { "languageHints": ["en-t-i0-handwrit"] } } ] }
+```
+
+The languageHint format follows the [BCP47](https://tools.ietf.org/html/bcp47) language code formatting guidelines. The BCP47 specified format is as follows:
+
+```
+languageHint
+```
+
+language ["-" script] ["-" region] *("-" variant) *("-" extension) ["-" privateuse].
+
+```
+language
+```
+
+
+```
+script
+```
+
+
+```
+region
+```
+
+
+```
+variant
+```
+
+
+```
+extension
+```
+
+
+```
+privateuse
+```
+
+For example, the language hint "en-t-i0-handwrit" specifies English language (en), [transform](https://tools.ietf.org/html/rfc6497) extension singleton (t), [input method engine transform](http://www.unicode.org/reports/tr35/) extension code (i0), and [handwriting transform code](http://unicode.org/repos/cldr/tags/latest/common/bcp47/transform_ime.xml) (handwrit). This code says that the language is "English transformed from handwriting." You don't need to specify a script code because Latn is implied by the "en" language.
+
+```
+en
+```
+
+
+```
+t
+```
+
+
+```
+i0
+```
+
+
+```
+handwrit
+```
+
+
+```
+en
+```
+
+
+```
+t
+```
+
+
+```
+i0
+```
+
+
+```
+handwrit
+```
+
+
+```
+Latn
+```
+
+
+```
+en
+```
+
+## Multi-regional support
+
+```
+TEXT_DETECTION
+```
+
+
+```
+DOCUMENT_TEXT_DETECTION
+```
+
+You can now specify continent-level data storage and OCR processing. The following regions are currently supported:
+- us: USA country only
+- eu: The European Union
+
+```
+us
+```
+
+
+```
+eu
+```
+
+### Locations
+Cloud Vision offers you some control over where the resources for your project are stored and processed. In particular, you can configure Cloud Vision to store and process your data only in the European Union.
+By default Cloud Vision stores and processes resources in a Global location, which means that Cloud Vision doesn't guarantee that your resources will remain within a particular location or region. If you choose the European Union location, Google will store your data and process it only in the European Union. You and your users can access the data from any location.
+
+### Setting the location using the API
+The Vision API supports a global API endpoint (vision.googleapis.com) and also two region-based endpoints: a European Union endpoint (eu-vision.googleapis.com) and United States endpoint (us-vision.googleapis.com). Use these endpoints for region-specific processing. For example, to store and process your data in the European Union only, use the URI eu-vision.googleapis.com in place of vision.googleapis.com for your REST API calls:
+
+```
+vision.googleapis.com
+```
+
+
+```
+eu-vision.googleapis.com
+```
+
+
+```
+us-vision.googleapis.com
+```
+
+
+```
+eu-vision.googleapis.com
+```
+
+
+```
+vision.googleapis.com
+```
+
+- https://eu-vision.googleapis.com/v1/projects/PROJECT_ID/locations/eu/images:annotate
+- https://eu-vision.googleapis.com/v1/projects/PROJECT_ID/locations/eu/images:asyncBatchAnnotate
+- https://eu-vision.googleapis.com/v1/projects/PROJECT_ID/locations/eu/files:annotate
+- https://eu-vision.googleapis.com/v1/projects/PROJECT_ID/locations/eu/files:asyncBatchAnnotate
+To store and process your data in the United States only, use the US endpoint (us-vision.googleapis.com) with the preceding methods.
+
+```
+us-vision.googleapis.com
+```
+
+### Setting the location using the client libraries
+The Vision API client libraries accesses the global API endpoint (vision.googleapis.com) by default. To store and process your data in the European Union only, you need to explicitly set the endpoint (eu-vision.googleapis.com). The following code samples show how to configure this setting.
+
+```
+vision.googleapis.com
+```
+
+
+```
+eu-vision.googleapis.com
+```
+
+### REST
+
+Before using any of the request data, make the following replacements:
+- REGION_ID: One of the valid regional
+  location identifiers:
+
+
+  us: USA country only
+  eu: The European Union
+
+
+
+- us: USA country only
+- eu: The European Union
+- CLOUD_STORAGE_IMAGE_URI: the path to a valid
+  image file in a Cloud Storage bucket. You must at least have read privileges to the file.
+  Example:
+
+
+      gs://cloud-samples-data/vision/ocr/sign.jpg
+
+
+
+- gs://cloud-samples-data/vision/ocr/sign.jpg
+- PROJECT_ID: Your Google Cloud project ID.
+- us: USA country only
+- eu: The European Union
+
+```
+us
+```
+
+
+```
+eu
+```
+
+- gs://cloud-samples-data/vision/ocr/sign.jpg
+
+```
+gs://cloud-samples-data/vision/ocr/sign.jpg
+```
+
+HTTP method and URL:
+
+```
+POST https://REGION_ID-vision.googleapis.com/v1/projects/PROJECT_ID/locations/REGION_ID/images:annotate
+```
+
+Request JSON body:
+
+```
+{ "requests": [ { "image": { "source": { "imageUri": "CLOUD_STORAGE_IMAGE_URI" } }, "features": [ { "type": "TEXT_DETECTION" } ] } ] }
+```
+
+To send your request, choose one of these options:
+
+#### curl
+
+```
+gcloud
+```
+
+[gcloud init](https://cloud.google.com/sdk/gcloud/reference/init)
+
+```
+gcloud init
+```
+
+[gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+
+```
+gcloud auth login
+```
+
+[Cloud Shell](https://cloud.google.com/shell/docs)
+
+```
+gcloud
+```
+
+[gcloud auth list](https://cloud.google.com/sdk/gcloud/reference/auth/list)
+
+```
+gcloud auth list
+```
+
+Save the request body in a file named request.json, and execute the following command:
+
+```
+request.json
+```
+
+
+```
+curl -X POST \ -H "Authorization: Bearer $(gcloud auth print-access-token)" \ -H "x-goog-user-project: PROJECT_ID" \ -H "Content-Type: application/json; charset=utf-8" \ -d @request.json \ "https://REGION_ID-vision.googleapis.com/v1/projects/PROJECT_ID/locations/REGION_ID/images:annotate"
+```
+
+
+#### PowerShell
+
+```
+gcloud
+```
+
+[gcloud init](https://cloud.google.com/sdk/gcloud/reference/init)
+
+```
+gcloud init
+```
+
+[gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+
+```
+gcloud auth login
+```
+
+[gcloud auth list](https://cloud.google.com/sdk/gcloud/reference/auth/list)
+
+```
+gcloud auth list
+```
+
+Save the request body in a file named request.json, and execute the following command:
+
+```
+request.json
+```
+
+
+```
+$cred = gcloud auth print-access-token$headers = @{ "Authorization" = "Bearer $cred"; "x-goog-user-project" = "PROJECT_ID" }Invoke-WebRequest ` -Method POST ` -Headers $headers ` -ContentType: "application/json; charset=utf-8" ` -InFile request.json ` -Uri "https://REGION_ID-vision.googleapis.com/v1/projects/PROJECT_ID/locations/REGION_ID/images:annotate" | Select-Object -Expand Content
+```
+
+If the request is successful, the server returns a 200 OK HTTP status code and the response in JSON format.
+
+```
+200 OK
+```
+
+A TEXT_DETECTION response includes the detected phrase, its bounding box, and individual words and their bounding boxes.
+
+```
+TEXT_DETECTION
+```
+
+[API Reference documentation](https://cloud.google.com/vision/docs/reference/rest/v1/images/annotate#boundingpoly)
+
+#### Response
+
+### REST
+```
+{ "responses": [ { "textAnnotations": [ { "locale": "en", "description": "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE\n", "boundingPoly": { "vertices": [ { "x": 341, "y": 828 }, { "x": 2249, "y": 828 }, { "x": 2249, "y": 1993 }, { "x": 341, "y": 1993 } ] } }, { "description": "WAITING?", "boundingPoly": { "vertices": [ { "x": 352, "y": 828 }, { "x": 2248, "y": 911 }, { "x": 2238, "y": 1148 }, { "x": 342, "y": 1065 } ] } }, { "description": "PLEASE", "boundingPoly": { "vertices": [ { "x": 1210, "y": 1233 }, { "x": 1907, "y": 1263 }, { "x": 1902, "y": 1383 }, { "x": 1205, "y": 1353 } ] } }, { "description": "TURN", "boundingPoly": { "vertices": [ { "x": 1210, "y": 1418 }, { "x": 1730, "y": 1441 }, { "x": 1724, "y": 1564 }, { "x": 1205, "y": 1541 } ] } }, { "description": "OFF", "boundingPoly": { "vertices": [ { "x": 1792, "y": 1443 }, { "x": 2128, "y": 1458 }, { "x": 2122, "y": 1581 }, { "x": 1787, "y": 1566 } ] } }, { "description": "YOUR", "boundingPoly": { "vertices": [ { "x": 1219, "y": 1603 }, { "x": 1746, "y": 1629 }, { "x": 1740, "y": 1759 }, { "x": 1213, "y": 1733 } ] } }, { "description": "ENGINE", "boundingPoly": { "vertices": [ { "x": 1222, "y": 1771 }, { "x": 1944, "y": 1834 }, { "x": 1930, "y": 1992 }, { "x": 1208, "y": 1928 } ] } } ], "fullTextAnnotation": { "pages": [ ... ] }, "paragraphs": [ ... ] }, "words": [ ... }, "symbols": [ ... } ] } ], "blockType": "TEXT" }, ... ] } ], "text": "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE\n" } } ] }
+```
+
+### Go
+Before trying this sample, follow the Go setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Go API reference documentation](https://godoc.org/cloud.google.com/go/vision/apiv1).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+import ( "context" "fmt" vision "cloud.google.com/go/vision/apiv1" "google.golang.org/api/option" ) // setEndpoint changes your endpoint. func setEndpoint(endpoint string) error { // endpoint := "eu-vision.googleapis.com:443" ctx := context.Background() client, err := vision.[NewImageAnnotatorClient](https://docs.cloud.google.com/go/docs/reference/cloud.google.com/go/vision/latest/apiv1.html#cloud_google_com_go_vision_apiv1_ImageAnnotatorClient_NewImageAnnotatorClient)(ctx, option.WithEndpoint(endpoint)) if err != nil { return fmt.Errorf("NewImageAnnotatorClient: %w", err) } defer client.Close() return nil }
+```
+
+
+```
+import ( "context" "fmt" vision "cloud.google.com/go/vision/apiv1" "google.golang.org/api/option" ) // setEndpoint changes your endpoint. func setEndpoint(endpoint string) error { // endpoint := "eu-vision.googleapis.com:443" ctx := context.Background() client, err := vision.[NewImageAnnotatorClient](https://docs.cloud.google.com/go/docs/reference/cloud.google.com/go/vision/latest/apiv1.html#cloud_google_com_go_vision_apiv1_ImageAnnotatorClient_NewImageAnnotatorClient)(ctx, option.WithEndpoint(endpoint)) if err != nil { return fmt.Errorf("NewImageAnnotatorClient: %w", err) } defer client.Close() return nil }
+```
+
+[NewImageAnnotatorClient](https://docs.cloud.google.com/go/docs/reference/cloud.google.com/go/vision/latest/apiv1.html#cloud_google_com_go_vision_apiv1_ImageAnnotatorClient_NewImageAnnotatorClient)
+
+### Java
+Before trying this sample, follow the Java setup instructions in the [Vision API Quickstart Using Client Libraries](https://cloud.google.com/vision/docs/detect-labels-image-client-libraries). For more information, see the [Vision API Java reference documentation](https://cloud.google.com/java/docs/reference/google-cloud-vision/latest/overview).
+[Spring Cloud Google Cloud](https://cloud.google.com/vision/docs/adding-spring)
+
+```
+ImageAnnotatorSettings settings = ImageAnnotatorSettings.newBuilder().setEndpoint("eu-vision.googleapis.com:443").build(); // Initialize client that will be used to send requests. This client only needs to be created // once, and can be reused for multiple requests. After completing all of your requests, call // the "close" method on the client to safely clean up any remaining background resources. ImageAnnotatorClient client = ImageAnnotatorClient.create(settings);
+```
+
+
+```
+ImageAnnotatorSettings settings = ImageAnnotatorSettings.newBuilder().setEndpoint("eu-vision.googleapis.com:443").build(); // Initialize client that will be used to send requests. This client only needs to be created // once, and can be reused for multiple requests. After completing all of your requests, call // the "close" method on the client to safely clean up any remaining background resources. ImageAnnotatorClient client = ImageAnnotatorClient.create(settings);
+```
+
+### Node.js
+Before trying this sample, follow the Node.js setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Node.js API reference documentation](https://googleapis.dev/nodejs/vision/latest).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+// Imports the Google Cloud client library const vision = require('[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)'); async function setEndpoint() { // Specifies the location of the api endpoint const clientOptions = {apiEndpoint: 'eu-vision.googleapis.com'}; // Creates a client const client = new vision.[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)(clientOptions); // Performs text detection on the image file const [[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)] = await client.textDetection('./resources/wakeupcat.jpg'); const labels = result.textAnnotations; console.log('Text:'); labels.forEach(label => console.log(label.description)); } setEndpoint();
+```
+
+
+```
+// Imports the Google Cloud client library const vision = require('[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)'); async function setEndpoint() { // Specifies the location of the api endpoint const clientOptions = {apiEndpoint: 'eu-vision.googleapis.com'}; // Creates a client const client = new vision.[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)(clientOptions); // Performs text detection on the image file const [[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)] = await client.textDetection('./resources/wakeupcat.jpg'); const labels = result.textAnnotations; console.log('Text:'); labels.forEach(label => console.log(label.description)); } setEndpoint();
+```
+
+[@google-cloud/vision](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)
+[ImageAnnotatorClient](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/overview.html)
+[result](https://docs.cloud.google.com/nodejs/docs/reference/vision/latest/vision/protos.google.longrunning.operation.html)
+
+### Python
+
+Before trying this sample, follow the Python setup instructions in the [Vision quickstart using client libraries](https://cloud.google.com/vision/docs/quickstart-client-libraries). For more information, see the [Vision Python API reference documentation](https://cloud.google.com/python/docs/reference/vision/latest).
+To authenticate to Vision, set up Application Default Credentials. For more information, see [Set up authentication for a local development environment](https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment).
+
+```
+from google.cloud import vision client_options = {"api_endpoint": "eu-vision.googleapis.com"} client = vision.[ImageAnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)(client_options=client_options)
+```
+
+
+```
+from google.cloud import vision client_options = {"api_endpoint": "eu-vision.googleapis.com"} client = vision.[ImageAnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)(client_options=client_options)
+```
+
+[ImageAnnotatorClient](https://docs.cloud.google.com/python/docs/reference/vision/latest/google.cloud.vision_v1.services.image_annotator.ImageAnnotatorClient.html)
+
+## Try it
+
+Try text detection and document text detection below. You can use the image specified already (gs://cloud-samples-data/vision/ocr/sign.jpg) by clicking Execute, or you can specify your own image in its place.
+
+```
+gs://cloud-samples-data/vision/ocr/sign.jpg
+```
+
+To try document text detection, update the value of type to DOCUMENT_TEXT_DETECTION.
+
+```
+type
+```
+
+
+```
+DOCUMENT_TEXT_DETECTION
+```
+
+Request body:
+
+```
+{ "requests": [ { "features": [ { "type": "TEXT_DETECTION" } ], "image": { "source": { "imageUri": "gs://cloud-samples-data/vision/ocr/sign.jpg" } } } ] }
+```
+
+Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/), and code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0). For details, see the [Google Developers Site Policies](https://developers.google.com/site-policies). Java is a registered trademark of Oracle and/or its affiliates.
+Last updated 2025-12-17 UTC.
+- 
+    Products and pricing
+
+
+
+
+          [See all products](https://cloud.google.com/products/)
+
+
+
+
+
+
+          [Google Cloud pricing](https://cloud.google.com/pricing/)
+
+
+
+
+
+
+          [Google Cloud Marketplace](https://cloud.google.com/marketplace/)
+
+
+
+
+
+
+          [Contact sales](https://cloud.google.com/contact/)
+
+
+
+
+
+
+- 
+
+          [See all products](https://cloud.google.com/products/)
+
+
+
+- 
+
+          [Google Cloud pricing](https://cloud.google.com/pricing/)
+
+
+
+- 
+
+          [Google Cloud Marketplace](https://cloud.google.com/marketplace/)
+
+
+
+- 
+
+          [Contact sales](https://cloud.google.com/contact/)
+
+
+
+- 
+    Support
+
+
+
+
+          [Community forums](https://discuss.google.dev/c/google-cloud/14/)
+
+
+
+
+
+
+          [Support](https://cloud.google.com/support-hub/)
+
+
+
+
+
+
+          [Release Notes](https://docs.cloud.google.com/release-notes)
+
+
+
+
+
+
+          [System status](https://status.cloud.google.com)
+
+
+
+
+
+
+- 
+
+          [Community forums](https://discuss.google.dev/c/google-cloud/14/)
+
+
+
+- 
+
+          [Support](https://cloud.google.com/support-hub/)
+
+
+
+- 
+
+          [Release Notes](https://docs.cloud.google.com/release-notes)
+
+
+
+- 
+
+          [System status](https://status.cloud.google.com)
+
+
+
+- 
+    Resources
+
+
+
+
+          [GitHub](https://github.com/googlecloudPlatform/)
+
+
+
+
+
+
+          [Getting Started with Google Cloud](https://cloud.google.com/docs/get-started/)
+
+
+
+
+
+
+          [Code samples](https://cloud.google.com/docs/samples)
+
+
+
+
+
+
+          [Cloud Architecture Center](https://cloud.google.com/architecture/)
+
+
+
+
+
+
+          [Training and Certification](https://cloud.google.com/learn/training/)
+
+
+
+
+
+
+- 
+
+          [GitHub](https://github.com/googlecloudPlatform/)
+
+
+
+- 
+
+          [Getting Started with Google Cloud](https://cloud.google.com/docs/get-started/)
+
+
+
+- 
+
+          [Code samples](https://cloud.google.com/docs/samples)
+
+
+
+- 
+
+          [Cloud Architecture Center](https://cloud.google.com/architecture/)
+
+
+
+- 
+
+          [Training and Certification](https://cloud.google.com/learn/training/)
+
+
+
+- 
+    Engage
+
+
+
+
+          [Blog](https://cloud.google.com/blog/)
+
+
+
+
+
+
+          [Events](https://cloud.google.com/events/)
+
+
+
+
+
+
+          [X (Twitter)](https://x.com/googlecloud)
+
+
+
+
+
+
+          [Google Cloud on YouTube](https://www.youtube.com/googlecloud)
+
+
+
+
+
+
+          [Google Cloud Tech on YouTube](https://www.youtube.com/googlecloudplatform)
+
+
+
+
+
+
+- 
+
+          [Blog](https://cloud.google.com/blog/)
+
+
+
+- 
+
+          [Events](https://cloud.google.com/events/)
+
+
+
+- 
+
+          [X (Twitter)](https://x.com/googlecloud)
+
+
+
+- 
+
+          [Google Cloud on YouTube](https://www.youtube.com/googlecloud)
+
+
+
+- 
+
+          [Google Cloud Tech on YouTube](https://www.youtube.com/googlecloudplatform)
+
+### Products and pricing
+- 
+
+          [See all products](https://cloud.google.com/products/)
+
+
+
+- 
+
+          [Google Cloud pricing](https://cloud.google.com/pricing/)
+
+
+
+- 
+
+          [Google Cloud Marketplace](https://cloud.google.com/marketplace/)
+
+
+
+- 
+
+          [Contact sales](https://cloud.google.com/contact/)
+
+
+
+[See all products](https://cloud.google.com/products/)
+[Google Cloud pricing](https://cloud.google.com/pricing/)
+[Google Cloud Marketplace](https://cloud.google.com/marketplace/)
+[Contact sales](https://cloud.google.com/contact/)
+
+### Support
+- 
+
+          [Community forums](https://discuss.google.dev/c/google-cloud/14/)
+
+
+
+- 
+
+          [Support](https://cloud.google.com/support-hub/)
+
+
+
+- 
+
+          [Release Notes](https://docs.cloud.google.com/release-notes)
+
+
+
+- 
+
+          [System status](https://status.cloud.google.com)
+
+
+
+[Community forums](https://discuss.google.dev/c/google-cloud/14/)
+[Support](https://cloud.google.com/support-hub/)
+[Release Notes](https://docs.cloud.google.com/release-notes)
+[System status](https://status.cloud.google.com)
+
+### Resources
+- 
+
+          [GitHub](https://github.com/googlecloudPlatform/)
+
+
+
+- 
+
+          [Getting Started with Google Cloud](https://cloud.google.com/docs/get-started/)
+
+
+
+- 
+
+          [Code samples](https://cloud.google.com/docs/samples)
+
+
+
+- 
+
+          [Cloud Architecture Center](https://cloud.google.com/architecture/)
+
+
+
+- 
+
+          [Training and Certification](https://cloud.google.com/learn/training/)
+
+
+
+[GitHub](https://github.com/googlecloudPlatform/)
+[Getting Started with Google Cloud](https://cloud.google.com/docs/get-started/)
+[Code samples](https://cloud.google.com/docs/samples)
+[Cloud Architecture Center](https://cloud.google.com/architecture/)
+[Training and Certification](https://cloud.google.com/learn/training/)
+
+### Engage
+
+- 
+
+          [Blog](https://cloud.google.com/blog/)
+
+
+
+- 
+
+          [Events](https://cloud.google.com/events/)
+
+
+
+- 
+
+          [X (Twitter)](https://x.com/googlecloud)
+
+
+
+- 
+
+          [Google Cloud on YouTube](https://www.youtube.com/googlecloud)
+
+
+
+- 
+
+          [Google Cloud Tech on YouTube](https://www.youtube.com/googlecloudplatform)
+
+
+
+[Blog](https://cloud.google.com/blog/)
+[Events](https://cloud.google.com/events/)
+[X (Twitter)](https://x.com/googlecloud)
+[Google Cloud on YouTube](https://www.youtube.com/googlecloud)
+[Google Cloud Tech on YouTube](https://www.youtube.com/googlecloudplatform)
+- 
+
+
+        [About Google](https://about.google/)
+
+
+- 
+
+
+        [Privacy](https://policies.google.com/privacy)
+
+
+- 
+
+
+        [Site terms](https://policies.google.com/terms?hl=en)
+
+
+- 
+
+
+        [Google Cloud terms](https://cloud.google.com/product-terms)
+
+
+- 
+
+
+        [Manage cookies](https://cloud.google.com/vision/docs/ocr)
+
+
+- 
+
+
+        [Our third decade of climate action: join us](https://cloud.google.com/sustainability)
+
+
+- 
+
+        Sign up for the Google Cloud newsletter
+
+
+        [Subscribe](https://cloud.google.com/newsletter/)
+
+
+[About Google](https://about.google/)
+[Privacy](https://policies.google.com/privacy)
+[Site terms](https://policies.google.com/terms?hl=en)
+[Google Cloud terms](https://cloud.google.com/product-terms)
+[Manage cookies](https://cloud.google.com/vision/docs/ocr)
+[Our third decade of climate action: join us](https://cloud.google.com/sustainability)
+[Subscribe](https://cloud.google.com/newsletter/)
+- 
+      [English](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Deutsch](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Español](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Español – América Latina](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Français](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Indonesia](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Italiano](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Português](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [Português – Brasil](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [中文 – 简体](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [中文 – 繁體](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [日本語](https://cloud.google.com/vision/docs/ocr)
+
+- 
+      [한국어](https://cloud.google.com/vision/docs/ocr)
+
+[English](https://cloud.google.com/vision/docs/ocr)
+[Deutsch](https://cloud.google.com/vision/docs/ocr)
+[Español](https://cloud.google.com/vision/docs/ocr)
+[Español – América Latina](https://cloud.google.com/vision/docs/ocr)
+[Français](https://cloud.google.com/vision/docs/ocr)
+[Indonesia](https://cloud.google.com/vision/docs/ocr)
+[Italiano](https://cloud.google.com/vision/docs/ocr)
+[Português](https://cloud.google.com/vision/docs/ocr)
+[Português – Brasil](https://cloud.google.com/vision/docs/ocr)
+[中文 – 简体](https://cloud.google.com/vision/docs/ocr)
+[中文 – 繁體](https://cloud.google.com/vision/docs/ocr)
+[日本語](https://cloud.google.com/vision/docs/ocr)
+[한국어](https://cloud.google.com/vision/docs/ocr)
