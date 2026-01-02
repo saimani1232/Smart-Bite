@@ -113,15 +113,15 @@ const EditModal: React.FC<{
                         </div>
 
                         {/* Quantity with +/- buttons */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Quantity
                                 </label>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3">
                                     <button
                                         onClick={decrementQuantity}
-                                        className="w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors"
+                                        className="w-12 h-12 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-xl transition-colors shrink-0"
                                     >
                                         −
                                     </button>
@@ -129,29 +129,25 @@ const EditModal: React.FC<{
                                         type="number"
                                         value={editQuantity}
                                         onChange={(e) => setEditQuantity(parseFloat(e.target.value) || 0)}
-                                        className="flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-center text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-bold"
+                                        className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-center text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-bold text-lg min-w-0"
                                         min="0"
                                         step="0.1"
                                     />
                                     <button
                                         onClick={incrementQuantity}
-                                        className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg transition-colors"
+                                        className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-xl transition-colors shrink-0"
                                     >
                                         +
                                     </button>
+                                    {/* Unit Selector inline */}
+                                    <select
+                                        value={editUnit}
+                                        onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
+                                        className="w-24 px-3 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-medium shrink-0"
+                                    >
+                                        {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                                    </select>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Unit
-                                </label>
-                                <select
-                                    value={editUnit}
-                                    onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
-                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-medium"
-                                >
-                                    {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                                </select>
                             </div>
                         </div>
 
@@ -166,8 +162,8 @@ const EditModal: React.FC<{
                                         key={cat}
                                         onClick={() => setEditCategory(cat)}
                                         className={`p-3 rounded-xl flex flex-col items-center gap-1 transition-all ${editCategory === cat
-                                                ? 'bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-400 dark:border-emerald-500 scale-105'
-                                                : 'bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-600'
+                                            ? 'bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-400 dark:border-emerald-500 scale-105'
+                                            : 'bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-600'
                                             }`}
                                     >
                                         <span className="text-xl">{getCategoryConfig(cat).emoji}</span>
@@ -231,8 +227,8 @@ const EditModal: React.FC<{
                                         key={days}
                                         onClick={() => setEditReminderDays(days)}
                                         className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all ${editReminderDays === days
-                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
-                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+                                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                             }`}
                                     >
                                         {days === 0 ? 'Off' : days}
