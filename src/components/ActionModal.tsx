@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { InventoryItem } from '../types';
-import { X, Snowflake, Heart, ArrowRight, Loader, ExternalLink, Clock, Users, ChefHat, RefreshCw, Check, Trash2, Package } from 'lucide-react';
+import { X, Snowflake, Heart, ArrowRight, Loader, ExternalLink, Clock, ChefHat, RefreshCw, Check, Trash2, Package } from 'lucide-react';
 import { findBestRecipes, type Recipe } from '../services/recipeService';
 import { useInventory } from '../context/InventoryContext';
 
@@ -185,9 +185,9 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                         <div className="w-full h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                             <div
                                 className={`h-full rounded-full transition-all duration-500 ${daysLeft < 0 ? 'bg-rose-500' :
-                                        daysLeft <= 3 ? 'bg-amber-500' :
-                                            daysLeft <= 7 ? 'bg-orange-400' :
-                                                'bg-emerald-500'
+                                    daysLeft <= 3 ? 'bg-amber-500' :
+                                        daysLeft <= 7 ? 'bg-orange-400' :
+                                            'bg-emerald-500'
                                     }`}
                                 style={{ width: `${progressPercent}%` }}
                             />

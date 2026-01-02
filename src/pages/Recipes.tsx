@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useInventory } from '../context/InventoryContext';
-import { Search, Clock, ChefHat, Utensils, Leaf, Dumbbell, Sparkles, ChevronLeft, ChevronRight, ExternalLink, Package, AlertTriangle } from 'lucide-react';
+import { Search, Clock, ChefHat, Utensils, Leaf, Dumbbell, Sparkles, ChevronLeft, ChevronRight, ExternalLink, Package } from 'lucide-react';
 import { findBestRecipes, type Recipe } from '../services/recipeService';
 
 type FilterType = 'expiring' | 'quick' | 'vegetarian' | 'protein' | null;
@@ -120,8 +120,8 @@ export const Recipes: React.FC = () => {
                                     key={chip.id}
                                     onClick={() => setActiveFilter(chip.id)}
                                     className={`flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl px-5 transition-all ${activeFilter === chip.id
-                                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95'
-                                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95'
+                                        : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                         }`}
                                 >
                                     {chip.icon}
