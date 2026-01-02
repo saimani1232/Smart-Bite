@@ -36,133 +36,224 @@ const getOpenedExpiryInfo = (category: InventoryItem['category']): string => {
 const CATEGORIES: InventoryItem['category'][] = ['Dairy', 'Grain', 'Vegetable', 'Meat', 'Other'];
 const UNITS: InventoryItem['unit'][] = ['kg', 'l', 'pkg', 'pcs', 'g', 'ml'];
 
-// Edit Modal Component
+// Edit Modal Component - Redesigned
 const EditModal: React.FC<{
     item: InventoryItem;
     onSave: (updates: Partial<InventoryItem>) => void;
     onClose: () => void;
 }> = ({ item, onSave, onClose }) => {
     const [editName, setEditName] = useState(item.name);
-    const [editQuantity, setEditQuantity] = useState(item.quantity.toString());
+    const [editQuantity, setEditQuantity] = useState(item.quantity);
     const [editUnit, setEditUnit] = useState(item.unit);
     const [editCategory, setEditCategory] = useState(item.category);
     const [editExpiry, setEditExpiry] = useState(item.expiryDate);
+    const [editEmail, setEditEmail] = useState(item.reminderEmail || '');
+    const [editReminderDays, setEditReminderDays] = useState(item.reminderDays || 0);
 
     const handleSave = () => {
         onSave({
             name: editName.trim() || item.name,
-            quantity: parseFloat(editQuantity) || item.quantity,
+            quantity: editQuantity || item.quantity,
             unit: editUnit,
             category: editCategory,
-            expiryDate: editExpiry || item.expiryDate
+            expiryDate: editExpiry || item.expiryDate,
+            reminderEmail: editEmail.trim() || undefined,
+            reminderDays: editReminderDays
         });
         onClose();
     };
 
+    const incrementQuantity = () => setEditQuantity(prev => prev + 1);
+    const decrementQuantity = () => setEditQuantity(prev => Math.max(0, prev - 1));
+
     return (
         <div className="fixed inset-0 bg-gray-900/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="p-5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="text-white/80 text-sm font-medium">Edit Item</p>
-                            <h2 className="text-xl font-bold">{item.name}</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+                {/* Header with emoji */}
+                <div className="relative p-6 pb-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border-b border-gray-100 dark:border-gray-700">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    >
+                        <X size={20} className="text-gray-500" />
+                    </button>
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-2xl shadow-lg flex items-center justify-center border border-gray-100 dark:border-gray-600">
+                            <span className="text-3xl">{getCategoryConfig(editCategory).emoji}</span>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
-                            <X size={20} />
-                        </button>
+                        <div>
+                            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Edit Item</p>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{item.name}</h2>
+                        </div>
                     </div>
                 </div>
 
-                {/* Form */}
-                <div className="p-5 space-y-4">
-                    {/* Name */}
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                            Product Name
-                        </label>
-                        <input
-                            type="text"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 dark:focus:border-emerald-500"
-                            placeholder="Enter name"
-                        />
-                    </div>
+                {/* Form Sections */}
+                <div className="p-6 space-y-6">
+                    {/* Basic Info Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                            <Package size={14} />
+                            Basic Information
+                        </h3>
 
-                    {/* Quantity & Unit */}
-                    <div className="grid grid-cols-2 gap-3">
+                        {/* Name */}
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                                Quantity
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Product Name
                             </label>
                             <input
-                                type="number"
-                                value={editQuantity}
-                                onChange={(e) => setEditQuantity(e.target.value)}
-                                className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 dark:focus:border-emerald-500"
-                                min="0"
-                                step="0.1"
+                                type="text"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-500 transition-colors font-medium"
+                                placeholder="Enter name"
                             />
                         </div>
+
+                        {/* Quantity with +/- buttons */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Quantity
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={decrementQuantity}
+                                        className="w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors"
+                                    >
+                                        −
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={editQuantity}
+                                        onChange={(e) => setEditQuantity(parseFloat(e.target.value) || 0)}
+                                        className="flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-center text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-bold"
+                                        min="0"
+                                        step="0.1"
+                                    />
+                                    <button
+                                        onClick={incrementQuantity}
+                                        className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg transition-colors"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Unit
+                                </label>
+                                <select
+                                    value={editUnit}
+                                    onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-medium"
+                                >
+                                    {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Category */}
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                                Unit
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Category
                             </label>
-                            <select
-                                value={editUnit}
-                                onChange={(e) => setEditUnit(e.target.value as InventoryItem['unit'])}
-                                className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                            >
-                                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                            </select>
+                            <div className="grid grid-cols-4 gap-2">
+                                {CATEGORIES.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setEditCategory(cat)}
+                                        className={`p-3 rounded-xl flex flex-col items-center gap-1 transition-all ${editCategory === cat
+                                                ? 'bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-400 dark:border-emerald-500 scale-105'
+                                                : 'bg-gray-50 dark:bg-gray-700 border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-600'
+                                            }`}
+                                    >
+                                        <span className="text-xl">{getCategoryConfig(cat).emoji}</span>
+                                        <span className={`text-[10px] font-bold ${editCategory === cat ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                                            {cat}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Category */}
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                            Category
-                        </label>
-                        <select
-                            value={editCategory}
-                            onChange={(e) => setEditCategory(e.target.value as InventoryItem['category'])}
-                            className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                        >
-                            {CATEGORIES.map(cat => (
-                                <option key={cat} value={cat}>
-                                    {getCategoryConfig(cat).emoji} {cat}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {/* Expiry Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                            <Calendar size={14} />
+                            Expiry & Reminders
+                        </h3>
 
-                    {/* Expiry Date */}
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                            Expiry Date
-                        </label>
-                        <input
-                            type="date"
-                            value={editExpiry}
-                            onChange={(e) => setEditExpiry(e.target.value)}
-                            className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 dark:focus:border-emerald-500"
-                        />
+                        {/* Expiry Date */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Expiry Date
+                            </label>
+                            <input
+                                type="date"
+                                value={editExpiry}
+                                onChange={(e) => setEditExpiry(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-medium"
+                            />
+                        </div>
+
+                        {/* Email Reminder */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Reminder Email
+                            </label>
+                            <input
+                                type="email"
+                                value={editEmail}
+                                onChange={(e) => setEditEmail(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-medium"
+                                placeholder="your@email.com"
+                            />
+                            {editEmail && (
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1">
+                                    <CheckCircle2 size={12} className="text-emerald-500" />
+                                    Notifications will be sent to this email
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Reminder Days */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Remind me before (days)
+                            </label>
+                            <div className="flex gap-2">
+                                {[0, 1, 2, 3, 5, 7].map(days => (
+                                    <button
+                                        key={days}
+                                        onClick={() => setEditReminderDays(days)}
+                                        className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all ${editReminderDays === days
+                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                            }`}
+                                    >
+                                        {days === 0 ? 'Off' : days}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex gap-3 pt-4">
                         <button
                             onClick={handleSave}
-                            className="flex-1 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                            className="flex-1 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
                         >
                             <Check size={18} />
                             Save Changes
                         </button>
                         <button
                             onClick={onClose}
-                            className="px-6 py-3.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            className="px-6 py-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                         >
                             Cancel
                         </button>
