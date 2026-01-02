@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { InventoryItem } from '../types';
-import { X, Snowflake, Heart, ArrowRight, Loader, ExternalLink, Clock, ChefHat, RefreshCw, Check, Trash2, Package } from 'lucide-react';
+import { X, Snowflake, Heart, Loader, ExternalLink, Clock, ChefHat, RefreshCw, Check, Trash2, Package } from 'lucide-react';
 import { findBestRecipes, type Recipe } from '../services/recipeService';
 import { useInventory } from '../context/InventoryContext';
 
@@ -57,7 +57,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
     // Progress bar width
     const progressPercent = Math.max(0, Math.min(100, (daysLeft / 30) * 100));
 
-    // Fetch recipes
+    // Fetch recipes - now always fetch, even for bulk items
     useEffect(() => {
         const fetchRecipes = async () => {
             setLoading(true);
@@ -80,12 +80,8 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
             }
         };
 
-        if (!isBulk) {
-            fetchRecipes();
-        } else {
-            setLoading(false);
-        }
-    }, [item.name, items, isBulk]);
+        fetchRecipes();
+    }, [item.name, items]);
 
     const handleRefresh = async () => {
         setLoading(true);
@@ -122,10 +118,68 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
         onClose();
     };
 
-    const preservationOptions = [
-        { title: 'Freeze for Later', desc: 'Extend shelf life by months', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' },
-        { title: 'Share with Others', desc: 'Help your community', icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' }
-    ];
+    // Category-specific preservation tips
+    const getPreservationTips = () => {
+        const tips: { title: string; desc: string; icon: React.ReactNode; color: string }[] = [];
+        const itemLower = item.name.toLowerCase();
+
+        switch (item.category) {
+            case 'Dairy':
+                if (itemLower.includes('milk')) {
+                    tips.push({ title: 'Freeze in Ice Cube Trays', desc: 'Perfect for smoothies & cooking', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                    tips.push({ title: 'Make Paneer or Ricotta', desc: 'Homemade cheese lasts longer', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                } else if (itemLower.includes('cheese')) {
+                    tips.push({ title: 'Grate & Freeze', desc: 'Ready-to-use for pizza & pasta', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                    tips.push({ title: 'Make a Cheese Dip', desc: 'Great for batch entertaining', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                } else if (itemLower.includes('yogurt') || itemLower.includes('curd')) {
+                    tips.push({ title: 'Freeze for Smoothies', desc: 'Blend directly from frozen', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                    tips.push({ title: 'Marinate Meat', desc: 'Yogurt tenderizes proteins', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                } else {
+                    tips.push({ title: 'Freeze Before Expiry', desc: 'Most dairy freezes well', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                }
+                break;
+
+            case 'Meat':
+                tips.push({ title: 'Portion & Freeze', desc: `Divide ${item.quantity} ${item.unit} into meal-sized portions`, icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                tips.push({ title: 'Marinate & Store', desc: 'Pre-marinated meat is ready to cook', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                if (itemLower.includes('chicken') || itemLower.includes('beef')) {
+                    tips.push({ title: 'Meal Prep Batch', desc: 'Cook all at once, portion for week', icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' });
+                }
+                break;
+
+            case 'Vegetable':
+                tips.push({ title: 'Blanch & Freeze', desc: 'Quick boil, ice bath, then freeze', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                if (itemLower.includes('tomato')) {
+                    tips.push({ title: 'Make Tomato Sauce', desc: 'Freezes well for months', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                } else if (itemLower.includes('onion') || itemLower.includes('garlic')) {
+                    tips.push({ title: 'Caramelize & Freeze', desc: 'Ready base for soups & sauces', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                } else if (itemLower.includes('spinach') || itemLower.includes('kale')) {
+                    tips.push({ title: 'Make Green Smoothie Packs', desc: 'Pre-portioned for quick blending', icon: <ChefHat size={20} />, color: 'from-emerald-500 to-green-500' });
+                } else {
+                    tips.push({ title: 'Pickle or Ferment', desc: 'Extends shelf life significantly', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                }
+                tips.push({ title: 'Share with Neighbors', desc: `${item.quantity} ${item.unit} is a lot!`, icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' });
+                break;
+
+            case 'Grain':
+                tips.push({ title: 'Store in Airtight Container', desc: 'Keeps fresh for months', icon: <Package size={20} />, color: 'from-amber-500 to-yellow-500' });
+                if (itemLower.includes('bread')) {
+                    tips.push({ title: 'Slice & Freeze', desc: 'Toast directly from frozen', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                    tips.push({ title: 'Make Breadcrumbs', desc: 'Dry, blend, and store', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                } else {
+                    tips.push({ title: 'Freeze for Long Storage', desc: 'Prevents pantry bugs', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                }
+                break;
+
+            default:
+                tips.push({ title: 'Freeze if Possible', desc: 'Check if this item freezes well', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                tips.push({ title: 'Share with Others', desc: 'Help your community', icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' });
+        }
+
+        return tips;
+    };
+
+    const preservationTips = getPreservationTips();
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -246,26 +300,37 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                         )}
                     </div>
 
-                    {isBulk ? (
-                        // Preservation options for bulk items
-                        <div className="space-y-3">
-                            {preservationOptions.map((opt, idx) => (
-                                <button
-                                    key={idx}
-                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-2xl transition-all group"
-                                >
-                                    <div className={`p-3 rounded-xl bg-gradient-to-br ${opt.color} text-white shadow-lg`}>
-                                        {opt.icon}
+                    {isBulk && (
+                        // Show preservation tips first for bulk items
+                        <div className="mb-6">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Package size={18} className="text-amber-500" />
+                                <h4 className="font-bold text-gray-900 dark:text-white text-sm">Bulk Item Tips</h4>
+                                <span className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">
+                                    {item.quantity} {item.unit}
+                                </span>
+                            </div>
+                            <div className="space-y-2">
+                                {preservationTips.slice(0, 2).map((opt, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl"
+                                    >
+                                        <div className={`p-2 rounded-lg bg-gradient-to-br ${opt.color} text-white shadow-sm`}>
+                                            {opt.icon}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{opt.title}</h4>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{opt.desc}</p>
+                                        </div>
                                     </div>
-                                    <div className="flex-1 text-left">
-                                        <h4 className="font-bold text-gray-900 dark:text-gray-100">{opt.title}</h4>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{opt.desc}</p>
-                                    </div>
-                                    <ArrowRight size={18} className="text-gray-300 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300 group-hover:translate-x-1 transition-all" />
-                                </button>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    ) : loading ? (
+                    )}
+
+                    {/* Recipes Section - always shown now */}
+                    {loading ? (
                         <div className="text-center py-12">
                             <Loader size={32} className="animate-spin text-emerald-500 mx-auto mb-4" />
                             <p className="text-gray-500 dark:text-gray-400">Finding delicious recipes...</p>
