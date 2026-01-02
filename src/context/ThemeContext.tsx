@@ -14,8 +14,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         if (saved !== null) {
             return saved === 'true';
         }
-        // Fall back to system preference
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // Default to light mode
+        return false;
     });
 
     useEffect(() => {

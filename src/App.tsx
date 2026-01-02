@@ -13,7 +13,7 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'recipes':
-        return <Recipes />;
+        return <Recipes onNavigateHome={() => setCurrentPage('home')} />;
       case 'analytics':
         return (
           <div className="flex items-center justify-center min-h-[50vh]">

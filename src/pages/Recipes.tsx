@@ -16,13 +16,18 @@ const getCategoryEmoji = (category: string) => {
     }
 };
 
-export const Recipes: React.FC = () => {
+interface RecipesProps {
+    onNavigateHome?: () => void;
+}
+
+export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome }) => {
     const { items } = useInventory();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<FilterType>('expiring');
     const [expiringRecipes, setExpiringRecipes] = useState<Recipe[]>([]);
     const [recommendedRecipes, setRecommendedRecipes] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showAllRecipes, setShowAllRecipes] = useState(false);
 
     // Calculate days left helper
     const getDaysLeft = (expiryDate: string) => {
@@ -180,10 +185,16 @@ export const Recipes: React.FC = () => {
                                     {getSectionTitle()}
                                 </h2>
                                 <button
-                                    onClick={() => setActiveFilter('expiring')}
+                                    onClick={() => {
+                                        if (activeFilter !== 'expiring') {
+                                            setActiveFilter('expiring');
+                                        } else {
+                                            setShowAllRecipes(!showAllRecipes);
+                                        }
+                                    }}
                                     className="text-emerald-600 dark:text-emerald-400 text-sm font-bold hover:underline"
                                 >
-                                    {activeFilter !== 'expiring' ? 'Clear Filter' : 'View All'}
+                                    {activeFilter !== 'expiring' ? 'Clear Filter' : showAllRecipes ? 'Show Less' : 'View All'}
                                 </button>
                             </div>
 
@@ -199,7 +210,7 @@ export const Recipes: React.FC = () => {
                                 </div>
                             ) : filteredRecipes.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {filteredRecipes.slice(0, 6).map((recipe) => (
+                                    {filteredRecipes.slice(0, showAllRecipes ? undefined : 6).map((recipe) => (
                                         <a
                                             key={recipe.id}
                                             href={recipe.sourceUrl || '#'}
@@ -360,7 +371,12 @@ export const Recipes: React.FC = () => {
                         <div className="sticky top-24">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">Expiring Pantry</h3>
-                                <button className="text-emerald-600 dark:text-emerald-400 text-xs font-bold hover:underline">Manage</button>
+                                <button
+                                    onClick={onNavigateHome}
+                                    className="text-emerald-600 dark:text-emerald-400 text-xs font-bold hover:underline"
+                                >
+                                    Manage →
+                                </button>
                             </div>
 
                             {expiringItems.length > 0 ? (
