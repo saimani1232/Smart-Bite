@@ -78,6 +78,49 @@ export const Recipes: React.FC = () => {
         { id: 'protein' as FilterType, label: 'High Protein', icon: <Dumbbell size={16} /> },
     ];
 
+    // Apply filters to recipes
+    const filteredRecipes = useMemo(() => {
+        let recipes = [...expiringRecipes];
+
+        switch (activeFilter) {
+            case 'quick':
+                // Filter to recipes that take 30 minutes or less
+                recipes = recipes.filter(r => r.readyInMinutes && r.readyInMinutes <= 30);
+                break;
+            case 'vegetarian':
+                // Filter by name heuristics (since TheMealDB doesn't flag vegetarian)
+                const meatWords = ['chicken', 'beef', 'pork', 'lamb', 'meat', 'fish', 'salmon', 'shrimp', 'bacon', 'ham'];
+                recipes = recipes.filter(r => {
+                    const nameLower = r.name.toLowerCase();
+                    return !meatWords.some(word => nameLower.includes(word));
+                });
+                break;
+            case 'protein':
+                // Filter to recipes likely high in protein (meat-based)
+                const proteinWords = ['chicken', 'beef', 'pork', 'lamb', 'meat', 'fish', 'salmon', 'shrimp', 'egg', 'bean'];
+                recipes = recipes.filter(r => {
+                    const nameLower = r.name.toLowerCase();
+                    return proteinWords.some(word => nameLower.includes(word));
+                });
+                break;
+            default:
+                // 'expiring' - show all expiring item recipes
+                break;
+        }
+
+        return recipes;
+    }, [expiringRecipes, activeFilter]);
+
+    // Get section title based on filter
+    const getSectionTitle = () => {
+        switch (activeFilter) {
+            case 'quick': return 'Quick Meals (Under 30 Minutes)';
+            case 'vegetarian': return 'Vegetarian Options';
+            case 'protein': return 'High Protein Recipes';
+            default: return 'Use It Up - Expiring Soon';
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24">
             {/* Page Content */}
@@ -134,10 +177,13 @@ export const Recipes: React.FC = () => {
                         <section className="mb-12">
                             <div className="flex items-center justify-between mb-5">
                                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-                                    Use It Up - Expiring Soon
+                                    {getSectionTitle()}
                                 </h2>
-                                <button className="text-emerald-600 dark:text-emerald-400 text-sm font-bold hover:underline">
-                                    View All
+                                <button
+                                    onClick={() => setActiveFilter('expiring')}
+                                    className="text-emerald-600 dark:text-emerald-400 text-sm font-bold hover:underline"
+                                >
+                                    {activeFilter !== 'expiring' ? 'Clear Filter' : 'View All'}
                                 </button>
                             </div>
 
@@ -151,9 +197,9 @@ export const Recipes: React.FC = () => {
                                         </div>
                                     ))}
                                 </div>
-                            ) : expiringRecipes.length > 0 ? (
+                            ) : filteredRecipes.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {expiringRecipes.slice(0, 6).map((recipe) => (
+                                    {filteredRecipes.slice(0, 6).map((recipe) => (
                                         <a
                                             key={recipe.id}
                                             href={recipe.sourceUrl || '#'}
@@ -162,12 +208,30 @@ export const Recipes: React.FC = () => {
                                             className="group flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                                         >
                                             <div className="relative h-48 w-full overflow-hidden">
-                                                {expiringItems.length > 0 && (
+                                                {expiringItems.length > 0 && activeFilter === 'expiring' && (
                                                     <div className="absolute top-3 right-3 bg-white/90 dark:bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 z-10 shadow-sm">
                                                         <Sparkles size={12} className="text-emerald-500" />
                                                         <span className="text-xs font-bold text-gray-800 dark:text-white">
                                                             Uses {expiringItems[0]?.name}
                                                         </span>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'quick' && recipe.readyInMinutes && (
+                                                    <div className="absolute top-3 right-3 bg-emerald-500 text-white px-3 py-1 rounded-full flex items-center gap-1 z-10 shadow-sm">
+                                                        <Clock size={12} />
+                                                        <span className="text-xs font-bold">{recipe.readyInMinutes} min</span>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'vegetarian' && (
+                                                    <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full flex items-center gap-1 z-10 shadow-sm">
+                                                        <Leaf size={12} />
+                                                        <span className="text-xs font-bold">Vegetarian</span>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'protein' && (
+                                                    <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-full flex items-center gap-1 z-10 shadow-sm">
+                                                        <Dumbbell size={12} />
+                                                        <span className="text-xs font-bold">High Protein</span>
                                                     </div>
                                                 )}
                                                 {recipe.image ? (
@@ -214,7 +278,20 @@ export const Recipes: React.FC = () => {
                             ) : (
                                 <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
                                     <ChefHat size={48} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
-                                    <p className="text-gray-500 dark:text-gray-400">No recipes found. Add items to your inventory!</p>
+                                    <p className="text-gray-500 dark:text-gray-400 mb-3">
+                                        {activeFilter === 'expiring'
+                                            ? 'No recipes found. Add items to your inventory!'
+                                            : `No ${activeFilter === 'quick' ? 'quick' : activeFilter === 'vegetarian' ? 'vegetarian' : 'high protein'} recipes match your expiring items.`
+                                        }
+                                    </p>
+                                    {activeFilter !== 'expiring' && (
+                                        <button
+                                            onClick={() => setActiveFilter('expiring')}
+                                            className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm hover:underline"
+                                        >
+                                            Show all recipes
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </section>

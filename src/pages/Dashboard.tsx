@@ -398,7 +398,7 @@ export const Dashboard: React.FC = () => {
             {/* Floating Action Button (Mobile) */}
             <button
                 onClick={() => setShowAddModal(true)}
-                className="fixed bottom-6 right-6 md:hidden w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full shadow-2xl shadow-emerald-500/40 flex items-center justify-center active:scale-95 transition-transform z-50"
+                className="fixed bottom-24 right-6 md:hidden w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full shadow-2xl shadow-emerald-500/40 flex items-center justify-center active:scale-95 transition-transform z-50"
             >
                 <Plus size={28} />
             </button>

@@ -136,35 +136,36 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
             />
 
             {/* Modal */}
-            <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="relative p-6 pb-4">
+            <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
+                {/* Header - Compact on mobile */}
+                <div className="relative p-4 md:p-6 pb-3 md:pb-4">
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 md:p-2 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
 
-                    <div className="flex items-start gap-5">
-                        {/* Large Emoji Icon */}
-                        <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-50 dark:from-amber-900/30 dark:to-orange-900/20 rounded-2xl flex items-center justify-center shadow-inner border border-amber-100 dark:border-amber-800/30 shrink-0">
-                            <span className="text-5xl drop-shadow-sm">{getCategoryEmoji(item.category)}</span>
+                    <div className="flex items-start gap-3 md:gap-5">
+                        {/* Emoji Icon - smaller on mobile */}
+                        <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-orange-100 to-amber-50 dark:from-amber-900/30 dark:to-orange-900/20 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner border border-amber-100 dark:border-amber-800/30 shrink-0">
+                            <span className="text-3xl md:text-5xl drop-shadow-sm">{getCategoryEmoji(item.category)}</span>
                         </div>
 
-                        <div className="flex-1 pt-1">
+                        <div className="flex-1 pt-0.5 md:pt-1 pr-6">
                             {/* Status Badge */}
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusConfig.color}`}>
-                                    <Clock size={12} />
+                            <div className="flex items-center gap-2 mb-0.5 md:mb-1">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-xs font-semibold ${statusConfig.color}`}>
+                                    <Clock size={10} className="md:hidden" />
+                                    <Clock size={12} className="hidden md:block" />
                                     {statusConfig.label}
                                 </span>
                             </div>
 
                             {/* Item Name */}
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white leading-tight">{item.name}</h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                                Added on {formatDate(item.expiryDate)} • {item.quantity} {item.unit} available
+                            <h2 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white leading-tight">{item.name}</h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-0.5 md:mt-1">
+                                {item.quantity} {item.unit} • {formatDate(item.expiryDate)}
                             </p>
                         </div>
                     </div>
@@ -195,27 +196,27 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
                     </div>
                 </div>
 
-                {/* Toggle Section */}
-                <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-y border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">Product Status</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Toggling updates expiration prediction</p>
+                {/* Toggle Section - Responsive */}
+                <div className="px-4 md:px-6 py-3 md:py-4 bg-gray-50 dark:bg-gray-700/50 border-y border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="shrink-0">
+                            <p className="text-xs md:text-sm font-medium text-gray-900 dark:text-white">Product Status</p>
+                            <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 mt-0.5 hidden sm:block">Updates expiry prediction</p>
                         </div>
 
-                        {/* Custom Toggle */}
+                        {/* Custom Toggle - Smaller on mobile */}
                         <button
                             onClick={handleToggleOpened}
-                            className="relative w-36 h-10 bg-gray-200 dark:bg-gray-600 rounded-lg p-1 flex"
+                            className="relative w-28 md:w-36 h-8 md:h-10 bg-gray-200 dark:bg-gray-600 rounded-lg p-0.5 md:p-1 flex shrink-0"
                         >
                             <div
-                                className={`absolute w-1/2 h-8 bg-white dark:bg-gray-800 rounded-md shadow-sm transition-all duration-300 ${isOpened ? 'left-[calc(50%-4px)]' : 'left-1'}`}
+                                className={`absolute w-1/2 h-7 md:h-8 bg-white dark:bg-gray-800 rounded-md shadow-sm transition-all duration-300 ${isOpened ? 'left-[calc(50%-2px)]' : 'left-0.5 md:left-1'}`}
                             />
-                            <div className={`z-10 w-1/2 flex items-center justify-center text-xs font-semibold transition-colors ${!isOpened ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'}`}>
-                                <Package size={12} className="mr-1" />
+                            <div className={`z-10 w-1/2 flex items-center justify-center text-[10px] md:text-xs font-semibold transition-colors ${!isOpened ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'}`}>
+                                <Package size={10} className="mr-0.5 md:mr-1" />
                                 Sealed
                             </div>
-                            <div className={`z-10 w-1/2 flex items-center justify-center text-xs font-semibold transition-colors ${isOpened ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500'}`}>
+                            <div className={`z-10 w-1/2 flex items-center justify-center text-[10px] md:text-xs font-semibold transition-colors ${isOpened ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500'}`}>
                                 Opened
                             </div>
                         </button>
