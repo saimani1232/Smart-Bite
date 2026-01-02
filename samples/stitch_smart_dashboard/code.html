@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Bite - Food Inventory Manager</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10B981", // Emerald 500
+                        "primary-dark": "#059669", // Emerald 600
+                        "background-light": "#F3FCF8", // Very light mint/white
+                        "background-dark": "#111827", // Gray 900
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1F2937", // Gray 800
+                        "accent-orange": "#F97316", // Orange 500
+                        "accent-yellow": "#FBBF24", // Amber 400
+                        "accent-purple": "#A78BFA", // Violet 400
+                        "accent-red": "#F87171", // Red 400
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(16, 185, 129, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }.transition-all-300 {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 font-sans min-h-screen transition-colors duration-300">
+<nav class="sticky top-0 z-50 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-700 px-6 py-4">
+<div class="max-w-7xl mx-auto flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-primary text-white p-2 rounded-xl shadow-glow">
+<span class="material-icons-round text-2xl">eco</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white leading-tight">Smart Bite</h1>
+<p class="text-xs text-gray-500 dark:text-gray-400">Food Inventory Manager</p>
+</div>
+</div>
+<div class="hidden md:flex bg-gray-100 dark:bg-gray-800 rounded-full p-1 items-center gap-1 shadow-inner">
+<button class="flex items-center gap-2 px-5 py-2 bg-white dark:bg-gray-700 rounded-full text-primary shadow-sm font-medium text-sm transition-all">
+<span class="material-icons-round text-lg">home</span>
+                    Home
+                </button>
+<button class="flex items-center gap-2 px-5 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full text-sm font-medium transition-all">
+<span class="material-icons-round text-lg">menu_book</span>
+                    Recipes
+                </button>
+<button class="flex items-center gap-2 px-5 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full text-sm font-medium transition-all">
+<span class="material-icons-round text-lg">analytics</span>
+                    Analytics
+                </button>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+<span class="material-icons-round">notifications_none</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white dark:border-gray-800">2</span>
+</button>
+<button class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+<span class="material-icons-round">settings</span>
+</button>
+<button class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-icons-round">dark_mode</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-6 py-8">
+<header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="text-3xl font-bold text-gray-800 dark:text-white">Good Morning, Alex! ☀️</h2>
+<p class="text-gray-500 dark:text-gray-400 mt-1">You've saved 12 items from waste this week.</p>
+</div>
+<div class="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full border border-green-200 dark:border-green-800">
+<span class="material-icons-round text-primary">emoji_events</span>
+<span class="text-sm font-semibold text-green-800 dark:text-green-300">Waste Score: 92/100</span>
+</div>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-800/30 rounded-2xl p-6 flex items-center gap-4 hover:shadow-lg transition-all-300 cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/50 text-red-500 flex items-center justify-center">
+<span class="material-icons-round text-2xl">warning</span>
+</div>
+<div>
+<h3 class="text-3xl font-bold text-red-600 dark:text-red-400">0</h3>
+<p class="text-sm text-red-400 dark:text-red-300 font-medium">Expired</p>
+</div>
+</div>
+<div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 rounded-2xl p-6 flex items-center gap-4 hover:shadow-lg transition-all-300 cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-500 flex items-center justify-center">
+<span class="material-icons-round text-2xl">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-3xl font-bold text-amber-600 dark:text-amber-400">2</h3>
+<p class="text-sm text-amber-500 dark:text-amber-300 font-medium">Expiring Soon</p>
+</div>
+</div>
+<div class="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 rounded-2xl p-6 flex items-center gap-4 hover:shadow-lg transition-all-300 cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-primary flex items-center justify-center">
+<span class="material-icons-round text-2xl">check_circle</span>
+</div>
+<div>
+<h3 class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">1</h3>
+<p class="text-sm text-emerald-500 dark:text-emerald-300 font-medium">Fresh Items</p>
+</div>
+</div>
+<div class="bg-violet-50 dark:bg-violet-900/10 border border-violet-100 dark:border-violet-800/30 rounded-2xl p-6 flex items-center gap-4 hover:shadow-lg transition-all-300 cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-900/50 text-violet-500 flex items-center justify-center">
+<span class="material-icons-round text-2xl">trending_up</span>
+</div>
+<div>
+<h3 class="text-3xl font-bold text-violet-600 dark:text-violet-400">3</h3>
+<p class="text-sm text-violet-500 dark:text-violet-300 font-medium">Total Items</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-4 mb-8">
+<div class="relative flex-grow">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-icons-round">search</span>
+<input class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-card-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 text-gray-700 dark:text-gray-200 shadow-sm" placeholder="Search inventory..." type="text"/>
+</div>
+<button class="px-6 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-card-dark text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium flex items-center justify-center gap-2 shadow-sm transition-all whitespace-nowrap">
+<span class="material-icons-round">filter_list</span>
+                Filters
+                <span class="material-icons-round text-sm">expand_more</span>
+</button>
+<div class="flex gap-2">
+<button class="flex-grow md:flex-none bg-primary hover:bg-primary-dark text-white px-6 py-3.5 rounded-xl shadow-lg shadow-primary/30 font-semibold flex items-center justify-center gap-2 transition-all active:scale-95">
+<span class="material-icons-round">add</span>
+                    Add Item
+                </button>
+<button aria-label="Scan Barcode" class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-3.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all flex items-center justify-center">
+<span class="material-icons-round">qr_code_scanner</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 shadow-soft border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all duration-300 group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 bg-green-50 dark:bg-gray-700 rounded-xl flex items-center justify-center text-3xl shrink-0">
+                            🥬
+                        </div>
+<div>
+<h3 class="font-bold text-lg text-gray-900 dark:text-white group-hover:text-primary transition-colors">Tomato Puree</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">2 pkg • Pantry</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 flex items-center gap-1">
+<span class="material-icons-round text-[14px]">timer</span> Expiring
+                    </span>
+</div>
+<div class="mb-4">
+<div class="flex justify-between text-sm mb-2">
+<span class="text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-icons-round text-sm">calendar_today</span> Jan 3
+                        </span>
+<span class="font-bold text-orange-500">1 day left</span>
+</div>
+<div class="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-orange-500 w-[95%] rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-50 dark:border-gray-700/50">
+<button class="py-2 px-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">inventory_2</span> Opened
+                    </button>
+<button class="py-2 px-3 rounded-lg bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-200 text-xs font-bold hover:bg-orange-200 dark:hover:bg-orange-900/60 flex items-center justify-center gap-1 transition-colors shadow-sm">
+<span class="material-icons-round text-sm">restaurant_menu</span> Recipes
+                    </button>
+<button class="py-2 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">auto_awesome</span> Used
+                    </button>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 shadow-soft border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all duration-300 group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 bg-blue-50 dark:bg-gray-700 rounded-xl flex items-center justify-center text-3xl shrink-0">
+                            🥛
+                        </div>
+<div>
+<h3 class="font-bold text-lg text-gray-900 dark:text-white group-hover:text-primary transition-colors">Whole Milk</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">1 L • Fridge</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300 flex items-center gap-1">
+<span class="material-icons-round text-[14px]">schedule</span> Use Soon
+                    </span>
+</div>
+<div class="mb-4">
+<div class="flex justify-between text-sm mb-2">
+<span class="text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-icons-round text-sm">calendar_today</span> Jan 6
+                        </span>
+<span class="font-bold text-amber-500">4 days left</span>
+</div>
+<div class="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-amber-400 w-[60%] rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-50 dark:border-gray-700/50">
+<button class="py-2 px-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">inventory_2</span> Opened
+                    </button>
+<button class="py-2 px-3 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-200 text-xs font-bold hover:bg-amber-200 dark:hover:bg-amber-900/60 flex items-center justify-center gap-1 transition-colors shadow-sm">
+<span class="material-icons-round text-sm">restaurant_menu</span> Recipes
+                    </button>
+<button class="py-2 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">auto_awesome</span> Used
+                    </button>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-2xl p-5 shadow-soft border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all duration-300 group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 bg-yellow-50 dark:bg-gray-700 rounded-xl flex items-center justify-center text-3xl shrink-0">
+                            🌾
+                        </div>
+<div>
+<h3 class="font-bold text-lg text-gray-900 dark:text-white group-hover:text-primary transition-colors">Wheat Flour</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">5 kg • Pantry</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300 flex items-center gap-1">
+<span class="material-icons-round text-[14px]">check_circle</span> Fresh
+                    </span>
+</div>
+<div class="mb-4">
+<div class="flex justify-between text-sm mb-2">
+<span class="text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-icons-round text-sm">calendar_today</span> Mar 2
+                        </span>
+<span class="font-bold text-emerald-600 dark:text-emerald-400">59 days left</span>
+</div>
+<div class="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-50 dark:border-gray-700/50">
+<button class="py-2 px-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">inventory_2</span> Opened
+                    </button>
+<button class="py-2 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">auto_awesome</span> Used
+                    </button>
+</div>
+</div>
+<div class="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary dark:hover:border-primary group transition-all h-[230px]">
+<div class="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 group-hover:bg-primary/10 transition-colors">
+<span class="material-icons-round text-gray-400 dark:text-gray-500 group-hover:text-primary">add</span>
+</div>
+<h3 class="font-medium text-gray-900 dark:text-white">Scan New Item</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[150px]">Add more groceries to track their freshness.</p>
+</div>
+</div>
+</main>
+
+</body></html>

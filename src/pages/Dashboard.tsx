@@ -3,12 +3,20 @@ import { useInventory } from '../context/InventoryContext';
 import { InventoryCard } from '../components/InventoryCard';
 import { AddItemForm } from '../components/AddItemForm';
 import { ActionModal } from '../components/ActionModal';
-import { Plus, Search, AlertTriangle, CheckCircle, Sparkles, TrendingUp, X, Filter, ChevronDown } from 'lucide-react';
+import { Plus, Search, AlertTriangle, CheckCircle, Sparkles, TrendingUp, X, Filter, ChevronDown, Trophy, QrCode } from 'lucide-react';
 import type { InventoryItem } from '../types';
 
 type StatusFilter = 'all' | 'expired' | 'expiring' | 'fresh';
 type CategoryFilter = 'all' | 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Other';
 type SortOption = 'expiry' | 'name' | 'added';
+
+// Get greeting based on time of day
+const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+};
 
 export const Dashboard: React.FC = () => {
     const { items } = useInventory();
@@ -39,7 +47,11 @@ export const Dashboard: React.FC = () => {
             else if (daysLeft <= 7) nearExpiry++;
             else fresh++;
         });
-        return { expired, nearExpiry, fresh, total: items.length };
+        // Calculate waste score (higher is better - penalize expired items)
+        const wasteScore = items.length > 0
+            ? Math.max(0, Math.round(100 - (expired * 20) - (nearExpiry * 5)))
+            : 100;
+        return { expired, nearExpiry, fresh, total: items.length, wasteScore };
     }, [items]);
 
     // Filter and sort items
@@ -81,65 +93,96 @@ export const Dashboard: React.FC = () => {
     const activeFiltersCount = [statusFilter !== 'all', categoryFilter !== 'all'].filter(Boolean).length;
 
     return (
-        <div className="p-4 md:p-6 max-w-6xl mx-auto pb-24">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto pb-24">
+            {/* Greeting Header */}
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+                        {getGreeting()}! 👋
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                        {stats.total > 0
+                            ? `You're tracking ${stats.total} item${stats.total !== 1 ? 's' : ''} in your inventory.`
+                            : 'Start by adding items to your inventory.'
+                        }
+                    </p>
+                </div>
+                {stats.total > 0 && (
+                    <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 px-4 py-2 rounded-full border border-emerald-200 dark:border-emerald-800">
+                        <Trophy size={18} className="text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                            Waste Score: {stats.wasteScore}/100
+                        </span>
+                    </div>
+                )}
+            </header>
+
             {/* Hero Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <button
                     onClick={() => { setStatusFilter('expired'); setShowFilters(true); }}
-                    className={`stat-card bg-gradient-to-br from-rose-500/10 to-rose-600/5 border transition-all hover:scale-[1.02] cursor-pointer ${statusFilter === 'expired' ? 'border-rose-400 ring-2 ring-rose-200' : 'border-rose-200'}`}
+                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
+                        bg-red-50 dark:bg-red-900/10 
+                        ${statusFilter === 'expired' ? 'border-red-400 ring-2 ring-red-200 dark:ring-red-800' : 'border-red-100 dark:border-red-800/30'}`}
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-rose-500/20 rounded-xl">
-                            <AlertTriangle size={20} className="text-rose-600" />
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <AlertTriangle size={24} />
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-rose-600">{stats.expired}</p>
-                            <p className="text-xs text-rose-500/80 font-medium">Expired</p>
+                        <div className="text-left">
+                            <h3 className="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">{stats.expired}</h3>
+                            <p className="text-sm text-red-400 dark:text-red-300 font-medium">Expired</p>
                         </div>
                     </div>
                 </button>
 
                 <button
                     onClick={() => { setStatusFilter('expiring'); setShowFilters(true); }}
-                    className={`stat-card bg-gradient-to-br from-amber-500/10 to-amber-600/5 border transition-all hover:scale-[1.02] cursor-pointer ${statusFilter === 'expiring' ? 'border-amber-400 ring-2 ring-amber-200' : 'border-amber-200'}`}
+                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
+                        bg-amber-50 dark:bg-amber-900/10 
+                        ${statusFilter === 'expiring' ? 'border-amber-400 ring-2 ring-amber-200 dark:ring-amber-800' : 'border-amber-100 dark:border-amber-800/30'}`}
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-amber-500/20 rounded-xl">
-                            <Sparkles size={20} className="text-amber-600" />
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Sparkles size={24} />
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-amber-600">{stats.nearExpiry}</p>
-                            <p className="text-xs text-amber-500/80 font-medium">Expiring Soon</p>
+                        <div className="text-left">
+                            <h3 className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-amber-400">{stats.nearExpiry}</h3>
+                            <p className="text-sm text-amber-500 dark:text-amber-300 font-medium">Expiring Soon</p>
                         </div>
                     </div>
                 </button>
 
                 <button
                     onClick={() => { setStatusFilter('fresh'); setShowFilters(true); }}
-                    className={`stat-card bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border transition-all hover:scale-[1.02] cursor-pointer ${statusFilter === 'fresh' ? 'border-emerald-400 ring-2 ring-emerald-200' : 'border-emerald-200'}`}
+                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
+                        bg-emerald-50 dark:bg-emerald-900/10 
+                        ${statusFilter === 'fresh' ? 'border-emerald-400 ring-2 ring-emerald-200 dark:ring-emerald-800' : 'border-emerald-100 dark:border-emerald-800/30'}`}
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-emerald-500/20 rounded-xl">
-                            <CheckCircle size={20} className="text-emerald-600" />
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <CheckCircle size={24} />
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-emerald-600">{stats.fresh}</p>
-                            <p className="text-xs text-emerald-500/80 font-medium">Fresh Items</p>
+                        <div className="text-left">
+                            <h3 className="text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.fresh}</h3>
+                            <p className="text-sm text-emerald-500 dark:text-emerald-300 font-medium">Fresh Items</p>
                         </div>
                     </div>
                 </button>
 
                 <button
                     onClick={() => { setStatusFilter('all'); setCategoryFilter('all'); }}
-                    className={`stat-card bg-gradient-to-br from-violet-500/10 to-violet-600/5 border transition-all hover:scale-[1.02] cursor-pointer ${statusFilter === 'all' && categoryFilter === 'all' ? 'border-violet-400 ring-2 ring-violet-200' : 'border-violet-200'}`}
+                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
+                        bg-violet-50 dark:bg-violet-900/10 
+                        ${statusFilter === 'all' && categoryFilter === 'all' ? 'border-violet-400 ring-2 ring-violet-200 dark:ring-violet-800' : 'border-violet-100 dark:border-violet-800/30'}`}
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-violet-500/20 rounded-xl">
-                            <TrendingUp size={20} className="text-violet-600" />
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-900/50 text-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <TrendingUp size={24} />
                         </div>
-                        <div>
-                            <p className="text-2xl font-bold text-violet-600">{stats.total}</p>
-                            <p className="text-xs text-violet-500/80 font-medium">Total Items</p>
+                        <div className="text-left">
+                            <h3 className="text-2xl md:text-3xl font-bold text-violet-600 dark:text-violet-400">{stats.total}</h3>
+                            <p className="text-sm text-violet-500 dark:text-violet-300 font-medium">Total Items</p>
                         </div>
                     </div>
                 </button>
@@ -155,12 +198,12 @@ export const Dashboard: React.FC = () => {
                             placeholder="Search inventory..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 shadow-sm"
+                            className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 shadow-sm transition-all"
                         />
                     </div>
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all ${showFilters || activeFiltersCount > 0
+                        className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${showFilters || activeFiltersCount > 0
                             ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
                             : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300 dark:hover:border-emerald-600'
                             }`}
@@ -174,13 +217,22 @@ export const Dashboard: React.FC = () => {
                         )}
                         <ChevronDown size={16} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
                     </button>
-                    <button
-                        onClick={() => setShowAddModal(true)}
-                        className="hidden md:flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all active:scale-95"
-                    >
-                        <Plus size={20} />
-                        Add Item
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            className="hidden md:flex bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg shadow-emerald-500/30 font-semibold items-center gap-2 transition-all active:scale-95"
+                        >
+                            <Plus size={20} />
+                            Add Item
+                        </button>
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            aria-label="Scan Barcode"
+                            className="hidden md:flex bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all items-center justify-center"
+                        >
+                            <QrCode size={20} />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Filter Panel */}
@@ -199,7 +251,7 @@ export const Dashboard: React.FC = () => {
                                                 ? status === 'expired' ? 'bg-rose-500 text-white'
                                                     : status === 'expiring' ? 'bg-amber-500 text-white'
                                                         : status === 'fresh' ? 'bg-emerald-500 text-white'
-                                                            : 'bg-gray-800 text-white'
+                                                            : 'bg-gray-800 dark:bg-white text-white dark:text-gray-800'
                                                 : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                                 }`}
                                         >
@@ -247,7 +299,7 @@ export const Dashboard: React.FC = () => {
                         {activeFiltersCount > 0 && (
                             <button
                                 onClick={() => { setStatusFilter('all'); setCategoryFilter('all'); }}
-                                className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                                className="mt-3 text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium"
                             >
                                 ✕ Clear all filters
                             </button>
@@ -258,22 +310,22 @@ export const Dashboard: React.FC = () => {
                 {/* Active Filters Summary */}
                 {!showFilters && activeFiltersCount > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs text-gray-500">Active filters:</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Active filters:</span>
                         {statusFilter !== 'all' && (
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${statusFilter === 'expired' ? 'bg-rose-100 text-rose-700'
-                                : statusFilter === 'expiring' ? 'bg-amber-100 text-amber-700'
-                                    : 'bg-emerald-100 text-emerald-700'
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${statusFilter === 'expired' ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300'
+                                : statusFilter === 'expiring' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                                    : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
                                 }`}>
                                 {statusFilter === 'expiring' ? 'Expiring Soon' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
-                                <button onClick={() => setStatusFilter('all')} className="hover:bg-black/10 rounded-full p-0.5">
+                                <button onClick={() => setStatusFilter('all')} className="hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5">
                                     <X size={12} />
                                 </button>
                             </span>
                         )}
                         {categoryFilter !== 'all' && (
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
+                            <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium flex items-center gap-1">
                                 {categoryFilter}
-                                <button onClick={() => setCategoryFilter('all')} className="hover:bg-black/10 rounded-full p-0.5">
+                                <button onClick={() => setCategoryFilter('all')} className="hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5">
                                     <X size={12} />
                                 </button>
                             </span>
@@ -320,7 +372,7 @@ export const Dashboard: React.FC = () => {
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredItems.map(item => (
                         <InventoryCard
                             key={item.id}
@@ -328,6 +380,18 @@ export const Dashboard: React.FC = () => {
                             onPreserve={() => setSelectedItem(item)}
                         />
                     ))}
+
+                    {/* Scan New Item Card */}
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 group transition-all min-h-[200px]"
+                    >
+                        <div className="w-14 h-14 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
+                            <Plus size={24} className="text-gray-400 dark:text-gray-500 group-hover:text-emerald-500 transition-colors" />
+                        </div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Scan New Item</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[150px]">Add more groceries to track their freshness.</p>
+                    </button>
                 </div>
             )}
 

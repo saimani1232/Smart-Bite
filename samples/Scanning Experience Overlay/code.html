@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Bite - Scanning Overlay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10B981", // Emerald 500 - Matches the 'Smart Bite' green
+                        "primary-dark": "#059669",
+                        "secondary": "#F59E0B", // Amber 500 - For warnings/expiring
+                        "accent": "#8B5CF6", // Violet 500 - For total items/analytics
+                        "background-light": "#F3F4F6", // Gray 100
+                        "background-dark": "#111827", // Gray 900
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1F2937",
+                        "overlay-dark": "rgba(0, 0, 0, 0.65)",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem", // 12px
+                        'xl': "1rem",      // 16px
+                        '2xl': "1.5rem",   // 24px
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 20px rgba(16, 185, 129, 0.4)',
+                    },
+                    animation: {
+                        'scan': 'scan 2.5s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        scan: {
+                            '0%, 100%': { transform: 'translateY(0)', opacity: '0.4' },
+                            '50%': { transform: 'translateY(100%)', opacity: '1' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+<style>.scan-line {
+    background: linear-gradient(to bottom, rgba(16, 185, 129, 0), rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0));
+    height: 4px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.6)
+    }
+.camera-overlay-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAfu4Q6OINoMrPqFwT3DVsq60W2aARBzC95v_ItU_ao_4tXao5kfLB8guIpIjSJuQPpAEnC-y6Zd88VbNqiQjYRY_mBXqjiCFqXrkm5UhLBgQ9zAfOTn0GBseSOCnd3QmNz67hVatfnKXq8lFUhqDunRXL-OchRmUrE4Om7nJZOO95JOShNgFoHb5MPWSR4v6AANn6dPe_PgNV4_sfHJboneu_C-WpZsXskVqWfHvobtf2XTMSgX88baxM8wwmBfvFyH8wMbUDUVsXn);
+    background-size: cover;
+    background-position: center
+    }.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px)
+    }
+.glass-panel-dark {
+    background: rgba(31, 41, 55, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px)
+    }</style>
+</head>
+<body class="font-body bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 antialiased h-screen overflow-hidden flex flex-col">
+<header class="absolute top-0 left-0 right-0 z-50 p-4 md:px-8 flex justify-between items-center pointer-events-none">
+<div class="pointer-events-auto flex items-center gap-3 glass-panel dark:glass-panel-dark dark:bg-opacity-60 rounded-2xl px-4 py-2 shadow-soft">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-glow">
+<span class="material-icons-round text-lg">eco</span>
+</div>
+<div>
+<h1 class="font-bold text-sm text-gray-900 dark:text-white leading-tight">Smart Bite</h1>
+<p class="text-[10px] text-gray-500 dark:text-gray-300">Scanner Mode</p>
+</div>
+</div>
+<button class="pointer-events-auto w-10 h-10 rounded-full glass-panel dark:glass-panel-dark flex items-center justify-center text-gray-600 dark:text-gray-200 hover:text-primary transition-colors shadow-soft">
+<span class="material-icons-round">close</span>
+</button>
+</header>
+<main class="relative flex-1 w-full h-full flex flex-col items-center justify-center bg-black">
+<div class="absolute inset-0 camera-overlay-bg opacity-70"></div>
+<div class="absolute inset-0 bg-overlay-dark"></div>
+<div class="relative z-10 w-full max-w-md aspect-[3/4] md:aspect-square flex flex-col items-center justify-center p-6">
+<div class="relative w-full h-full max-h-[500px] border-2 border-white/20 rounded-[2rem] overflow-hidden shadow-2xl">
+<div class="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-primary rounded-tl-[1.8rem] shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div>
+<div class="absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 border-primary rounded-tr-[1.8rem] shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div>
+<div class="absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 border-primary rounded-bl-[1.8rem] shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div>
+<div class="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-primary rounded-br-[1.8rem] shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div>
+<div class="absolute top-0 w-full h-full overflow-hidden">
+<div class="scan-line animate-scan"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-64 h-64 border border-dashed border-white/30 rounded-xl flex items-center justify-center">
+<span class="text-white/50 text-xs font-medium uppercase tracking-widest">Align Product</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-12 md:bottom-16 transform transition-all duration-300 hover:scale-105 cursor-pointer">
+<div class="glass-panel dark:glass-panel-dark dark:bg-surface-dark/90 px-6 py-3 rounded-full shadow-lg border border-white/20 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div> 
+<span class="text-sm font-semibold text-gray-800 dark:text-white">Detecting Expiry Date...</span>
+</div>
+</div>
+<div class="absolute -bottom-16 opacity-80 hover:opacity-100 transition-opacity">
+<button class="text-white text-sm font-medium flex items-center gap-2 hover:underline decoration-primary underline-offset-4">
+<span class="material-icons-round text-lg">edit</span>
+                    Enter manually
+                </button>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex justify-between items-end z-20 pointer-events-none">
+<button class="pointer-events-auto w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">
+<span class="material-icons-round text-xl">flash_off</span>
+</button>
+<button class="pointer-events-auto relative w-20 h-20 rounded-full border-4 border-white/30 flex items-center justify-center group hover:scale-105 transition-transform duration-200">
+<div class="w-16 h-16 bg-white rounded-full group-hover:bg-primary transition-colors duration-300"></div>
+</button>
+<button class="pointer-events-auto w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors overflow-hidden">
+<img alt="Latest gallery item" class="w-full h-full object-cover opacity-80 hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaiMDIniGzr9QZ15kmWVg2YLiZz9IwxQPgk9p8Edxbu0XQ6dUS8xiseDwD1maCOQo35eQyKRTmIzQcEgBkn4b4MCnKuoUGwccYwNRL_4gZmoKP232UOX2s44wL1KHvS-8lOdGYO3R1EyzBkzOhM0j_R5V8VmkFVNwZqPtPf3m9JfErhZPO4zELiKzdN9jepjV23nDwOcQkMJYARGhcspMXaP9u0teX9cpdzNTCM2hjsFUkSDZ-LqhK49-jM9reXnJ3mBtmZf9kElh6"/>
+</button>
+</div>
+</main>
+<aside class="hidden lg:flex absolute right-8 top-1/2 -translate-y-1/2 w-80 h-[80vh] flex-col gap-4 z-20 pointer-events-none">
+<div class="glass-panel dark:glass-panel-dark dark:bg-surface-dark/90 p-4 rounded-xl shadow-lg border border-white/20 pointer-events-auto backdrop-blur-xl">
+<h3 class="text-sm font-bold text-gray-800 dark:text-white flex items-center gap-2">
+<span class="material-icons-round text-primary">history</span>
+                Recent Scans
+            </h3>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 pointer-events-auto space-y-3">
+<div class="glass-panel dark:glass-panel-dark dark:bg-surface-dark/80 p-3 rounded-xl shadow-sm border border-white/10 flex items-center gap-3 hover:translate-x-1 transition-transform cursor-pointer group">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
+<img alt="Tomato Puree" class="w-full h-full object-contain rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdC-aNWKW1y4QyKIpRah9AeFRLUZC7m3ViiL4ebUxCiXWhaJ4yHBdTiH1ndZsntOV62J0ifodp6dFuZHEwzQhHTECt2qk2mblI21U3I9bDyBrM31tLSP5W1FPGPukSxWC4QJvoUV19CeTDt08l7gEEWb92Z7dc65EZgtUICe3Q0bSzkiiS1xqc-Lo8uD1wuiKHQ-aMkylfb34EHt5gTBnOfDSWkNVPV4FfFHn0RslSw1s3QNIFT9aPsIxH67XtvBozs8OIsrxhuWna"/>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">Tomato Puree</h4>
+<p class="text-xs text-secondary font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                        Exp: 3 days
+                    </p>
+</div>
+<button class="text-gray-400 hover:text-primary">
+<span class="material-icons-round text-lg">edit</span>
+</button>
+</div>
+<div class="glass-panel dark:glass-panel-dark dark:bg-surface-dark/80 p-3 rounded-xl shadow-sm border border-white/10 flex items-center gap-3 hover:translate-x-1 transition-transform cursor-pointer group">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
+<img alt="Whole Milk" class="w-full h-full object-contain rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiGa06NcFuq8OAIfBH-lHvs47LFlgEhHHIlz7OyGicuDKh4sMjdiEujrfkPTlynEN4dnP0CAvJRROYmy_UVoqDST5wxtpF7Ov9IFOQUxmJKbN8PbVEZ9ivQkAIaalwJVroxrdQVmZg4D-MFaorTrHK6wERRaxbMpwROfsgrfWCp2FgwAfKU8tIulIo0Muyn_g2I-kJ_bQvHEwk9yq-rf98lgRTN6aJaummRrZ-xKuSM9iv7QZBAFOCYodTfxdqv1rOZiwC9n0ZPZI5"/>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">Whole Milk</h4>
+<p class="text-xs text-primary font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        Fresh
+                    </p>
+</div>
+<button class="text-gray-400 hover:text-primary">
+<span class="material-icons-round text-lg">edit</span>
+</button>
+</div>
+<div class="glass-panel dark:glass-panel-dark dark:bg-surface-dark/80 p-3 rounded-xl shadow-sm border border-white/10 flex items-center gap-3 hover:translate-x-1 transition-transform cursor-pointer group">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
+<img alt="Bread" class="w-full h-full object-contain rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg7Iu88Hg87bv9dE_FqBd2j1QclkUkHqp_zIKcI6z7jWReOyKoHOlRRL_IZcEfFr9ZBN5jnI395qys_MjiapJ3TTV17rzVdr3M55t3q3fa5SYQUu2N8oF9s_51lkGHb1Hum9XHizSndkKy7Oq11E7QmydA_pOeYesXKn3qRfBaqStiEcNcosbYVms-Z7egUI42UOw84njh7tTsD-N4kq6kVeX8pzbrtokz3xyMJw73Y5Hm40Z0VoffUKErFjYD-AIyRukbTQtOJwwK"/>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">Sourdough</h4>
+<p class="text-xs text-red-500 font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                        Expiring Today
+                    </p>
+</div>
+<button class="text-gray-400 hover:text-primary">
+<span class="material-icons-round text-lg">edit</span>
+</button>
+</div>
+</div>
+<button class="pointer-events-auto w-full py-3 bg-primary hover:bg-primary-dark text-white rounded-xl shadow-lg shadow-primary/30 font-semibold transition-all transform active:scale-95 flex items-center justify-center gap-2">
+<span class="material-icons-round text-sm">inventory_2</span>
+            View Inventory
+        </button>
+</aside>
+
+</body></html>
