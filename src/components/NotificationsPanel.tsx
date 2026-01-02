@@ -62,18 +62,18 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl animate-in slide-in-from-right duration-300 overflow-hidden">
                 {/* Header with gradient and glow effect */}
                 <div className="relative overflow-hidden">
-                    {/* Background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500" />
+                    {/* Background gradient - emerald/teal to match branding */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500" />
 
                     {/* Animated glow effect */}
                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-fuchsia-300/30 rounded-full blur-2xl" />
+                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-300/30 rounded-full blur-2xl" />
 
                     {/* Content */}
                     <div className="relative p-6 pb-8">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg shadow-purple-500/20">
+                                <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg shadow-emerald-500/20">
                                     <Bell size={24} className="text-white" />
                                 </div>
                                 <div>
