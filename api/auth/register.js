@@ -1,9 +1,9 @@
 // User Registration API
-const bcrypt = require('bcryptjs');
-const { connectToDatabase } = require('../lib/mongodb');
-const { generateToken } = require('../lib/auth');
+import bcrypt from 'bcryptjs';
+import { connectToDatabase } from '../lib/mongodb.js';
+import { generateToken } from '../lib/auth.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -83,4 +83,4 @@ module.exports = async function handler(req, res) {
             details: error.message 
         });
     }
-};
+}

@@ -1,11 +1,11 @@
 // Inventory Items API - GET all, POST new
-const { ObjectId } = require('mongodb');
-const { connectToDatabase } = require('../lib/mongodb');
-const { authenticateRequest } = require('../lib/auth');
+import { ObjectId } from 'mongodb';
+import { connectToDatabase } from '../lib/mongodb.js';
+import { authenticateRequest } from '../lib/auth.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     // CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
@@ -20,10 +20,10 @@ module.exports = async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { db } = await connectToDatabase();
-    const itemsCollection = db.collection('items');
-
     try {
+        const { db } = await connectToDatabase();
+        const itemsCollection = db.collection('items');
+
         // GET - Fetch all items for user
         if (req.method === 'GET') {
             const items = await itemsCollection
@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
 
         // POST - Create new item
         if (req.method === 'POST') {
-            const { name, quantity, unit, category, expiryDate, isOpened, reminderDays, reminderEmail } = req.body;
+            const { name, quantity, unit, category, expiryDate, isOpened, reminderDays, reminderEmail } = req.body || {};
 
             if (!name || !quantity || !unit || !category || !expiryDate) {
                 return res.status(400).json({ error: 'Missing required fields' });
@@ -83,6 +83,6 @@ module.exports = async function handler(req, res) {
 
     } catch (error) {
         console.error('Items API error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', details: error.message });
     }
-};
+}

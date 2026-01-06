@@ -1,11 +1,11 @@
 // Single Item API - PUT update, DELETE
-const { ObjectId } = require('mongodb');
-const { connectToDatabase } = require('../lib/mongodb');
-const { authenticateRequest } = require('../lib/auth');
+import { ObjectId } from 'mongodb';
+import { connectToDatabase } from '../lib/mongodb.js';
+import { authenticateRequest } from '../lib/auth.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     // CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
@@ -26,10 +26,10 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid item ID' });
     }
 
-    const { db } = await connectToDatabase();
-    const itemsCollection = db.collection('items');
-
     try {
+        const { db } = await connectToDatabase();
+        const itemsCollection = db.collection('items');
+
         // Verify item belongs to user
         const existingItem = await itemsCollection.findOne({
             _id: new ObjectId(id),
@@ -42,7 +42,7 @@ module.exports = async function handler(req, res) {
 
         // PUT - Update item
         if (req.method === 'PUT') {
-            const updates = req.body;
+            const updates = req.body || {};
             delete updates.id; // Don't allow updating id
             delete updates.userId; // Don't allow changing owner
 
@@ -91,6 +91,6 @@ module.exports = async function handler(req, res) {
 
     } catch (error) {
         console.error('Item API error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', details: error.message });
     }
-};
+}

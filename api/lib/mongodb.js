@@ -1,5 +1,5 @@
 // MongoDB connection utility for Vercel Serverless Functions
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
 const options = {};
@@ -7,7 +7,7 @@ const options = {};
 let cachedClient = null;
 let cachedDb = null;
 
-async function connectToDatabase() {
+export async function connectToDatabase() {
     if (cachedClient && cachedDb) {
         return { client: cachedClient, db: cachedDb };
     }
@@ -25,5 +25,3 @@ async function connectToDatabase() {
 
     return { client, db };
 }
-
-module.exports = { connectToDatabase };

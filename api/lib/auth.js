@@ -1,9 +1,9 @@
 // Auth utility functions
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'smartbite-secret-key-change-in-production';
 
-function generateToken(userId, username) {
+export function generateToken(userId, username) {
     return jwt.sign(
         { userId, username },
         JWT_SECRET,
@@ -11,7 +11,7 @@ function generateToken(userId, username) {
     );
 }
 
-function verifyToken(token) {
+export function verifyToken(token) {
     try {
         return jwt.verify(token, JWT_SECRET);
     } catch (error) {
@@ -19,7 +19,7 @@ function verifyToken(token) {
     }
 }
 
-function getTokenFromHeader(req) {
+export function getTokenFromHeader(req) {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
         return authHeader.substring(7);
@@ -27,12 +27,10 @@ function getTokenFromHeader(req) {
     return null;
 }
 
-async function authenticateRequest(req) {
+export async function authenticateRequest(req) {
     const token = getTokenFromHeader(req);
     if (!token) {
         return null;
     }
     return verifyToken(token);
 }
-
-module.exports = { generateToken, verifyToken, getTokenFromHeader, authenticateRequest };
