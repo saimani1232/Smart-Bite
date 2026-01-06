@@ -5,7 +5,7 @@ const { generateToken } = require('../lib/auth');
 
 module.exports = async function handler(req, res) {
     // CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
@@ -19,14 +19,25 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const { username, password } = req.body;
+        const { username, password } = req.body || {};
 
         // Validation
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required' });
         }
 
-        const { db } = await connectToDatabase();
+        let db;
+        try {
+            const connection = await connectToDatabase();
+            db = connection.db;
+        } catch (dbError) {
+            console.error('Database connection error:', dbError);
+            return res.status(500).json({ 
+                error: 'Database connection failed',
+                details: dbError.message 
+            });
+        }
+
         const usersCollection = db.collection('users');
 
         // Find user
@@ -55,6 +66,9 @@ module.exports = async function handler(req, res) {
 
     } catch (error) {
         console.error('Login error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ 
+            error: 'Internal server error',
+            details: error.message 
+        });
     }
 };
