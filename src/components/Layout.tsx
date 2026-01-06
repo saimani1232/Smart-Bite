@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Leaf, Bell, Settings, Home, BarChart2, Book } from 'lucide-react';
+import { Leaf, Bell, Settings, Home, BarChart2, Book, LogOut, User } from 'lucide-react';
 import { SettingsPanel } from './SettingsPanel';
 import { NotificationsPanel, getNotificationCount } from './NotificationsPanel';
 import { useInventory } from '../context/InventoryContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import type { PageType } from '../App';
 
 interface LayoutProps {
@@ -18,6 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
     const [showNotifications, setShowNotifications] = useState(false);
     const { items } = useInventory();
     const { isDarkMode } = useTheme();
+    const { user, logout } = useAuth();
 
     const notificationCount = getNotificationCount(items);
 
@@ -68,8 +70,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                                     key={item.id}
                                     onClick={() => onNavigate(item.id)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all ${isActive
-                                            ? 'bg-white dark:bg-gray-700 text-emerald-600 dark:text-emerald-400 font-medium shadow-sm'
-                                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                                        ? 'bg-white dark:bg-gray-700 text-emerald-600 dark:text-emerald-400 font-medium shadow-sm'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                                         }`}
                                 >
                                     <Icon size={16} />
@@ -101,6 +103,25 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                         >
                             <Settings size={20} className="text-gray-600 dark:text-gray-300" />
                         </button>
+
+                        {/* User Profile & Logout */}
+                        {user && (
+                            <div className="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200 dark:border-gray-700">
+                                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full">
+                                    <User size={14} className="text-emerald-600 dark:text-emerald-400" />
+                                    <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+                                        {user.username}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={logout}
+                                    className="p-2 hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded-full transition-colors group"
+                                    title="Logout"
+                                >
+                                    <LogOut size={18} className="text-gray-500 group-hover:text-rose-600 dark:text-gray-400 dark:group-hover:text-rose-400" />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </header>
@@ -116,8 +137,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                                 key={item.id}
                                 onClick={() => onNavigate(item.id)}
                                 className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all ${isActive
-                                        ? 'text-emerald-600 dark:text-emerald-400'
-                                        : 'text-gray-400 dark:text-gray-500'
+                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                    : 'text-gray-400 dark:text-gray-500'
                                     }`}
                             >
                                 <Icon size={20} />

@@ -3,72 +3,62 @@ import type { InventoryItem } from '../types';
 import { calculateExpiryStatus, getOpenedExpiryDate } from '../utils/logic';
 import { findBestRecipes } from '../services/recipeService';
 import { sendExpiryReminder, isEmailConfigured } from '../services/emailService';
-
-// Fallback for UUID since we didn't install the package
-const generateId = () => Math.random().toString(36).substr(2, 9);
+import { itemsAPI } from '../services/api';
+import { useAuth } from './AuthContext';
 
 type InventoryContextType = {
     items: InventoryItem[];
-    addItem: (item: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => void;
-    updateItem: (id: string, updates: Partial<InventoryItem>) => void;
-    removeItem: (id: string) => void;
-    toggleOpened: (id: string) => void;
+    isLoading: boolean;
+    addItem: (item: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => Promise<void>;
+    updateItem: (id: string, updates: Partial<InventoryItem>) => Promise<void>;
+    removeItem: (id: string) => Promise<void>;
+    toggleOpened: (id: string) => Promise<void>;
     refreshStatus: () => void;
     checkReminders: () => Promise<void>;
     sendTestReminder: (itemId: string) => Promise<boolean>;
+    refetchItems: () => Promise<void>;
 };
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
-// Mock Data - updated with reminder fields
-const INITIAL_ITEMS: InventoryItem[] = [
-    {
-        id: '1',
-        name: 'Whole Milk',
-        expiryDate: new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0], // 5 days from now
-        quantity: 1,
-        unit: 'l',
-        category: 'Dairy',
-        isOpened: false,
-        status: 'Good',
-        reminderDays: 3,
-    },
-    {
-        id: '2',
-        name: 'Wheat Flour',
-        expiryDate: new Date(Date.now() + 60 * 86400000).toISOString().split('T')[0], // 60 days
-        quantity: 5,
-        unit: 'kg',
-        category: 'Grain',
-        isOpened: false,
-        status: 'Good',
-        reminderDays: 7,
-    },
-    {
-        id: '3',
-        name: 'Tomato Puree',
-        expiryDate: new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0], // 2 days
-        quantity: 2,
-        unit: 'pkg',
-        category: 'Vegetable',
-        isOpened: false,
-        status: 'Expiring Soon',
-        reminderDays: 3,
-    }
-];
-
 export const InventoryProvider = ({ children }: { children: ReactNode }) => {
-    const [items, setItems] = useState<InventoryItem[]>(() => {
-        const saved = localStorage.getItem('smart-bite-inventory');
-        return saved ? JSON.parse(saved) : INITIAL_ITEMS;
-    });
+    const { isAuthenticated } = useAuth();
+    const [items, setItems] = useState<InventoryItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isInitialized, setIsInitialized] = useState(false);
 
-    useEffect(() => {
-        localStorage.setItem('smart-bite-inventory', JSON.stringify(items));
-    }, [items]);
+    // Fetch items from database
+    const refetchItems = useCallback(async () => {
+        if (!isAuthenticated) return;
 
-    // Recalculate status on mount or when items change
+        try {
+            setIsLoading(true);
+            const data = await itemsAPI.getAll();
+            // Add client-side status calculation
+            const itemsWithStatus = data.map((item: InventoryItem) => ({
+                ...item,
+                status: calculateExpiryStatus(item)
+            }));
+            setItems(itemsWithStatus);
+        } catch (error) {
+            console.error('Failed to fetch items:', error);
+        } finally {
+            setIsLoading(false);
+            setIsInitialized(true);
+        }
+    }, [isAuthenticated]);
+
+    // Fetch items on auth change
+    useEffect(() => {
+        if (isAuthenticated) {
+            refetchItems();
+        } else {
+            setItems([]);
+            setIsLoading(false);
+        }
+    }, [isAuthenticated, refetchItems]);
+
+    // Recalculate status
     const refreshStatus = useCallback(() => {
         setItems(prev => prev.map(item => ({
             ...item,
@@ -90,7 +80,6 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         today.setHours(0, 0, 0, 0);
 
         const itemsToRemind = items.filter(item => {
-            // Skip if no reminder set, no email, or already sent
             if (item.reminderDays === 0 || !item.reminderEmail || item.reminderSent) {
                 return false;
             }
@@ -99,154 +88,136 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             expiry.setHours(0, 0, 0, 0);
             const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-            console.log(`📦 ${item.name}: ${daysUntilExpiry} days until expiry, remind at ${item.reminderDays} days`);
-
-            // Remind if within reminder window
             return daysUntilExpiry <= item.reminderDays && daysUntilExpiry > 0;
         });
 
-        console.log('📬 Items needing reminder:', itemsToRemind.map(i => `${i.name} → ${i.reminderEmail}`));
-
         for (const item of itemsToRemind) {
-            console.log(`🍳 Fetching recipes for ${item.name}...`);
-
-            // Get all inventory item names for recipe matching
             const allItemNames = items.map(i => i.name);
-
-            // Find best recipes using the expiring item + other inventory
             const recipes = await findBestRecipes(item.name, allItemNames);
-            console.log(`✅ Found ${recipes.length} recipes for ${item.name}`);
-
-            // Send email reminder
-            console.log(`📧 Sending email to ${item.reminderEmail}...`);
             const success = await sendExpiryReminder(item, recipes);
 
             if (success) {
-                console.log(`✅ Email sent successfully to ${item.reminderEmail}`);
-                // Mark reminder as sent
-                setItems(prev => prev.map(i =>
-                    i.id === item.id ? { ...i, reminderSent: true } : i
-                ));
-            } else {
-                console.error(`❌ Failed to send email to ${item.reminderEmail}`);
+                // Update in database
+                try {
+                    await itemsAPI.update(item.id, { reminderSent: true });
+                    setItems(prev => prev.map(i =>
+                        i.id === item.id ? { ...i, reminderSent: true } : i
+                    ));
+                } catch (error) {
+                    console.error('Failed to update reminder status:', error);
+                }
             }
-        }
-
-        if (itemsToRemind.length === 0) {
-            console.log('✨ No items need reminders right now.');
         }
     }, [items]);
 
-    // Send a test reminder for a specific item (for debugging)
+    // Send a test reminder for a specific item
     const sendTestReminder = useCallback(async (itemId: string): Promise<boolean> => {
         const item = items.find(i => i.id === itemId);
-        if (!item) {
-            console.error('Item not found:', itemId);
+        if (!item || !item.reminderEmail) {
             return false;
         }
-
-        if (!item.reminderEmail) {
-            console.error('No email set for item:', item.name);
-            return false;
-        }
-
-        console.log(`🧪 Sending test reminder for ${item.name} to ${item.reminderEmail}...`);
 
         const allItemNames = items.map(i => i.name);
         const recipes = await findBestRecipes(item.name, allItemNames);
-
-        console.log(`Found ${recipes.length} recipes:`, recipes.map(r => r.name));
-
-        const success = await sendExpiryReminder(item, recipes);
-
-        if (success) {
-            console.log('✅ Test reminder sent successfully!');
-        } else {
-            console.error('❌ Test reminder failed');
-        }
-
-        return success;
+        return await sendExpiryReminder(item, recipes);
     }, [items]);
-
-    useEffect(() => {
-        refreshStatus();
-        setIsInitialized(true);
-    }, [refreshStatus]);
 
     // Run checkReminders after initialization
     useEffect(() => {
-        if (isInitialized) {
-            // Small delay to ensure items are loaded
+        if (isInitialized && items.length > 0) {
             const timer = setTimeout(() => {
                 checkReminders();
-            }, 1000);
+            }, 2000);
             return () => clearTimeout(timer);
         }
-    }, [isInitialized, checkReminders]);
+    }, [isInitialized, checkReminders, items.length]);
 
-    const addItem = (newItem: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => {
-        const item: InventoryItem = {
-            ...newItem,
-            id: generateId(),
-            isOpened: false,
-            status: 'Good', // temporary, will be recalculated
-            reminderSent: false,
-        };
-        item.status = calculateExpiryStatus(item);
-        setItems(prev => [...prev, item]);
+    const addItem = async (newItem: Omit<InventoryItem, 'id' | 'status' | 'isOpened'>) => {
+        try {
+            const created = await itemsAPI.create({
+                name: newItem.name,
+                quantity: newItem.quantity,
+                unit: newItem.unit,
+                category: newItem.category,
+                expiryDate: newItem.expiryDate,
+                isOpened: false,
+                reminderDays: newItem.reminderDays || 0,
+                reminderEmail: newItem.reminderEmail || ''
+            });
+
+            const itemWithStatus = {
+                ...created,
+                status: calculateExpiryStatus(created)
+            };
+
+            setItems(prev => [itemWithStatus, ...prev]);
+        } catch (error) {
+            console.error('Failed to add item:', error);
+            throw error;
+        }
     };
 
-    const updateItem = (id: string, updates: Partial<InventoryItem>) => {
-        setItems(prev => prev.map(item => {
-            if (item.id === id) {
-                const updated = { ...item, ...updates };
-                updated.status = calculateExpiryStatus(updated);
-                // Reset reminderSent if expiry date changes
-                if (updates.expiryDate && updates.expiryDate !== item.expiryDate) {
-                    updated.reminderSent = false;
+    const updateItem = async (id: string, updates: Partial<InventoryItem>) => {
+        try {
+            const updated = await itemsAPI.update(id, updates);
+
+            setItems(prev => prev.map(item => {
+                if (item.id === id) {
+                    const newItem = { ...item, ...updated };
+                    newItem.status = calculateExpiryStatus(newItem);
+                    // Reset reminderSent if expiry date changes
+                    if (updates.expiryDate && updates.expiryDate !== item.expiryDate) {
+                        newItem.reminderSent = false;
+                    }
+                    return newItem;
                 }
-                return updated;
-            }
-            return item;
-        }));
+                return item;
+            }));
+        } catch (error) {
+            console.error('Failed to update item:', error);
+            throw error;
+        }
     };
 
-    const removeItem = (id: string) => {
-        setItems(prev => prev.filter(item => item.id !== id));
+    const removeItem = async (id: string) => {
+        try {
+            await itemsAPI.delete(id);
+            setItems(prev => prev.filter(item => item.id !== id));
+        } catch (error) {
+            console.error('Failed to delete item:', error);
+            throw error;
+        }
     };
 
-    const toggleOpened = (id: string) => {
-        setItems(prev => prev.map(item => {
-            if (item.id === id) {
-                if (item.isOpened) return item; // Already opened
+    const toggleOpened = async (id: string) => {
+        const item = items.find(i => i.id === id);
+        if (!item || item.isOpened) return;
 
-                const openedDate = new Date().toISOString().split('T')[0];
-                const newExpiry = getOpenedExpiryDate(openedDate, item.category);
+        const openedDate = new Date().toISOString().split('T')[0];
+        const newExpiry = getOpenedExpiryDate(openedDate, item.category);
 
-                const updated = {
-                    ...item,
-                    isOpened: true,
-                    openedDate,
-                    expiryDate: newExpiry || item.expiryDate,
-                    reminderSent: false, // Reset reminder for new expiry
-                };
-                updated.status = calculateExpiryStatus(updated);
-                return updated;
-            }
-            return item;
-        }));
+        const updates = {
+            isOpened: true,
+            openedDate,
+            expiryDate: newExpiry || item.expiryDate,
+            reminderSent: false
+        };
+
+        await updateItem(id, updates);
     };
 
     return (
         <InventoryContext.Provider value={{
             items,
+            isLoading,
             addItem,
             updateItem,
             removeItem,
             toggleOpened,
             refreshStatus,
             checkReminders,
-            sendTestReminder
+            sendTestReminder,
+            refetchItems
         }}>
             {children}
         </InventoryContext.Provider>
