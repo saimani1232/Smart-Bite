@@ -20,7 +20,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onCapture, onClose, ty
     const [error, setError] = useState<string>('');
     const [isReady, setIsReady] = useState(false);
     const [cameras, setCameras] = useState<CameraDevice[]>([]);
-    const [_selectedCameraId, setSelectedCameraId] = useState<string>('');
+    const [selectedCameraId, setSelectedCameraId] = useState<string>('');
     const [showCameraSelect, setShowCameraSelect] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [flashOn, setFlashOn] = useState(false);
@@ -188,7 +188,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ onCapture, onClose, ty
                                     <button
                                         key={camera.deviceId}
                                         onClick={() => handleSelectCamera(camera.deviceId)}
-                                        className="w-full flex items-center gap-3 p-4 bg-gray-800/80 hover:bg-gray-700 rounded-xl transition-all text-left group hover:translate-x-1"
+                                        className={`w-full flex items-center gap-3 p-4 rounded-xl transition-all text-left group hover:translate-x-1 ${selectedCameraId === camera.deviceId ? 'bg-gray-700 ring-2 ring-emerald-500' : 'bg-gray-800/80 hover:bg-gray-700'}`}
                                     >
                                         <div className="w-10 h-10 bg-gray-700 group-hover:bg-emerald-500/20 rounded-lg flex items-center justify-center transition-colors">
                                             <Video size={18} className="text-gray-400 group-hover:text-emerald-400" />

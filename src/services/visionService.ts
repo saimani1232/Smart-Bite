@@ -100,7 +100,7 @@ export function extractExpiryDate(ocrText: string): string | null {
     const ignoreKeywords = ['pkd', 'mfg', 'mfd', 'packed', 'manufacturing', 'mrp'];
 
     // Date pattern: DD/MM/YY or DD/MM/YYYY or DD-MM-YY etc.
-    const datePattern = /(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/g;
+    const datePattern = /(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})/g;
 
     // First, try to find date on lines with expiry keywords
     for (const line of lines) {
@@ -168,11 +168,11 @@ export function extractExpiryDate(ocrText: string): string | null {
 
 // Parse date string to YYYY-MM-DD format
 function parseDate(dateStr: string): string | null {
-    const match = dateStr.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+    const match = dateStr.match(/(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})/);
     if (!match) return null;
 
-    let day = parseInt(match[1]);
-    let month = parseInt(match[2]);
+    const day = parseInt(match[1]);
+    const month = parseInt(match[2]);
     let year = parseInt(match[3]);
 
     // Fix 2-digit year
