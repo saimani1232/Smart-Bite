@@ -61,10 +61,40 @@ function convertToRecipe(meal: MealDBRecipe, matchedIngredients: string[] = []):
     };
 }
 
-// Search recipes by main ingredient
+// Search recipes by meal NAME (what the MealDB website search uses)
+export async function searchRecipesByName(searchTerm: string): Promise<Recipe[]> {
+    try {
+        console.log('🔍 Searching TheMealDB by NAME for:', searchTerm);
+
+        const response = await fetch(
+            `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(searchTerm)}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.meals) {
+            console.log('No meals found by name for:', searchTerm);
+            return [];
+        }
+
+        // Convert meals to our Recipe format (already has full details from search.php)
+        const recipes = data.meals.slice(0, 5).map((meal: MealDBRecipe) => convertToRecipe(meal));
+        console.log(`✅ Found ${recipes.length} recipes by name search`);
+        return recipes;
+    } catch (error) {
+        console.error('Error searching recipes by name:', error);
+        return [];
+    }
+}
+
+// Search recipes by INGREDIENT (filter endpoint)
 export async function getRecipesByIngredient(ingredient: string): Promise<Recipe[]> {
     try {
-        console.log('🔍 Searching TheMealDB for:', ingredient);
+        console.log('🔍 Searching TheMealDB by INGREDIENT for:', ingredient);
 
         const response = await fetch(
             `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ingredient)}`
@@ -77,7 +107,7 @@ export async function getRecipesByIngredient(ingredient: string): Promise<Recipe
         const data = await response.json();
 
         if (!data.meals) {
-            console.log('No meals found for:', ingredient);
+            console.log('No meals found by ingredient for:', ingredient);
             return [];
         }
 
@@ -92,6 +122,7 @@ export async function getRecipesByIngredient(ingredient: string): Promise<Recipe
             }
         }
 
+        console.log(`✅ Found ${recipes.length} recipes by ingredient`);
         return recipes;
     } catch (error) {
         console.error('Error fetching recipes from TheMealDB:', error);
@@ -136,25 +167,47 @@ export async function findBestRecipes(
     const inventoryNormalized = allInventoryItems.map(normalize);
 
     try {
-        // Search by main ingredient
-        const recipes = await getRecipesByIngredient(expiringItemName);
+        // FIRST: Try searching by NAME (like MealDB website search bar)
+        // This finds recipes WITH that name (e.g., "cookies" -> "Peanut Butter Cookies")
+        console.log('📛 Step 1: Searching by NAME for:', expiringItemName);
+        let recipes = await searchRecipesByName(expiringItemName);
 
-        if (recipes.length === 0) {
-            // Try searching by first word (e.g., "Whole Milk" -> "Milk")
-            const firstWord = expiringItemName.split(' ').pop() || expiringItemName;
-            console.log('Trying search with:', firstWord);
-            const altRecipes = await getRecipesByIngredient(firstWord);
-
-            if (altRecipes.length === 0) {
-                // Try getting a random recipe as fallback
-                console.log('No specific recipes found, getting suggestions...');
-                return await getRandomRecipes(3);
-            }
-
-            return processRecipes(altRecipes, expiringNormalized, inventoryNormalized);
+        if (recipes.length > 0) {
+            console.log(`✅ Found ${recipes.length} recipes by name!`);
+            return processRecipes(recipes, expiringNormalized, inventoryNormalized);
         }
 
-        return processRecipes(recipes, expiringNormalized, inventoryNormalized);
+        // SECOND: Try searching by INGREDIENT (finds meals that USE this ingredient)
+        console.log('🥘 Step 2: Searching by INGREDIENT for:', expiringItemName);
+        recipes = await getRecipesByIngredient(expiringItemName);
+
+        if (recipes.length > 0) {
+            console.log(`✅ Found ${recipes.length} recipes by ingredient!`);
+            return processRecipes(recipes, expiringNormalized, inventoryNormalized);
+        }
+
+        // THIRD: Try with last word (e.g., "Whole Milk" -> "Milk")
+        const lastWord = expiringItemName.split(' ').pop() || expiringItemName;
+        if (lastWord !== expiringItemName) {
+            console.log('🔄 Step 3: Trying with last word:', lastWord);
+
+            // Try name search first
+            recipes = await searchRecipesByName(lastWord);
+            if (recipes.length > 0) {
+                return processRecipes(recipes, expiringNormalized, inventoryNormalized);
+            }
+
+            // Then ingredient search
+            recipes = await getRecipesByIngredient(lastWord);
+            if (recipes.length > 0) {
+                return processRecipes(recipes, expiringNormalized, inventoryNormalized);
+            }
+        }
+
+        // FALLBACK: Get random recipes
+        console.log('🎲 No specific recipes found, getting random suggestions...');
+        return await getRandomRecipes(3);
+
     } catch (error) {
         console.error('Error finding best recipes:', error);
         return [];
@@ -236,26 +289,4 @@ export async function getRandomRecipe(): Promise<Recipe | null> {
     }
 }
 
-// Search recipes by name
-export async function searchRecipesByName(query: string): Promise<Recipe[]> {
-    try {
-        const response = await fetch(
-            `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(query)}`
-        );
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.meals) {
-            return [];
-        }
-
-        return data.meals.slice(0, 5).map((meal: MealDBRecipe) => convertToRecipe(meal));
-    } catch (error) {
-        console.error('Error searching recipes:', error);
-        return [];
-    }
-}
