@@ -3,6 +3,7 @@ import type { InventoryItem } from '../types';
 import { calculateExpiryStatus, getOpenedExpiryDate } from '../utils/logic';
 import { findBestRecipes } from '../services/recipeService';
 import { sendExpiryReminder, isEmailConfigured } from '../services/emailService';
+import { sendWhatsAppReminder } from '../services/whatsappService';
 import { itemsAPI } from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -66,21 +67,22 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         })));
     }, []);
 
-    // Check all items for reminders that need to be sent
+    // Check all items for reminders that need to be sent (Email + WhatsApp)
     const checkReminders = useCallback(async () => {
-        console.log('🔔 Checking reminders...');
-        console.log('📧 Email configured:', isEmailConfigured());
-
-        if (!isEmailConfigured()) {
-            console.warn('⚠️ EmailJS not configured! Please set VITE_EMAILJS_* environment variables.');
-            return;
-        }
+        console.log('🔔 [REMINDER CHECK] Starting reminder check...');
+        console.log('� Total items:', items.length);
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Find items that need reminders (either email OR whatsapp)
         const itemsToRemind = items.filter(item => {
-            if (item.reminderDays === 0 || !item.reminderEmail || item.reminderSent) {
+            // Skip if no reminder days set or already sent
+            if (item.reminderDays === 0 || item.reminderSent) {
+                return false;
+            }
+            // Skip if neither email nor phone is set
+            if (!item.reminderEmail && !item.reminderPhone) {
                 return false;
             }
 
@@ -88,26 +90,54 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             expiry.setHours(0, 0, 0, 0);
             const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-            return daysUntilExpiry <= item.reminderDays && daysUntilExpiry > 0;
+            const shouldRemind = daysUntilExpiry <= item.reminderDays && daysUntilExpiry > 0;
+
+            console.log(`📋 [${item.name}] Days until expiry: ${daysUntilExpiry}, Reminder days: ${item.reminderDays}, Email: ${item.reminderEmail || 'none'}, Phone: ${item.reminderPhone || 'none'}, Should remind: ${shouldRemind}`);
+
+            return shouldRemind;
         });
 
+        console.log(`🎯 Items needing reminders: ${itemsToRemind.length}`);
+
         for (const item of itemsToRemind) {
+            console.log(`\n📬 Processing reminder for: ${item.name}`);
+
             const allItemNames = items.map(i => i.name);
             const recipes = await findBestRecipes(item.name, allItemNames);
-            const success = await sendExpiryReminder(item, recipes);
+            console.log(`🍳 Found ${recipes.length} recipes`);
 
-            if (success) {
-                // Update in database
+            let emailSent = false;
+            let whatsAppSent = false;
+
+            // Send Email if configured
+            if (item.reminderEmail && isEmailConfigured()) {
+                console.log(`📧 Sending email to: ${item.reminderEmail}`);
+                emailSent = await sendExpiryReminder(item, recipes);
+                console.log(`📧 Email sent: ${emailSent}`);
+            }
+
+            // Send WhatsApp if phone is set
+            if (item.reminderPhone) {
+                console.log(`📱 Sending WhatsApp to: ${item.reminderPhone}`);
+                whatsAppSent = await sendWhatsAppReminder(item, recipes);
+                console.log(`📱 WhatsApp sent: ${whatsAppSent}`);
+            }
+
+            // Mark as sent if either succeeded
+            if (emailSent || whatsAppSent) {
+                console.log(`✅ Marking ${item.name} reminder as sent`);
                 try {
                     await itemsAPI.update(item.id, { reminderSent: true });
                     setItems(prev => prev.map(i =>
                         i.id === item.id ? { ...i, reminderSent: true } : i
                     ));
                 } catch (error) {
-                    console.error('Failed to update reminder status:', error);
+                    console.error('❌ Failed to update reminder status:', error);
                 }
             }
         }
+
+        console.log('🔔 [REMINDER CHECK] Complete\n');
     }, [items]);
 
     // Send a test reminder for a specific item
