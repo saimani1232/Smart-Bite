@@ -70,34 +70,61 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
     // Check all items for reminders that need to be sent (Email + WhatsApp)
     const checkReminders = useCallback(async () => {
         console.log('🔔 [REMINDER CHECK] Starting reminder check...');
-        console.log('� Total items:', items.length);
+        console.log('📦 Total items:', items.length);
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        console.log('📅 Today:', today.toISOString().split('T')[0]);
 
         // Find items that need reminders (either email OR whatsapp)
         const itemsToRemind = items.filter(item => {
-            // Skip if no reminder days set or already sent
-            if (item.reminderDays === 0 || item.reminderSent) {
-                return false;
-            }
-            // Skip if neither email nor phone is set
-            if (!item.reminderEmail && !item.reminderPhone) {
-                return false;
-            }
+            console.log(`\n--- Checking: ${item.name} ---`);
 
+            // Check 1: Reminder days set?
+            if (item.reminderDays === 0) {
+                console.log(`  ❌ SKIP: reminderDays = 0 (no reminder requested)`);
+                return false;
+            }
+            console.log(`  ✓ reminderDays: ${item.reminderDays}`);
+
+            // Check 2: Already sent?
+            if (item.reminderSent) {
+                console.log(`  ❌ SKIP: reminderSent = true (already notified)`);
+                return false;
+            }
+            console.log(`  ✓ reminderSent: false`);
+
+            // Check 3: Contact info provided?
+            if (!item.reminderEmail && !item.reminderPhone) {
+                console.log(`  ❌ SKIP: No email or phone set`);
+                return false;
+            }
+            console.log(`  ✓ Contact: Email=${item.reminderEmail || 'none'}, Phone=${item.reminderPhone || 'none'}`);
+
+            // Check 4: Within reminder window?
             const expiry = new Date(item.expiryDate);
             expiry.setHours(0, 0, 0, 0);
             const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
+            console.log(`  📅 Expiry: ${item.expiryDate}, Days left: ${daysUntilExpiry}`);
+
+            // Must be within reminder window AND not already expired
             const shouldRemind = daysUntilExpiry <= item.reminderDays && daysUntilExpiry > 0;
 
-            console.log(`📋 [${item.name}] Days until expiry: ${daysUntilExpiry}, Reminder days: ${item.reminderDays}, Email: ${item.reminderEmail || 'none'}, Phone: ${item.reminderPhone || 'none'}, Should remind: ${shouldRemind}`);
+            if (!shouldRemind) {
+                if (daysUntilExpiry <= 0) {
+                    console.log(`  ❌ SKIP: Already expired (${daysUntilExpiry} days)`);
+                } else {
+                    console.log(`  ❌ SKIP: Not in reminder window yet (${daysUntilExpiry} days > ${item.reminderDays} reminder days)`);
+                }
+                return false;
+            }
 
-            return shouldRemind;
+            console.log(`  ✅ WILL REMIND: Within ${item.reminderDays}-day window`);
+            return true;
         });
 
-        console.log(`🎯 Items needing reminders: ${itemsToRemind.length}`);
+        console.log(`\n🎯 Items needing reminders: ${itemsToRemind.length}`);
 
         for (const item of itemsToRemind) {
             console.log(`\n📬 Processing reminder for: ${item.name}`);
