@@ -1,15 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { User, Lock, Eye, EyeOff, LogIn, UserPlus, Loader, ChefHat, Sparkles } from 'lucide-react';
 
+// Google Client ID
+const GOOGLE_CLIENT_ID = '687999453020-o0j4o3ugt03bsvbep79rqhnvmpmc8g7c.apps.googleusercontent.com';
+
+declare global {
+    interface Window {
+        google?: {
+            accounts: {
+                id: {
+                    initialize: (config: {
+                        client_id: string;
+                        callback: (response: { credential: string }) => void;
+                    }) => void;
+                    renderButton: (element: HTMLElement, config: {
+                        theme?: string;
+                        size?: string;
+                        width?: number;
+                        text?: string;
+                    }) => void;
+                };
+            };
+        };
+    }
+}
+
 export const LoginPage: React.FC = () => {
-    const { login, register } = useAuth();
+    const { login, register, loginWithGoogle } = useAuth();
     const [isLogin, setIsLogin] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
+    const googleButtonRef = useRef<HTMLDivElement>(null);
+
+    // Load Google Identity Services script
+    useEffect(() => {
+        const loadGoogleScript = () => {
+            if (document.getElementById('google-gsi-script')) return;
+
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.id = 'google-gsi-script';
+            script.async = true;
+            script.defer = true;
+            script.onload = initializeGoogle;
+            document.body.appendChild(script);
+        };
+
+        const initializeGoogle = () => {
+            if (window.google && googleButtonRef.current) {
+                window.google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleGoogleResponse
+                });
+
+                window.google.accounts.id.renderButton(googleButtonRef.current, {
+                    theme: 'outline',
+                    size: 'large',
+                    width: 320,
+                    text: 'continue_with'
+                });
+            }
+        };
+
+        // If script already loaded
+        if (window.google) {
+            initializeGoogle();
+        } else {
+            loadGoogleScript();
+        }
+    }, []);
+
+    const handleGoogleResponse = async (response: { credential: string }) => {
+        setError('');
+        setGoogleLoading(true);
+
+        try {
+            await loginWithGoogle(response.credential);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Google sign-in failed');
+        } finally {
+            setGoogleLoading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,12 +131,12 @@ export const LoginPage: React.FC = () => {
                 {/* Form Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl shadow-gray-200/50 dark:shadow-none p-8">
                     {/* Toggle */}
-                    <div className="flex bg-gray-100 dark:bg-gray-700 rounded-2xl p-1 mb-8">
+                    <div className="flex bg-gray-100 dark:bg-gray-700 rounded-2xl p-1 mb-6">
                         <button
                             onClick={() => setIsLogin(true)}
                             className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all ${isLogin
-                                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
                             Sign In
@@ -67,12 +144,38 @@ export const LoginPage: React.FC = () => {
                         <button
                             onClick={() => setIsLogin(false)}
                             className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all ${!isLogin
-                                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
                             Sign Up
                         </button>
+                    </div>
+
+                    {/* Google Sign-In Button */}
+                    <div className="mb-6">
+                        <div
+                            ref={googleButtonRef}
+                            className="flex justify-center"
+                        />
+                        {googleLoading && (
+                            <div className="flex justify-center mt-3">
+                                <Loader size={20} className="animate-spin text-emerald-500" />
+                                <span className="ml-2 text-sm text-gray-500">Signing in with Google...</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                                or continue with username
+                            </span>
+                        </div>
                     </div>
 
                     {/* Error Message */}

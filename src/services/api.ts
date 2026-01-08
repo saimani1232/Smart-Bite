@@ -56,6 +56,13 @@ export const authAPI = {
             method: 'POST',
             body: JSON.stringify({ username, password })
         });
+    },
+
+    googleLogin: async (credential: string) => {
+        return fetchWithAuth('/auth/google', {
+            method: 'POST',
+            body: JSON.stringify({ credential })
+        });
     }
 };
 

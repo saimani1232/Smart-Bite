@@ -4,6 +4,8 @@ import { authAPI, setToken, removeToken } from '../services/api';
 interface User {
     id: string;
     username: string;
+    email?: string;
+    picture?: string;
 }
 
 interface AuthContextType {
@@ -12,6 +14,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     login: (username: string, password: string) => Promise<void>;
     register: (username: string, password: string) => Promise<void>;
+    loginWithGoogle: (credential: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -52,6 +55,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.setItem('smartbite-user', JSON.stringify(response.user));
     };
 
+    const loginWithGoogle = async (credential: string) => {
+        const response = await authAPI.googleLogin(credential);
+        setToken(response.token);
+        setUser(response.user);
+        localStorage.setItem('smartbite-user', JSON.stringify(response.user));
+    };
+
     const logout = () => {
         removeToken();
         setUser(null);
@@ -67,6 +77,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 isAuthenticated: !!user,
                 login,
                 register,
+                loginWithGoogle,
                 logout
             }}
         >
