@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { User, Lock, Eye, EyeOff, LogIn, UserPlus, Loader, ChefHat, Sparkles } from 'lucide-react';
 
-// Google Client ID
-const GOOGLE_CLIENT_ID = '687999453020-o0j4o3ugt03bsvbep79rqhnvmpmc8g7c.apps.googleusercontent.com';
+// Google Client ID from environment variable
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 declare global {
     interface Window {

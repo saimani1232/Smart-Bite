@@ -81,6 +81,7 @@ export const itemsAPI = {
         isOpened?: boolean;
         reminderDays?: number;
         reminderEmail?: string;
+        reminderPhone?: string;
     }) => {
         return fetchWithAuth('/items', {
             method: 'POST',

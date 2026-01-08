@@ -208,7 +208,8 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
                 expiryDate: newItem.expiryDate,
                 isOpened: false,
                 reminderDays: newItem.reminderDays || 0,
-                reminderEmail: newItem.reminderEmail || ''
+                reminderEmail: newItem.reminderEmail || '',
+                reminderPhone: newItem.reminderPhone || ''
             });
 
             const itemWithStatus = {
