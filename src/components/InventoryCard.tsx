@@ -48,6 +48,7 @@ const EditModal: React.FC<{
     const [editCategory, setEditCategory] = useState(item.category);
     const [editExpiry, setEditExpiry] = useState(item.expiryDate);
     const [editEmail, setEditEmail] = useState(item.reminderEmail || '');
+    const [editPhone, setEditPhone] = useState(item.reminderPhone || '');
     const [editReminderDays, setEditReminderDays] = useState(item.reminderDays || 0);
 
     const handleSave = () => {
@@ -58,6 +59,7 @@ const EditModal: React.FC<{
             category: editCategory,
             expiryDate: editExpiry || item.expiryDate,
             reminderEmail: editEmail.trim() || undefined,
+            reminderPhone: editPhone.trim() || undefined,
             reminderDays: editReminderDays
         });
         onClose();
@@ -212,6 +214,26 @@ const EditModal: React.FC<{
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1">
                                     <CheckCircle2 size={12} className="text-emerald-500" />
                                     Notifications will be sent to this email
+                                </p>
+                            )}
+                        </div>
+
+                        {/* WhatsApp Phone */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                WhatsApp Phone Number
+                            </label>
+                            <input
+                                type="tel"
+                                value={editPhone}
+                                onChange={(e) => setEditPhone(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-emerald-400 font-medium"
+                                placeholder="+91 98765 43210"
+                            />
+                            {editPhone && (
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1">
+                                    <CheckCircle2 size={12} className="text-green-500" />
+                                    WhatsApp reminders will be sent to this number
                                 </p>
                             )}
                         </div>

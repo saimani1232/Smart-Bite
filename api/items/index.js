@@ -42,6 +42,7 @@ export default async function handler(req, res) {
                 isOpened: item.isOpened || false,
                 reminderDays: item.reminderDays || 0,
                 reminderEmail: item.reminderEmail || '',
+                reminderPhone: item.reminderPhone || '',
                 reminderSent: item.reminderSent || false
             }));
 
@@ -50,7 +51,7 @@ export default async function handler(req, res) {
 
         // POST - Create new item
         if (req.method === 'POST') {
-            const { name, quantity, unit, category, expiryDate, isOpened, reminderDays, reminderEmail } = req.body || {};
+            const { name, quantity, unit, category, expiryDate, isOpened, reminderDays, reminderEmail, reminderPhone } = req.body || {};
 
             if (!name || !quantity || !unit || !category || !expiryDate) {
                 return res.status(400).json({ error: 'Missing required fields' });
@@ -66,6 +67,7 @@ export default async function handler(req, res) {
                 isOpened: isOpened || false,
                 reminderDays: reminderDays || 0,
                 reminderEmail: reminderEmail || '',
+                reminderPhone: reminderPhone || '',
                 reminderSent: false,
                 createdAt: new Date(),
                 updatedAt: new Date()

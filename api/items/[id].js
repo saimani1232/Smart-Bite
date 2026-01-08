@@ -73,6 +73,7 @@ export default async function handler(req, res) {
                 isOpened: updatedItem.isOpened || false,
                 reminderDays: updatedItem.reminderDays || 0,
                 reminderEmail: updatedItem.reminderEmail || '',
+                reminderPhone: updatedItem.reminderPhone || '',
                 reminderSent: updatedItem.reminderSent || false
             });
         }
