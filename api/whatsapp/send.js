@@ -1,10 +1,6 @@
 // WhatsApp Message API - Send reminder via Twilio
 import twilio from 'twilio';
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER;
-
 export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -20,18 +16,35 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // Log incoming request
+    console.log('📱 WhatsApp API called');
+    console.log('📦 Body:', JSON.stringify(req.body));
+
     try {
         const { to, itemName, expiryDate, daysLeft, recipes } = req.body || {};
 
         // Validation
         if (!to || !itemName || !expiryDate) {
+            console.log('❌ Missing fields:', { to: !!to, itemName: !!itemName, expiryDate: !!expiryDate });
             return res.status(400).json({ error: 'Missing required fields: to, itemName, expiryDate' });
         }
 
         // Check Twilio config
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+
+        console.log('🔑 Twilio config check:');
+        console.log('  - ACCOUNT_SID set:', !!accountSid, accountSid ? `(starts with ${accountSid.substring(0, 5)}...)` : '');
+        console.log('  - AUTH_TOKEN set:', !!authToken);
+        console.log('  - WHATSAPP_NUMBER set:', !!twilioWhatsAppNumber, twilioWhatsAppNumber || '');
+
         if (!accountSid || !authToken || !twilioWhatsAppNumber) {
-            console.error('Twilio not configured');
-            return res.status(500).json({ error: 'WhatsApp service not configured' });
+            console.error('❌ Twilio environment variables not configured!');
+            return res.status(500).json({ 
+                error: 'WhatsApp service not configured',
+                details: 'Missing Twilio environment variables'
+            });
         }
 
         // Format phone number for WhatsApp
@@ -40,6 +53,7 @@ export default async function handler(req, res) {
             // Assume India if no country code
             phoneNumber = '+91' + phoneNumber;
         }
+        console.log('📞 Formatted phone:', phoneNumber);
 
         // Build message
         let message = `🍎 *SmartBite Reminder*\n\n`;
@@ -67,16 +81,25 @@ export default async function handler(req, res) {
 
         message += `Don't let it go to waste! 🌿`;
 
+        console.log('📝 Message built, length:', message.length);
+
         // Send via Twilio
+        console.log('📤 Initializing Twilio client...');
         const client = twilio(accountSid, authToken);
         
+        console.log('📤 Sending message...');
+        console.log('  - From: whatsapp:' + twilioWhatsAppNumber);
+        console.log('  - To: whatsapp:' + phoneNumber);
+
         const result = await client.messages.create({
             body: message,
             from: `whatsapp:${twilioWhatsAppNumber}`,
             to: `whatsapp:${phoneNumber}`
         });
 
-        console.log('WhatsApp message sent:', result.sid);
+        console.log('✅ WhatsApp message sent!');
+        console.log('  - SID:', result.sid);
+        console.log('  - Status:', result.status);
 
         return res.status(200).json({
             success: true,
@@ -85,10 +108,18 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('WhatsApp error:', error);
+        console.error('❌ WhatsApp error:', error.message);
+        console.error('❌ Full error:', error);
+        
+        // Check for specific Twilio errors
+        if (error.code) {
+            console.error('❌ Twilio error code:', error.code);
+        }
+        
         return res.status(500).json({ 
             error: 'Failed to send WhatsApp message',
-            details: error.message 
+            details: error.message,
+            code: error.code || 'UNKNOWN'
         });
     }
 }
