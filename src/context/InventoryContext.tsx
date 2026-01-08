@@ -4,6 +4,7 @@ import { calculateExpiryStatus, getOpenedExpiryDate } from '../utils/logic';
 import { findBestRecipes } from '../services/recipeService';
 import { sendExpiryReminder, isEmailConfigured } from '../services/emailService';
 import { sendWhatsAppReminder } from '../services/whatsappService';
+import { sendPushNotification, isPushEnabled, getPushPermission } from '../services/pushService';
 import { itemsAPI } from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -150,8 +151,16 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
                 console.log(`📱 WhatsApp sent: ${whatsAppSent}`);
             }
 
-            // Mark as sent if either succeeded
-            if (emailSent || whatsAppSent) {
+            // Send Push Notification if enabled
+            let pushSent = false;
+            if (isPushEnabled() && getPushPermission() === 'granted') {
+                console.log(`🔔 Sending push notification for: ${item.name}`);
+                pushSent = await sendPushNotification(item, recipes);
+                console.log(`🔔 Push sent: ${pushSent}`);
+            }
+
+            // Mark as sent if any channel succeeded
+            if (emailSent || whatsAppSent || pushSent) {
                 console.log(`✅ Marking ${item.name} reminder as sent`);
                 try {
                     await itemsAPI.update(item.id, { reminderSent: true });

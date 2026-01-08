@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Mail, Send, CheckCircle, AlertCircle, Loader2, Leaf, Bell, Moon, Sun, Shield, Heart } from 'lucide-react';
 import { isEmailConfigured, sendTestEmail } from '../services/emailService';
 import { useTheme } from '../context/ThemeContext';
+import { isPushSupported, isPushEnabled, setPushEnabled, requestPushPermission, getPushPermission } from '../services/pushService';
 
 interface SettingsPanelProps {
     isOpen: boolean;
@@ -12,10 +13,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
     const [testEmail, setTestEmail] = useState('');
     const [sendStatus, setSendStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [statusMessage, setStatusMessage] = useState('');
-    const [notifications, setNotifications] = useState(true);
+    const [pushEnabled, setLocalPushEnabled] = useState(isPushEnabled());
+    const [pushPermission, setPushPermission] = useState(getPushPermission());
 
     const { isDarkMode, toggleDarkMode } = useTheme();
     const emailConfigured = isEmailConfigured();
+    const pushSupported = isPushSupported();
 
     const handleSendTestEmail = async () => {
         if (!testEmail) {
@@ -100,20 +103,44 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
                             </button>
                         </div>
 
-                        {/* Notifications Toggle */}
+                        {/* Push Notifications Toggle */}
                         <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
                             <div className="flex items-center gap-3">
-                                <Bell size={20} className={notifications ? 'text-emerald-500' : 'text-gray-400'} />
+                                <Bell size={20} className={pushEnabled && pushPermission === 'granted' ? 'text-emerald-500' : 'text-gray-400'} />
                                 <div>
                                     <p className="font-medium text-gray-800 dark:text-gray-200">Push Notifications</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Expiry reminders</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {!pushSupported ? 'Not supported in this browser' :
+                                            pushPermission === 'denied' ? 'Blocked by browser' :
+                                                pushPermission === 'granted' && pushEnabled ? 'Enabled' :
+                                                    'Click to enable'}
+                                    </p>
                                 </div>
                             </div>
                             <button
-                                onClick={() => setNotifications(!notifications)}
-                                className={`w-12 h-7 rounded-full transition-colors relative ${notifications ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+                                onClick={async () => {
+                                    if (!pushSupported) return;
+
+                                    if (pushPermission !== 'granted') {
+                                        const granted = await requestPushPermission();
+                                        setPushPermission(getPushPermission());
+                                        if (granted) {
+                                            setPushEnabled(true);
+                                            setLocalPushEnabled(true);
+                                        }
+                                    } else {
+                                        const newValue = !pushEnabled;
+                                        setPushEnabled(newValue);
+                                        setLocalPushEnabled(newValue);
+                                    }
+                                }}
+                                disabled={!pushSupported || pushPermission === 'denied'}
+                                className={`w-12 h-7 rounded-full transition-colors relative ${!pushSupported || pushPermission === 'denied' ? 'bg-gray-200 dark:bg-gray-700 cursor-not-allowed' :
+                                    pushEnabled && pushPermission === 'granted' ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                                    }`}
                             >
-                                <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${notifications ? 'left-6' : 'left-1'}`} />
+                                <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${pushEnabled && pushPermission === 'granted' ? 'left-6' : 'left-1'
+                                    }`} />
                             </button>
                         </div>
                     </section>
