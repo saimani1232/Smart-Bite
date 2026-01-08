@@ -96,7 +96,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
             } else {
                 setRecipes(fetchedRecipes);
             }
-        } catch (err) {
+        } catch {
             setError('Failed to fetch recipes.');
         } finally {
             setLoading(false);

@@ -88,11 +88,12 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome }) => {
         let recipes = [...expiringRecipes];
 
         switch (activeFilter) {
-            case 'quick':
+            case 'quick': {
                 // Filter to recipes that take 30 minutes or less
                 recipes = recipes.filter(r => r.readyInMinutes && r.readyInMinutes <= 30);
                 break;
-            case 'vegetarian':
+            }
+            case 'vegetarian': {
                 // Filter by name heuristics (since TheMealDB doesn't flag vegetarian)
                 const meatWords = ['chicken', 'beef', 'pork', 'lamb', 'meat', 'fish', 'salmon', 'shrimp', 'bacon', 'ham'];
                 recipes = recipes.filter(r => {
@@ -100,7 +101,8 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome }) => {
                     return !meatWords.some(word => nameLower.includes(word));
                 });
                 break;
-            case 'protein':
+            }
+            case 'protein': {
                 // Filter to recipes likely high in protein (meat-based)
                 const proteinWords = ['chicken', 'beef', 'pork', 'lamb', 'meat', 'fish', 'salmon', 'shrimp', 'egg', 'bean'];
                 recipes = recipes.filter(r => {
@@ -108,6 +110,7 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome }) => {
                     return proteinWords.some(word => nameLower.includes(word));
                 });
                 break;
+            }
             default:
                 // 'expiring' - show all expiring item recipes
                 break;
