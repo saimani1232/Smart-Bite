@@ -1,4 +1,4 @@
-// WhatsApp Message API - Send reminder via Twilio
+// WhatsApp Message API - Send reminder via Twilio (with image support)
 import twilio from 'twilio';
 
 export default async function handler(req, res) {
@@ -16,16 +16,13 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Log incoming request
     console.log('📱 WhatsApp API called');
-    console.log('📦 Body:', JSON.stringify(req.body));
 
     try {
         const { to, itemName, expiryDate, daysLeft, recipes } = req.body || {};
 
         // Validation
         if (!to || !itemName || !expiryDate) {
-            console.log('❌ Missing fields:', { to: !!to, itemName: !!itemName, expiryDate: !!expiryDate });
             return res.status(400).json({ error: 'Missing required fields: to, itemName, expiryDate' });
         }
 
@@ -33,11 +30,6 @@ export default async function handler(req, res) {
         const accountSid = process.env.TWILIO_ACCOUNT_SID;
         const authToken = process.env.TWILIO_AUTH_TOKEN;
         const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER;
-
-        console.log('🔑 Twilio config check:');
-        console.log('  - ACCOUNT_SID set:', !!accountSid, accountSid ? `(starts with ${accountSid.substring(0, 5)}...)` : '');
-        console.log('  - AUTH_TOKEN set:', !!authToken);
-        console.log('  - WHATSAPP_NUMBER set:', !!twilioWhatsAppNumber, twilioWhatsAppNumber || '');
 
         if (!accountSid || !authToken || !twilioWhatsAppNumber) {
             console.error('❌ Twilio environment variables not configured!');
@@ -50,52 +42,64 @@ export default async function handler(req, res) {
         // Format phone number for WhatsApp
         let phoneNumber = to.replace(/\s+/g, '').replace(/-/g, '');
         if (!phoneNumber.startsWith('+')) {
-            // Assume India if no country code
             phoneNumber = '+91' + phoneNumber;
         }
-        console.log('📞 Formatted phone:', phoneNumber);
 
-        // Build message
+        // Build message with recipe links
         let message = `🍎 *SmartBite Reminder*\n\n`;
         message += `Your *${itemName}* expires on *${expiryDate}*`;
         
         if (daysLeft !== undefined) {
             if (daysLeft <= 0) {
-                message += ` (Expired!)`;
+                message += ` ⚠️ *(Expired!)*`;
             } else if (daysLeft === 1) {
-                message += ` (Tomorrow!)`;
+                message += ` ⏰ *(Tomorrow!)*`;
             } else {
-                message += ` (${daysLeft} days left)`;
+                message += ` 📅 *(${daysLeft} days left)*`;
             }
         }
-        message += `\n\n`;
+        message += `\n`;
 
-        // Add recipes if provided
+        // Add recipes with links
         if (recipes && recipes.length > 0) {
-            message += `🍳 *Recipe Ideas:*\n`;
+            message += `\n🍳 *Recipe Ideas to use it up:*\n\n`;
             recipes.slice(0, 3).forEach((recipe, i) => {
-                message += `${i + 1}. ${recipe.name}\n`;
+                message += `*${i + 1}. ${recipe.name}*\n`;
+                if (recipe.link) {
+                    message += `   📖 ${recipe.link}\n`;
+                }
+                message += `\n`;
             });
-            message += `\n`;
         }
 
-        message += `Don't let it go to waste! 🌿`;
+        message += `━━━━━━━━━━━━━━━━━━\n`;
+        message += `Don't let good food go to waste! 🌿\n`;
+        message += `_Sent by SmartBite_`;
 
-        console.log('📝 Message built, length:', message.length);
-
-        // Send via Twilio
-        console.log('📤 Initializing Twilio client...');
+        // Initialize Twilio client
         const client = twilio(accountSid, authToken);
         
-        console.log('📤 Sending message...');
-        console.log('  - From: whatsapp:' + twilioWhatsAppNumber);
-        console.log('  - To: whatsapp:' + phoneNumber);
+        // Get the first recipe image (if available) to send as media
+        const firstRecipeWithImage = recipes?.find(r => r.image);
+        
+        console.log('📤 Sending WhatsApp message...');
+        console.log('  - To:', phoneNumber);
+        console.log('  - Has image:', !!firstRecipeWithImage);
 
-        const result = await client.messages.create({
+        // Build message options
+        const messageOptions = {
             body: message,
             from: `whatsapp:${twilioWhatsAppNumber}`,
             to: `whatsapp:${phoneNumber}`
-        });
+        };
+
+        // Add media URL if available (recipe image)
+        if (firstRecipeWithImage && firstRecipeWithImage.image) {
+            messageOptions.mediaUrl = [firstRecipeWithImage.image];
+            console.log('  - Media URL:', firstRecipeWithImage.image);
+        }
+
+        const result = await client.messages.create(messageOptions);
 
         console.log('✅ WhatsApp message sent!');
         console.log('  - SID:', result.sid);
@@ -109,12 +113,7 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('❌ WhatsApp error:', error.message);
-        console.error('❌ Full error:', error);
-        
-        // Check for specific Twilio errors
-        if (error.code) {
-            console.error('❌ Twilio error code:', error.code);
-        }
+        console.error('❌ Error code:', error.code);
         
         return res.status(500).json({ 
             error: 'Failed to send WhatsApp message',

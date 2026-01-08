@@ -6,6 +6,8 @@ const API_BASE = '/api';
 interface Recipe {
     name: string;
     id: string;
+    image?: string;
+    sourceUrl?: string;
 }
 
 export async function sendWhatsAppReminder(
@@ -35,7 +37,12 @@ export async function sendWhatsAppReminder(
                 itemName: item.name,
                 expiryDate: item.expiryDate,
                 daysLeft,
-                recipes: recipes.map(r => ({ name: r.name }))
+                // Pass full recipe data including image and link
+                recipes: recipes.map(r => ({
+                    name: r.name,
+                    image: r.image || '',
+                    link: r.sourceUrl || `https://www.themealdb.com/meal/${r.id}`
+                }))
             })
         });
 
