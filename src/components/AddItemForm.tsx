@@ -294,7 +294,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Unit</label>
-                        <select value={unit} onChange={e => setUnit(e.target.value as any)} className="input-field">
+                        <select value={unit} onChange={e => setUnit(e.target.value as InventoryItem['unit'])} className="input-field">
                             <option value="pkg">Packets</option>
                             <option value="kg">Kilograms</option>
                             <option value="l">Liters</option>
@@ -322,7 +322,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                 <div>
                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Category</label>
-                    <select value={category} onChange={e => setCategory(e.target.value as any)} className="input-field">
+                    <select value={category} onChange={e => setCategory(e.target.value as InventoryItem['category'])} className="input-field">
                         <option value="Dairy">Dairy</option>
                         <option value="Grain">Grain</option>
                         <option value="Vegetable">Vegetable</option>

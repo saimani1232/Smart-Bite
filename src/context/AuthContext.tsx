@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
 import { authAPI, setToken, removeToken } from '../services/api';
 
 interface User {
@@ -21,38 +21,44 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Check for existing session on mount
-    useEffect(() => {
+    const [user, setUser] = useState<User | null>(() => {
         const savedUser = localStorage.getItem('smartbite-user');
         const token = localStorage.getItem('smartbite-token');
-
         if (savedUser && token) {
             try {
-                setUser(JSON.parse(savedUser));
+                return JSON.parse(savedUser);
             } catch {
-                // Invalid saved user, clear storage
                 localStorage.removeItem('smartbite-user');
                 localStorage.removeItem('smartbite-token');
+                return null;
             }
         }
-        setIsLoading(false);
-    }, []);
+        return null;
+    });
+    const [isLoading, setIsLoading] = useState(false);
 
     const login = async (username: string, password: string) => {
-        const response = await authAPI.login(username, password);
-        setToken(response.token);
-        setUser(response.user);
-        localStorage.setItem('smartbite-user', JSON.stringify(response.user));
+        setIsLoading(true);
+        try {
+            const response = await authAPI.login(username, password);
+            setToken(response.token);
+            setUser(response.user);
+            localStorage.setItem('smartbite-user', JSON.stringify(response.user));
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const register = async (username: string, password: string) => {
-        const response = await authAPI.register(username, password);
-        setToken(response.token);
-        setUser(response.user);
-        localStorage.setItem('smartbite-user', JSON.stringify(response.user));
+        setIsLoading(true);
+        try {
+            const response = await authAPI.register(username, password);
+            setToken(response.token);
+            setUser(response.user);
+            localStorage.setItem('smartbite-user', JSON.stringify(response.user));
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const loginWithGoogle = async (credential: string) => {
