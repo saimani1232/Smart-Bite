@@ -288,6 +288,7 @@ export async function detectBarcode(base64Image: string): Promise<string | null>
 // Hardcoded barcode map for known products (skip API calls)
 const KNOWN_BARCODES: Record<string, ProductInfo> = {
     '8901058005080': { name: 'Munch Max', category: 'Other', estimatedExpiryDays: 180, barcode: '8901058005080' },
+    '8901491101844': { name: 'Lays Masala Blue Color', category: 'Other', estimatedExpiryDays: 180, barcode: '8901491101844' }
 };
 
 // Waterfall barcode lookup: Known → Open Food Facts → UPCitemdb → Unknown (manual entry)
