@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBite - Goldman Sachs Possibilities Summit 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            margin: 0;
+            size: A4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            background: #fff;
+        }
+        
+        /* COVER PAGE */
+        .cover-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f4c3a 0%, #1a7a5c 30%, #22a76e 70%, #2dd881 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            page-break-after: always;
+        }
+        
+        .cover-bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 60%);
+        }
+        
+        .cover-content {
+            text-align: center;
+            z-index: 10;
+            padding: 40px;
+        }
+        
+        .cover-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+        }
+        
+        .cover-title {
+            font-size: 72px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+        }
+        
+        .cover-title span {
+            color: #ffd93d;
+        }
+        
+        .cover-tagline {
+            font-size: 22px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+            margin-bottom: 50px;
+        }
+        
+        .cover-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+            color: #1a1a2e;
+            font-weight: 700;
+            padding: 18px 50px;
+            border-radius: 60px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 15px 40px rgba(255,107,107,0.4);
+            margin-bottom: 60px;
+        }
+        
+        .cover-meta-box {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px 50px;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .cover-meta-box p {
+            color: #fff;
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        
+        .cover-meta-box strong {
+            color: #ffd93d;
+        }
+        
+        /* PAGE STYLES */
+        .page {
+            padding: 40px 50px;
+            min-height: 100vh;
+            page-break-after: always;
+            position: relative;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #22a76e;
+        }
+        
+        .page-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #22a76e, #1a7a5c);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 24px;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+        
+        h2 {
+            font-size: 20px;
+            color: #22a76e;
+            margin: 30px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2::before {
+            content: '';
+            width: 5px;
+            height: 25px;
+            background: linear-gradient(180deg, #22a76e, #ffd93d);
+            border-radius: 3px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #444;
+        }
+        
+        /* STAT CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            padding: 25px 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #22a76e, #ffd93d);
+        }
+        
+        .stat-card .emoji {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 800;
+            color: #22a76e;
+            line-height: 1;
+        }
+        
+        .stat-card .label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+        
+        /* PROBLEM TABLE */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .problem-card {
+            background: linear-gradient(135deg, #fff5f5, #fff);
+            border-left: 4px solid #ff6b6b;
+            border-radius: 0 12px 12px 0;
+            padding: 20px;
+        }
+        
+        .problem-card h4 {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .problem-card p {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+        
+        /* IMPACT BOX */
+        .impact-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .impact-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(34,167,110,0.2) 0%, transparent 50%);
+        }
+        
+        .impact-box h3 {
+            color: #ffd93d;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .impact-box p {
+            color: rgba(255,255,255,0.8);
+            font-size: 15px;
+            margin: 0;
+            position: relative;
+        }
+        
+        /* FEATURE GRID */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .feature-card {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:nth-child(1) { border-color: #22a76e; }
+        .feature-card:nth-child(2) { border-color: #ffd93d; }
+        .feature-card:nth-child(3) { border-color: #ff6b6b; }
+        .feature-card:nth-child(4) { border-color: #4dabf7; }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card:nth-child(1) .feature-icon { background: linear-gradient(135deg, #d3f9d8, #b2f2bb); }
+        .feature-card:nth-child(2) .feature-icon { background: linear-gradient(135deg, #fff3bf, #ffe066); }
+        .feature-card:nth-child(3) .feature-icon { background: linear-gradient(135deg, #ffc9c9, #ffa8a8); }
+        .feature-card:nth-child(4) .feature-icon { background: linear-gradient(135deg, #a5d8ff, #74c0fc); }
+        
+        .feature-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        
+        .feature-card p {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+        
+        /* NOTIFICATION DEMO */
+        .notification-demo {
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+            border: 2px solid #22a76e;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            page-break-inside: avoid;
+        }
+        
+        .notification-demo::before {
+            content: 'WhatsApp Preview';
+            position: absolute;
+            top: -12px;
+            left: 25px;
+            background: #22a76e;
+            color: #fff;
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .notification-demo .msg-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+        }
+        
+        .notification-demo .recipe-list {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .notification-demo .recipe-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px dashed #c8e6c9;
+            font-size: 14px;
+        }
+        
+        .notification-demo .recipe-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* TECH STACK */
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .tech-tag {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border: 1px solid #a5d6a7;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        
+        /* TIMELINE */
+        .timeline {
+            margin: 25px 0;
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #22a76e, #ffd93d, #ff6b6b);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px 20px;
+            page-break-inside: avoid;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 25px;
+            width: 20px;
+            height: 20px;
+            background: #22a76e;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 0 0 3px #22a76e;
+        }
+        
+        .timeline-item.completed::before {
+            background: #22a76e;
+        }
+        
+        .timeline-item.future::before {
+            background: #fff;
+        }
+        
+        .timeline-item h4 {
+            color: #22a76e;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-item p {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+        
+        /* TABLE */
+        .styled-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 15px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            page-break-inside: avoid;
+        }
+        
+        .styled-table th {
+            background: linear-gradient(135deg, #22a76e, #1a7a5c);
+            color: #fff;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .styled-table td {
+            padding: 15px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .styled-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .styled-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        /* FOOTER */
+        .footer-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer-page::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(34,167,110,0.3) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+        }
+        
+        .footer-page::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,217,61,0.2) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+        }
+        
+        .footer-content {
+            text-align: center;
+            z-index: 10;
+            padding: 40px;
+        }
+        
+        .footer-emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .footer-title span {
+            color: #22a76e;
+        }
+        
+        .footer-tagline {
+            font-size: 22px;
+            color: #ffd93d;
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+        
+        .footer-info {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px 50px;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .footer-info p {
+            color: #fff;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .footer-info strong {
+            color: #22a76e;
+        }
+        
+        .footer-cta {
+            margin-top: 40px;
+            display: inline-block;
+            background: linear-gradient(135deg, #22a76e, #1a7a5c);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(34,167,110,0.4);
+        }
+        
+        @media print {
+            .page { padding: 35px 45px; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .styled-table { page-break-inside: avoid; }
+            .timeline-item { page-break-inside: avoid; }
+            .notification-demo { page-break-inside: avoid; }
+            .feature-grid { page-break-inside: avoid; }
+            .impact-box { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== COVER PAGE ========== -->
+    <div class="cover-page">
+        <div class="cover-bg-pattern"></div>
+        <div class="cover-content">
+            <div class="cover-emoji">🍎</div>
+            <h1 class="cover-title">Smart<span>Bite</span></h1>
+            <p class="cover-tagline">AI-Powered Food Waste Reduction Platform</p>
+            
+            <div class="cover-badge">🏆 Goldman Sachs Possibilities Summit 2026</div>
+            
+            <div style="background: #fff; color: #1a1a2e; padding: 15px 35px; border-radius: 50px; font-weight: 700; font-size: 16px; margin-bottom: 30px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                🌐 Live Demo: <span style="color: #22a76e;"><a href="https://smart-bite-beryl.vercel.app" style="text-decoration: none;">smart-bite-beryl.vercel.app</a></span>
+            </div>
+            
+            <div class="cover-meta-box">
+                <p><strong>Category:</strong> Technology-Enabled Sustainable Solution</p>
+                <p><strong>Submitted By:</strong> Sai Mani</p>
+                <p><strong>Email:</strong> macherlasaimani@gmail.com</p>
+                <p><strong>Date:</strong> January 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE 1: EXECUTIVE SUMMARY ========== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="page-number">01</div>
+            <h1 class="page-title">Executive Summary</h1>
+        </div>
+        
+        <p style="font-size: 16px; line-height: 1.8;"><strong>SmartBite</strong> is an intelligent food inventory management platform designed to combat India's massive food wastage crisis. Through smart expiry tracking, AI-powered recipe recommendations, and multi-channel notifications, SmartBite prevents household food waste before it occurs.</p>
+        
+        <div class="impact-box">
+            <h3>🎯 Our Core Innovation</h3>
+            <p>Unlike traditional reminder apps, SmartBite uses intelligent recipe matching to convert expiring food into delicious meals—transforming a "waste problem" into a "meal opportunity."</p>
+        </div>
+        
+        <h2>The Crisis in Numbers</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="emoji">🗑️</div>
+                <div class="number">68.7M</div>
+                <div class="label">Tonnes Wasted Annually</div>
+            </div>
+            <div class="stat-card">
+                <div class="emoji">💸</div>
+                <div class="number">₹92K Cr</div>
+                <div class="label">Economic Loss/Year</div>
+            </div>
+            <div class="stat-card">
+                <div class="emoji">🏠</div>
+                <div class="number">40%</div>
+                <div class="label">From Households</div>
+            </div>
+            <div class="stat-card">
+                <div class="emoji">📦</div>
+                <div class="number">50 kg</div>
+                <div class="label">Per Family/Year</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE 2: PROBLEM STATEMENT ========== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="page-number">02</div>
+            <h1 class="page-title">Problem Statement</h1>
+        </div>
+        
+        <p>India ranks among the top food-wasting nations globally. While 189.2 million Indians remain undernourished, households waste enough food annually to feed entire nations.</p>
+        
+        <h2>Root Causes Identified</h2>
+        
+        <div class="problem-grid">
+            <div class="problem-card">
+                <h4>❌ Lack of Visibility</h4>
+                <p>Families forget what's stored in their fridge and pantry, leading to items being overlooked until expired.</p>
+            </div>
+            <div class="problem-card">
+                <h4>❌ Poor Expiry Tracking</h4>
+                <p>No systematic way to track expiry dates results in items expiring before consumption.</p>
+            </div>
+            <div class="problem-card">
+                <h4>❌ Recipe Confusion</h4>
+                <p>Not knowing what to cook with available ingredients leads to ingredients going unused.</p>
+            </div>
+            <div class="problem-card">
+                <h4>❌ No Timely Reminders</h4>
+                <p>Realizing food is expired only when it's already too late to use it.</p>
+            </div>
+        </div>
+        
+        <div class="impact-box">
+            <h3>189.2 Million Indians Undernourished</h3>
+            <p>While millions go hungry, Indian households waste enough food annually to feed Germany's entire population.</p>
+        </div>
+    </div>
+
+    <!-- ========== PAGE 3: SOLUTION ========== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="page-number">03</div>
+            <h1 class="page-title">Our Solution: SmartBite</h1>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h4>Smart Inventory Management</h4>
+                <p>Track all food items with barcode scanning, AI image recognition, and automatic expiry status calculation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🍳</div>
+                <h4>AI Recipe Matching</h4>
+                <p>Suggests recipes using YOUR expiring items plus other inventory. Priority-ranked by ingredient match score.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h4>Multi-Channel Alerts</h4>
+                <p>WhatsApp + Email + Push notifications ensure you never miss an item that's about to expire.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h4>Secure Authentication</h4>
+                <p>Username/password + Google OAuth. Your inventory syncs securely across all devices.</p>
+            </div>
+        </div>
+        
+        <h2>Recipe-First Reminders (Our USP)</h2>
+        
+        <div class="notification-demo">
+            <div class="msg-header">🍎 SmartBite Reminder</div>
+            <p>Your <strong>Milk</strong> expires <strong>tomorrow</strong>! ⏰</p>
+            
+            <div class="recipe-list">
+                <div class="recipe-item">🍳 <strong>1. Paneer Butter Masala</strong> — View Recipe →</div>
+                <div class="recipe-item">🥤 <strong>2. Mango Lassi</strong> — View Recipe →</div>
+                <div class="recipe-item">🍮 <strong>3. Rice Kheer</strong> — View Recipe →</div>
+            </div>
+            
+            <p style="font-style: italic; color: #22a76e;">Don't let good food go to waste! 🌿</p>
+        </div>
+    </div>
+
+    <!-- ========== PAGE 4: TECHNICAL ARCHITECTURE ========== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="page-number">04</div>
+            <h1 class="page-title">Technical Architecture</h1>
+        </div>
+        
+        <h2>Technology Stack</h2>
+        
+        <div class="tech-grid">
+            <span class="tech-tag">⚛️ React 18</span>
+            <span class="tech-tag">📘 TypeScript</span>
+            <span class="tech-tag">⚡ Vite</span>
+            <span class="tech-tag">🎨 Tailwind CSS</span>
+            <span class="tech-tag">🟢 Node.js</span>
+            <span class="tech-tag">🍃 MongoDB Atlas</span>
+            <span class="tech-tag">▲ Vercel</span>
+            <span class="tech-tag">🔑 JWT Auth</span>
+            <span class="tech-tag">🔵 Google OAuth</span>
+            <span class="tech-tag">💬 Twilio WhatsApp</span>
+            <span class="tech-tag">📧 EmailJS</span>
+            <span class="tech-tag">🍽️ TheMealDB API</span>
+        </div>
+        
+        <h2>Impact Assessment</h2>
+        
+        <table class="styled-table">
+            <tr>
+                <th>Metric</th>
+                <th>Per Household</th>
+                <th>India-wide (50M users)</th>
+            </tr>
+            <tr>
+                <td>🍎 Food Saved</td>
+                <td>25-30 kg/year</td>
+                <td>1.25-1.5 million tonnes</td>
+            </tr>
+            <tr>
+                <td>💰 Money Saved</td>
+                <td>₹4,000-6,000/year</td>
+                <td>₹20,000-30,000 crores</td>
+            </tr>
+            <tr>
+                <td>🌍 CO2 Prevented</td>
+                <td>75-90 kg/year</td>
+                <td>3.75-4.5 million tonnes</td>
+            </tr>
+            <tr>
+                <td>🍽️ Meals Recovered</td>
+                <td>150-200 meals</td>
+                <td>7.5-10 billion meals</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ========== PAGE 5: ROADMAP & FEASIBILITY ========== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="page-number">05</div>
+            <h1 class="page-title">Roadmap & Feasibility</h1>
+        </div>
+        
+        <h2>Implementation Roadmap</h2>
+        
+        <div class="timeline">
+            <div class="timeline-item completed">
+                <h4>✅ Phase 1: MVP (Completed)</h4>
+                <p>User authentication, inventory management, expiry tracking, recipe suggestions, multi-channel notifications (WhatsApp, Email, Push)</p>
+            </div>
+            <div class="timeline-item future">
+                <h4>📱 Phase 2: Enhancement (Q1 2026)</h4>
+                <p>Mobile app (React Native), family sharing feature, grocery list generation, Hindi/regional language support</p>
+            </div>
+            <div class="timeline-item future">
+                <h4>🚀 Phase 3: Scale (Q2-Q3 2026)</h4>
+                <p>AI-powered purchase predictions, smart fridge integration, community features, grocery chain partnerships</p>
+            </div>
+            <div class="timeline-item future">
+                <h4>💰 Phase 4: Monetization (Q4 2026)</h4>
+                <p>Premium subscription launch, B2B partnerships, corporate wellness programs</p>
+            </div>
+        </div>
+        
+        <h2>Feasibility Analysis</h2>
+        
+        <table class="styled-table">
+            <tr>
+                <th>Aspect</th>
+                <th>Status</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>🔧 Technical</td>
+                <td>✅ Complete</td>
+                <td>Fully functional, deployed on Vercel</td>
+            </tr>
+            <tr>
+                <td>💸 Financial</td>
+                <td>✅ Viable</td>
+                <td>Runs on free-tier services (&lt;₹500/month)</td>
+            </tr>
+            <tr>
+                <td>📊 Market</td>
+                <td>✅ Ready</td>
+                <td>300M+ smartphone users in India</td>
+            </tr>
+            <tr>
+                <td>🏆 Competition</td>
+                <td>✅ Favorable</td>
+                <td>No Indian app combines all features</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ========== FOOTER PAGE ========== -->
+    <div class="footer-page">
+        <div class="footer-content">
+            <div class="footer-emoji">🍎</div>
+            <h1 class="footer-title">Smart<span>Bite</span></h1>
+            <p class="footer-tagline">"Reduce waste. Save money. Cook smart."</p>
+            
+            <div class="footer-info">
+                <p><strong>🌐 Live Demo:</strong> https://smart-bite-beryl.vercel.app</p>
+                <p><strong>👤 Developer:</strong> Sai Mani</p>
+                <p><strong>📧 Email:</strong> macherlasaimani@gmail.com</p>
+                <p><strong>💻 GitHub:</strong> github.com/saimani1232/SmartBite</p>
+            </div>
+            
+            <div class="footer-cta">Your Intelligent Kitchen Companion 🌿</div>
+        </div>
+    </div>
+
+</body>
+</html>

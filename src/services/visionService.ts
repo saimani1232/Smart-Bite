@@ -1,9 +1,18 @@
 import * as jose from 'jose';
 
 // Service Account Credentials - Read from environment variables
+function parsePrivateKey(raw: string): string {
+    if (!raw) return '';
+    // Remove surrounding quotes if present
+    let key = raw.replace(/^["']|["']$/g, '');
+    // Replace all forms of escaped newlines with actual newlines
+    key = key.replace(/\\\\n/g, '\n').replace(/\\n/g, '\n');
+    return key;
+}
+
 const SERVICE_ACCOUNT = {
     client_email: import.meta.env.VITE_GOOGLE_CLOUD_CLIENT_EMAIL || '',
-    private_key: (import.meta.env.VITE_GOOGLE_CLOUD_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+    private_key: parsePrivateKey(import.meta.env.VITE_GOOGLE_CLOUD_PRIVATE_KEY || ''),
     token_uri: "https://oauth2.googleapis.com/token"
 };
 
@@ -78,7 +87,13 @@ export async function extractTextFromImage(base64Image: string): Promise<string>
 
     const data = await response.json();
 
+    if (!response.ok) {
+        console.error('Vision API HTTP error:', response.status, JSON.stringify(data, null, 2));
+        throw new Error(`Vision API error (${response.status}): ${data.error?.message || JSON.stringify(data)}`);
+    }
+
     if (data.error) {
+        console.error('Vision API data error:', JSON.stringify(data.error, null, 2));
         throw new Error(`Vision API error: ${data.error.message}`);
     }
 
@@ -270,11 +285,22 @@ export async function detectBarcode(base64Image: string): Promise<string | null>
     return null;
 }
 
-// Waterfall barcode lookup: Open Food Facts → UPCitemdb → Unknown (manual entry)
+// Hardcoded barcode map for known products (skip API calls)
+const KNOWN_BARCODES: Record<string, ProductInfo> = {
+    '8901058005080': { name: 'Munch Max', category: 'Other', estimatedExpiryDays: 180, barcode: '8901058005080' },
+};
+
+// Waterfall barcode lookup: Known → Open Food Facts → UPCitemdb → Unknown (manual entry)
 export async function lookupProduct(barcode: string): Promise<ProductInfo | null> {
     // Clean barcode (remove spaces)
     const cleanBarcode = barcode.replace(/\s/g, '');
     console.log('🔍 Looking up barcode:', cleanBarcode);
+
+    // Step 0: Check hardcoded map first
+    if (KNOWN_BARCODES[cleanBarcode]) {
+        console.log('✅ Found in hardcoded map:', KNOWN_BARCODES[cleanBarcode].name);
+        return KNOWN_BARCODES[cleanBarcode];
+    }
 
     // Create a timeout promise
     const timeout = (ms: number) => new Promise((_, reject) =>
