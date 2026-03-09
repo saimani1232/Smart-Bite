@@ -169,7 +169,7 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
             matchScore: 3,
             readyInMinutes: 10,
             servings: 2,
-            sourceUrl: 'https://www.youtube.com/watch?v=RzBm0K-Gy3k'
+            sourceUrl: 'https://www.youtube.com/watch?v=92gHUzeeOI8'
         },
         {
             id: 'custom-lays-2',
@@ -183,7 +183,7 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
             matchScore: 3,
             readyInMinutes: 15,
             servings: 4,
-            sourceUrl: 'https://www.youtube.com/watch?v=5R3ZGEo3kDc'
+            sourceUrl: 'https://www.youtube.com/watch?v=X2effcTdCZY'
         },
         {
             id: 'custom-lays-3',
@@ -197,7 +197,7 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
             matchScore: 3,
             readyInMinutes: 25,
             servings: 4,
-            sourceUrl: 'https://www.youtube.com/watch?v=VB1VhZ8mQ-0'
+            sourceUrl: 'https://www.youtube.com/watch?v=qkM7HwvclCU'
         }
     ]
 };
