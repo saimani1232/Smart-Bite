@@ -5,7 +5,7 @@ export type InventoryItem = {
   expiryDate: string; // ISO format YYYY-MM-DD
   quantity: number;
   unit: 'pkg' | 'kg' | 'l' | 'pcs' | 'g' | 'ml';
-  category: 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Other';
+  category: 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Snacks' | 'Other';
   isOpened: boolean;
   openedDate?: string;
   status: 'Good' | 'Expiring Soon' | 'Expired';

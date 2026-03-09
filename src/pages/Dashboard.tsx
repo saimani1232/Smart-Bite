@@ -7,7 +7,7 @@ import { Plus, Search, AlertTriangle, CheckCircle, Sparkles, TrendingUp, X, Filt
 import type { InventoryItem } from '../types';
 
 type StatusFilter = 'all' | 'expired' | 'expiring' | 'fresh';
-type CategoryFilter = 'all' | 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Other';
+type CategoryFilter = 'all' | 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Snacks' | 'Other';
 type SortOption = 'expiry' | 'name' | 'added';
 
 // Get greeting based on time of day
@@ -265,7 +265,7 @@ export const Dashboard: React.FC = () => {
                             <div className="flex-1 min-w-[150px]">
                                 <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Category</label>
                                 <div className="flex flex-wrap gap-2">
-                                    {(['all', 'Dairy', 'Grain', 'Vegetable', 'Meat', 'Other'] as CategoryFilter[]).map(cat => (
+                                    {(['all', 'Dairy', 'Grain', 'Vegetable', 'Meat', 'Snacks', 'Other'] as CategoryFilter[]).map(cat => (
                                         <button
                                             key={cat}
                                             onClick={() => setCategoryFilter(cat)}

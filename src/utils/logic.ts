@@ -82,6 +82,9 @@ export const getOpenedExpiryDate = (
             break;
         case 'Grain':
             return null; // Grains, flour, rice - no change needed
+        case 'Snacks':
+            daysToAdd = 14; // Opened snacks - chips, biscuits
+            break;
         case 'Other':
         default:
             daysToAdd = 7; // Packaged foods, sauces, snacks

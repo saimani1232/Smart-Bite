@@ -327,6 +327,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <option value="Grain">Grain</option>
                         <option value="Vegetable">Vegetable</option>
                         <option value="Meat">Meat</option>
+                        <option value="Snacks">Snacks</option>
                         <option value="Other">Other</option>
                     </select>
                 </div>

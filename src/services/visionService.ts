@@ -207,7 +207,7 @@ function parseDate(dateStr: string): string | null {
 
 export interface ProductInfo {
     name: string;
-    category: 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Other';
+    category: 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Snacks' | 'Other';
     estimatedExpiryDays: number;
     barcode: string;
 }
@@ -287,8 +287,8 @@ export async function detectBarcode(base64Image: string): Promise<string | null>
 
 // Hardcoded barcode map for known products (skip API calls)
 const KNOWN_BARCODES: Record<string, ProductInfo> = {
-    '8901058005080': { name: 'Munch Max', category: 'Other', estimatedExpiryDays: 180, barcode: '8901058005080' },
-    '8901491101844': { name: 'Lays Masala Blue Color', category: 'Other', estimatedExpiryDays: 180, barcode: '8901491101844' }
+    '8901058005080': { name: 'Munch Max', category: 'Snacks', estimatedExpiryDays: 180, barcode: '8901058005080' },
+    '8901491101844': { name: 'Lays Masala Blue Color', category: 'Snacks', estimatedExpiryDays: 180, barcode: '8901491101844' }
 };
 
 // Waterfall barcode lookup: Known → Open Food Facts → UPCitemdb → Unknown (manual entry)
@@ -421,19 +421,25 @@ function mapToCategory(categories: string, productName: string): ProductInfo['ca
         return 'Vegetable';
     }
 
-    // Grain/Snacks/Biscuits - EXPANDED
+    // Snacks - chips, biscuits, namkeen, etc.
+    if (lowerCats.includes('snack') || lowerCats.includes('chips') || lowerCats.includes('biscuit') ||
+        lowerCats.includes('cookie') || lowerCats.includes('cracker') || lowerCats.includes('wafer') ||
+        lowerCats.includes('namkeen') || lowerCats.includes('rusk') ||
+        lowerName.includes('chips') || lowerName.includes('lays') || lowerName.includes('kurkure') ||
+        lowerName.includes('biscuit') || lowerName.includes('cookie') || lowerName.includes('namkeen') ||
+        lowerName.includes('bhujia') || lowerName.includes('mixture') || lowerName.includes('haldiram') ||
+        lowerName.includes('rusk') || lowerName.includes('cracker') || lowerName.includes('wafer') ||
+        lowerName.includes('oreo') || lowerName.includes('parle') || lowerName.includes('britannia') ||
+        lowerName.includes('munch') || lowerName.includes('snack')) {
+        return 'Snacks';
+    }
+
+    // Grain - bread, rice, flour, noodles
     if (lowerCats.includes('grain') || lowerCats.includes('bread') || lowerCats.includes('cereal') ||
         lowerCats.includes('flour') || lowerCats.includes('rice') || lowerCats.includes('pasta') ||
-        lowerCats.includes('biscuit') || lowerCats.includes('cookie') || lowerCats.includes('snack') ||
-        lowerCats.includes('cracker') || lowerCats.includes('wafer') || lowerCats.includes('rusk') ||
-        lowerCats.includes('namkeen') || lowerCats.includes('chips') || lowerCats.includes('noodle') ||
+        lowerCats.includes('noodle') ||
         lowerName.includes('bread') || lowerName.includes('rice') || lowerName.includes('flour') ||
-        lowerName.includes('biscuit') || lowerName.includes('cookie') || lowerName.includes('chips') ||
-        lowerName.includes('namkeen') || lowerName.includes('bhujia') || lowerName.includes('mixture') ||
-        lowerName.includes('rusk') || lowerName.includes('toast') || lowerName.includes('cracker') ||
-        lowerName.includes('wafer') || lowerName.includes('noodle') || lowerName.includes('maggi') ||
-        lowerName.includes('parle') || lowerName.includes('britannia') || lowerName.includes('oreo') ||
-        lowerName.includes('kurkure') || lowerName.includes('lays') || lowerName.includes('haldiram')) {
+        lowerName.includes('noodle') || lowerName.includes('maggi') || lowerName.includes('toast')) {
         return 'Grain';
     }
 
@@ -460,6 +466,8 @@ function getEstimatedExpiryDays(category: ProductInfo['category'], categories: s
             return 7; // Fresh produce: ~1 week  
         case 'Grain':
             return 180; // Dry goods: ~6 months
+        case 'Snacks':
+            return 120; // Packaged snacks: ~4 months
         default:
             return 30; // Default: ~1 month
     }
