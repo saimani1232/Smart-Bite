@@ -160,7 +160,7 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
         {
             id: 'custom-lays-1',
             name: 'Crispy Chips Bhel Puri',
-            image: 'https://www.themealdb.com/images/media/meals/1525876468.jpg',
+            image: '/i1.jpeg',
             category: 'Snack',
             area: 'Indian',
             instructions: '1. Crush the Lays chips into bite-sized pieces in a bowl.\n2. Add finely chopped onion, tomato, green chili, and coriander.\n3. Squeeze fresh lemon juice over the mixture.\n4. Add tamarind chutney and green chutney.\n5. Toss everything together and serve immediately while crispy.',
@@ -174,7 +174,7 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
         {
             id: 'custom-lays-2',
             name: 'Loaded Nachos with Cheese Sauce',
-            image: 'https://www.themealdb.com/images/media/meals/xxpqsy1511452222.jpg',
+            image: '/i2.jpeg',
             category: 'Starter',
             area: 'Mexican',
             instructions: '1. Arrange Lays chips on a baking tray in a single layer.\n2. Make cheese sauce: melt butter, add flour, stir in milk, then add grated cheese until smooth.\n3. Pour hot cheese sauce over the chips.\n4. Top with diced tomatoes, jalapeños, and corn kernels.\n5. Bake at 180°C for 5 minutes until cheese is bubbly.\n6. Garnish with sour cream and coriander.',
@@ -188,7 +188,7 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
         {
             id: 'custom-lays-3',
             name: 'Chips Crusted Aloo Tikki',
-            image: 'https://www.themealdb.com/images/media/meals/o2wb6p1581005243.jpg',
+            image: '/i3.jpeg',
             category: 'Side',
             area: 'Indian',
             instructions: '1. Boil and mash potatoes. Mix with chopped onion, green chili, ginger, garam masala, and salt.\n2. Crush Lays chips finely to make a crispy coating.\n3. Shape potato mixture into flat round patties.\n4. Coat each patty generously with crushed chips.\n5. Shallow fry on medium heat until golden and crispy on both sides.\n6. Serve hot with mint chutney and tamarind chutney.',
