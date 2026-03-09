@@ -321,15 +321,29 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Category</label>
-                    <select value={category} onChange={e => setCategory(e.target.value as any)} className="input-field">
-                        <option value="Dairy">Dairy</option>
-                        <option value="Grain">Grain</option>
-                        <option value="Vegetable">Vegetable</option>
-                        <option value="Meat">Meat</option>
-                        <option value="Snacks">Snacks</option>
-                        <option value="Other">Other</option>
-                    </select>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Category</label>
+                    <div className="grid grid-cols-3 gap-2">
+                        {([
+                            { value: 'Dairy', emoji: '🥛', color: 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300', active: 'bg-blue-100 border-blue-400 ring-2 ring-blue-300 dark:bg-blue-800/50 dark:border-blue-500 dark:ring-blue-600' },
+                            { value: 'Grain', emoji: '🌾', color: 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300', active: 'bg-amber-100 border-amber-400 ring-2 ring-amber-300 dark:bg-amber-800/50 dark:border-amber-500 dark:ring-amber-600' },
+                            { value: 'Vegetable', emoji: '🥬', color: 'bg-green-50 border-green-200 text-green-700 dark:bg-green-900/30 dark:border-green-700 dark:text-green-300', active: 'bg-green-100 border-green-400 ring-2 ring-green-300 dark:bg-green-800/50 dark:border-green-500 dark:ring-green-600' },
+                            { value: 'Meat', emoji: '🍖', color: 'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/30 dark:border-red-700 dark:text-red-300', active: 'bg-red-100 border-red-400 ring-2 ring-red-300 dark:bg-red-800/50 dark:border-red-500 dark:ring-red-600' },
+                            { value: 'Snacks', emoji: '🍿', color: 'bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-900/30 dark:border-orange-700 dark:text-orange-300', active: 'bg-orange-100 border-orange-400 ring-2 ring-orange-300 dark:bg-orange-800/50 dark:border-orange-500 dark:ring-orange-600' },
+                            { value: 'Other', emoji: '📦', color: 'bg-gray-50 border-gray-200 text-gray-700 dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300', active: 'bg-gray-100 border-gray-400 ring-2 ring-gray-300 dark:bg-gray-600/50 dark:border-gray-500 dark:ring-gray-500' },
+                        ] as const).map(cat => (
+                            <button
+                                key={cat.value}
+                                type="button"
+                                onClick={() => setCategory(cat.value as any)}
+                                className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200 cursor-pointer
+                                    ${category === cat.value ? cat.active : cat.color}
+                                    hover:scale-[1.03] active:scale-95`}
+                            >
+                                <span className="text-base">{cat.emoji}</span>
+                                <span>{cat.value}</span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Reminder Settings */}
