@@ -12,6 +12,7 @@ const getCategoryEmoji = (category: string) => {
         case 'Grain': return '🌾';
         case 'Vegetable': return '🥬';
         case 'Meat': return '🍖';
+        case 'Snacks': return '🍿';
         default: return '📦';
     }
 };

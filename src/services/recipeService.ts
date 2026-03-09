@@ -154,12 +154,88 @@ export async function getRecipeById(id: string): Promise<Recipe | null> {
     }
 }
 
+// Hardcoded recipes for specific items that don't get good API results
+const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
+    'lays': [
+        {
+            id: 'custom-lays-1',
+            name: 'Crispy Chips Bhel Puri',
+            image: 'https://www.themealdb.com/images/media/meals/1525876468.jpg',
+            category: 'Snack',
+            area: 'Indian',
+            instructions: '1. Crush the Lays chips into bite-sized pieces in a bowl.\n2. Add finely chopped onion, tomato, green chili, and coriander.\n3. Squeeze fresh lemon juice over the mixture.\n4. Add tamarind chutney and green chutney.\n5. Toss everything together and serve immediately while crispy.',
+            ingredients: ['lays chips', 'onion', 'tomato', 'green chili', 'coriander', 'lemon juice', 'tamarind chutney', 'green chutney', 'sev'],
+            matchedIngredients: ['lays chips', 'onion', 'tomato'],
+            matchScore: 3,
+            readyInMinutes: 10,
+            servings: 2,
+            sourceUrl: 'https://www.youtube.com/watch?v=RzBm0K-Gy3k'
+        },
+        {
+            id: 'custom-lays-2',
+            name: 'Loaded Nachos with Cheese Sauce',
+            image: 'https://www.themealdb.com/images/media/meals/xxpqsy1511452222.jpg',
+            category: 'Starter',
+            area: 'Mexican',
+            instructions: '1. Arrange Lays chips on a baking tray in a single layer.\n2. Make cheese sauce: melt butter, add flour, stir in milk, then add grated cheese until smooth.\n3. Pour hot cheese sauce over the chips.\n4. Top with diced tomatoes, jalapeños, and corn kernels.\n5. Bake at 180°C for 5 minutes until cheese is bubbly.\n6. Garnish with sour cream and coriander.',
+            ingredients: ['lays chips', 'cheese', 'butter', 'flour', 'milk', 'tomato', 'jalapeño', 'corn', 'sour cream', 'coriander'],
+            matchedIngredients: ['lays chips', 'cheese', 'tomato'],
+            matchScore: 3,
+            readyInMinutes: 15,
+            servings: 4,
+            sourceUrl: 'https://www.youtube.com/watch?v=5R3ZGEo3kDc'
+        },
+        {
+            id: 'custom-lays-3',
+            name: 'Chips Crusted Aloo Tikki',
+            image: 'https://www.themealdb.com/images/media/meals/o2wb6p1581005243.jpg',
+            category: 'Side',
+            area: 'Indian',
+            instructions: '1. Boil and mash potatoes. Mix with chopped onion, green chili, ginger, garam masala, and salt.\n2. Crush Lays chips finely to make a crispy coating.\n3. Shape potato mixture into flat round patties.\n4. Coat each patty generously with crushed chips.\n5. Shallow fry on medium heat until golden and crispy on both sides.\n6. Serve hot with mint chutney and tamarind chutney.',
+            ingredients: ['lays chips', 'potato', 'onion', 'green chili', 'ginger', 'garam masala', 'salt', 'oil', 'mint chutney'],
+            matchedIngredients: ['lays chips', 'potato', 'onion'],
+            matchScore: 3,
+            readyInMinutes: 25,
+            servings: 4,
+            sourceUrl: 'https://www.youtube.com/watch?v=VB1VhZ8mQ-0'
+        }
+    ]
+};
+
+// Check if an item name matches any known recipe key
+function getKnownRecipes(itemName: string): Recipe[] | null {
+    const normalized = itemName.toLowerCase();
+    for (const [key, recipes] of Object.entries(KNOWN_ITEM_RECIPES)) {
+        if (normalized.includes(key)) {
+            return recipes;
+        }
+    }
+    return null;
+}
+
 // Find best recipes that use expiring item + other inventory items
 export async function findBestRecipes(
     expiringItemName: string,
     allInventoryItems: string[]
 ): Promise<Recipe[]> {
     console.log('🍳 Finding recipes for:', expiringItemName, 'with inventory:', allInventoryItems);
+
+    // Check hardcoded recipes first (for items like Lays that don't have good API results)
+    const knownRecipes = getKnownRecipes(expiringItemName);
+    if (knownRecipes) {
+        console.log('✅ Found hardcoded recipes for:', expiringItemName);
+        // Update matched ingredients with actual inventory items
+        const inventoryNormalized = allInventoryItems.map(s => s.toLowerCase().trim());
+        return knownRecipes.map(recipe => {
+            const matched = recipe.ingredients.filter(ing =>
+                inventoryNormalized.some(inv => ing.includes(inv) || inv.includes(ing))
+            );
+            if (!matched.some(m => m.includes(expiringItemName.toLowerCase()))) {
+                matched.unshift(expiringItemName.toLowerCase());
+            }
+            return { ...recipe, matchedIngredients: matched, matchScore: matched.length };
+        });
+    }
 
     // Normalize ingredient names
     const normalize = (s: string) => s.toLowerCase().trim();
