@@ -1,11 +1,11 @@
-// Google Authentication API - Verify Google token and create/login user
+// Google Authentication API - Verify Google token and create/login user (Firebase Firestore)
 import { OAuth2Client } from 'google-auth-library';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { connectToDatabase } from '../lib/mongodb.js';
+import { getFirestoreDb } from '../lib/firestore.js';
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const JWT_SECRET = process.env.JWT_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
+const JWT_SECRET = process.env.JWT_SECRET || 'smartbite-jwt-secret-persistent';
 
 export default async function handler(req, res) {
     // CORS headers
@@ -34,11 +34,6 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Google Sign-In not configured' });
         }
 
-        if (!JWT_SECRET) {
-            console.error('JWT_SECRET not configured');
-            return res.status(500).json({ error: 'Server configuration error' });
-        }
-
         // Verify the Google token
         const client = new OAuth2Client(GOOGLE_CLIENT_ID);
         
@@ -59,59 +54,62 @@ export default async function handler(req, res) {
         const name = payload.name || email.split('@')[0];
         const picture = payload.picture;
 
-        console.log('Google user:', { googleId, email, name });
+        let db;
+        try {
+            db = getFirestoreDb();
+        } catch (dbError) {
+            console.error('Database connection error in /auth/google:', dbError.message);
+            return res.status(503).json({ 
+                error: 'Cloud database not configured',
+                details: dbError.message 
+            });
+        }
 
-        // Connect to database
-        const { db } = await connectToDatabase();
         const usersCollection = db.collection('users');
 
-        // Find existing user by Google ID or email
-        let user = await usersCollection.findOne({
-            $or: [
-                { googleId },
-                { email: email.toLowerCase() }
-            ]
-        });
+        // Find existing user by googleId
+        let userDocId = null;
+        let userData = null;
 
-        if (user) {
-            // Update existing user with Google info if not already set
-            if (!user.googleId) {
-                await usersCollection.updateOne(
-                    { _id: user._id },
-                    { 
-                        $set: { 
-                            googleId,
-                            picture,
-                            updatedAt: new Date()
-                        }
-                    }
-                );
-            }
-            console.log('Existing user logged in:', user.username || user.email);
+        let snapshot = await usersCollection.where('googleId', '==', googleId).limit(1).get();
+        if (snapshot.empty && email) {
+            snapshot = await usersCollection.where('email', '==', email.toLowerCase()).limit(1).get();
+        }
+
+        if (!snapshot.empty) {
+            const doc = snapshot.docs[0];
+            userDocId = doc.id;
+            userData = doc.data();
+
+            // Update with googleId or picture if needed
+            await doc.ref.update({
+                googleId,
+                picture: picture || userData.picture,
+                updatedAt: new Date()
+            });
         } else {
-            // Create new user
+            // Create new Google user
             const newUser = {
                 username: name.toLowerCase().replace(/\s+/g, '_'),
                 email: email.toLowerCase(),
                 googleId,
                 picture,
-                // Random password for Google users (they can't use password login)
                 password: await bcrypt.hash(Math.random().toString(36), 10),
                 createdAt: new Date(),
                 updatedAt: new Date()
             };
 
-            const result = await usersCollection.insertOne(newUser);
-            user = { _id: result.insertedId, ...newUser };
-            console.log('New Google user created:', user.username);
+            const docRef = await usersCollection.add(newUser);
+            userDocId = docRef.id;
+            userData = newUser;
         }
 
         // Generate JWT
         const token = jwt.sign(
             { 
-                userId: user._id.toString(), 
-                username: user.username || name,
-                email: user.email
+                userId: userDocId, 
+                username: userData.username || name,
+                email: userData.email
             },
             JWT_SECRET,
             { expiresIn: '7d' }
@@ -121,10 +119,10 @@ export default async function handler(req, res) {
             success: true,
             token,
             user: {
-                id: user._id.toString(),
-                username: user.username || name,
-                email: user.email,
-                picture: user.picture || picture
+                id: userDocId,
+                username: userData.username || name,
+                email: userData.email,
+                picture: userData.picture || picture
             }
         });
 

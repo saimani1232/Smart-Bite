@@ -1,6 +1,6 @@
-// User Registration API
+// User Registration API (Firebase Firestore)
 import bcrypt from 'bcryptjs';
-import { connectToDatabase } from '../lib/mongodb.js';
+import { getFirestoreDb } from '../lib/firestore.js';
 import { generateToken } from '../lib/auth.js';
 
 export default async function handler(req, res) {
@@ -36,12 +36,11 @@ export default async function handler(req, res) {
 
         let db;
         try {
-            const connection = await connectToDatabase();
-            db = connection.db;
+            db = getFirestoreDb();
         } catch (dbError) {
-            console.error('Database connection error:', dbError);
-            return res.status(500).json({ 
-                error: 'Database connection failed',
+            console.error('Database connection error in /auth/register:', dbError.message);
+            return res.status(503).json({ 
+                error: 'Cloud database not configured',
                 details: dbError.message 
             });
         }
@@ -49,29 +48,35 @@ export default async function handler(req, res) {
         const usersCollection = db.collection('users');
 
         // Check if username already exists
-        const existingUser = await usersCollection.findOne({ username: username.toLowerCase() });
-        if (existingUser) {
+        const existingUsers = await usersCollection
+            .where('username', '==', username.toLowerCase())
+            .limit(1)
+            .get();
+
+        if (!existingUsers.empty) {
             return res.status(400).json({ error: 'Username already taken' });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
-        const result = await usersCollection.insertOne({
+        // Create user in Firestore
+        const now = new Date();
+        const docRef = await usersCollection.add({
             username: username.toLowerCase(),
             password: hashedPassword,
-            createdAt: new Date()
+            createdAt: now,
+            updatedAt: now
         });
 
         // Generate token
-        const token = generateToken(result.insertedId.toString(), username.toLowerCase());
+        const token = generateToken(docRef.id, username.toLowerCase());
 
         return res.status(201).json({
             message: 'User created successfully',
             token,
             user: {
-                id: result.insertedId.toString(),
+                id: docRef.id,
                 username: username.toLowerCase()
             }
         });

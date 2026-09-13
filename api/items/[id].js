@@ -1,6 +1,5 @@
-// Single Item API - PUT update, DELETE
-import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '../lib/mongodb.js';
+// Single Item API - PUT update, DELETE (Firebase Firestore)
+import { getFirestoreDb, formatDoc } from '../lib/firestore.js';
 import { authenticateRequest } from '../lib/auth.js';
 
 export default async function handler(req, res) {
@@ -20,71 +19,60 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Get item ID from URL
+    // Get item ID from URL query
     const { id } = req.query;
-    if (!id || !ObjectId.isValid(id)) {
+    if (!id || typeof id !== 'string') {
         return res.status(400).json({ error: 'Invalid item ID' });
     }
 
     try {
-        const { db } = await connectToDatabase();
-        const itemsCollection = db.collection('items');
+        let db;
+        try {
+            db = getFirestoreDb();
+        } catch (dbErr) {
+            console.error('Database connection error in /items/[id]:', dbErr.message);
+            return res.status(503).json({
+                error: 'Cloud database not configured',
+                details: dbErr.message
+            });
+        }
+
+        const itemRef = db.collection('items').doc(id);
+        const docSnapshot = await itemRef.get();
+
+        if (!docSnapshot.exists) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        const itemData = docSnapshot.data();
 
         // Verify item belongs to user
-        const existingItem = await itemsCollection.findOne({
-            _id: new ObjectId(id),
-            userId: user.userId
-        });
-
-        if (!existingItem) {
-            return res.status(404).json({ error: 'Item not found' });
+        if (itemData.userId !== user.userId) {
+            return res.status(403).json({ error: 'Forbidden: Item belongs to another user' });
         }
 
         // PUT - Update item
         if (req.method === 'PUT') {
             const updates = req.body || {};
-            delete updates.id; // Don't allow updating id
-            delete updates.userId; // Don't allow changing owner
+            delete updates.id;     // Prevent changing ID
+            delete updates.userId; // Prevent changing ownership
 
-            const result = await itemsCollection.updateOne(
-                { _id: new ObjectId(id), userId: user.userId },
-                { 
-                    $set: {
-                        ...updates,
-                        updatedAt: new Date()
-                    }
-                }
-            );
+            const updatePayload = {
+                ...updates,
+                updatedAt: new Date()
+            };
 
-            if (result.modifiedCount === 0) {
-                return res.status(400).json({ error: 'No changes made' });
-            }
+            await itemRef.update(updatePayload);
 
-            // Fetch updated item
-            const updatedItem = await itemsCollection.findOne({ _id: new ObjectId(id) });
+            const updatedDoc = await itemRef.get();
+            const formatted = formatDoc(updatedDoc);
 
-            return res.status(200).json({
-                id: updatedItem._id.toString(),
-                name: updatedItem.name,
-                quantity: updatedItem.quantity,
-                unit: updatedItem.unit,
-                category: updatedItem.category,
-                expiryDate: updatedItem.expiryDate,
-                isOpened: updatedItem.isOpened || false,
-                reminderDays: updatedItem.reminderDays || 0,
-                reminderEmail: updatedItem.reminderEmail || '',
-                reminderPhone: updatedItem.reminderPhone || '',
-                reminderSent: updatedItem.reminderSent || false
-            });
+            return res.status(200).json(formatted);
         }
 
         // DELETE - Remove item
         if (req.method === 'DELETE') {
-            await itemsCollection.deleteOne({
-                _id: new ObjectId(id),
-                userId: user.userId
-            });
-
+            await itemRef.delete();
             return res.status(200).json({ message: 'Item deleted successfully' });
         }
 

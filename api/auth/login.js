@@ -1,6 +1,6 @@
-// User Login API
+// User Login API (Firebase Firestore)
 import bcrypt from 'bcryptjs';
-import { connectToDatabase } from '../lib/mongodb.js';
+import { getFirestoreDb } from '../lib/firestore.js';
 import { generateToken } from '../lib/auth.js';
 
 export default async function handler(req, res) {
@@ -28,23 +28,29 @@ export default async function handler(req, res) {
 
         let db;
         try {
-            const connection = await connectToDatabase();
-            db = connection.db;
+            db = getFirestoreDb();
         } catch (dbError) {
-            console.error('Database connection error:', dbError);
-            return res.status(500).json({ 
-                error: 'Database connection failed',
+            console.error('Database connection error in /auth/login:', dbError.message);
+            return res.status(503).json({ 
+                error: 'Cloud database not configured',
                 details: dbError.message 
             });
         }
 
         const usersCollection = db.collection('users');
 
-        // Find user
-        const user = await usersCollection.findOne({ username: username.toLowerCase() });
-        if (!user) {
+        // Find user by username
+        const snapshot = await usersCollection
+            .where('username', '==', username.toLowerCase())
+            .limit(1)
+            .get();
+
+        if (snapshot.empty) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
+
+        const userDoc = snapshot.docs[0];
+        const user = userDoc.data();
 
         // Verify password
         const isValidPassword = await bcrypt.compare(password, user.password);
@@ -53,13 +59,13 @@ export default async function handler(req, res) {
         }
 
         // Generate token
-        const token = generateToken(user._id.toString(), user.username);
+        const token = generateToken(userDoc.id, user.username);
 
         return res.status(200).json({
             message: 'Login successful',
             token,
             user: {
-                id: user._id.toString(),
+                id: userDoc.id,
                 username: user.username
             }
         });

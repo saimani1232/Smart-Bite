@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { X, Mail, Send, CheckCircle, AlertCircle, Loader2, Leaf, Bell, Moon, Sun, Shield, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Mail, Send, CheckCircle, AlertCircle, Loader2, Leaf, Bell, Moon, Sun, Shield, Heart, Database, RotateCcw, Cloud } from 'lucide-react';
 import { isEmailConfigured, sendTestEmail } from '../services/emailService';
 import { useTheme } from '../context/ThemeContext';
 import { isPushSupported, isPushEnabled, setPushEnabled, requestPushPermission, getPushPermission } from '../services/pushService';
+import { localStore } from '../services/localStore';
+import { useInventory } from '../context/InventoryContext';
 
 interface SettingsPanelProps {
     isOpen: boolean;
@@ -15,10 +17,31 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
     const [statusMessage, setStatusMessage] = useState('');
     const [pushEnabled, setLocalPushEnabled] = useState(isPushEnabled());
     const [pushPermission, setPushPermission] = useState(getPushPermission());
+    const [syncMode, setSyncMode] = useState<'cloud' | 'local'>(localStore.getSyncMode());
+    const [resetting, setResetting] = useState(false);
 
     const { isDarkMode, toggleDarkMode } = useTheme();
+    const { refetchItems } = useInventory();
     const emailConfigured = isEmailConfigured();
     const pushSupported = isPushSupported();
+
+    useEffect(() => {
+        const handleSyncChange = (e: Event) => {
+            const customEvent = e as CustomEvent<'cloud' | 'local'>;
+            setSyncMode(customEvent.detail || localStore.getSyncMode());
+        };
+        window.addEventListener('smartbite_sync_changed', handleSyncChange);
+        return () => window.removeEventListener('smartbite_sync_changed', handleSyncChange);
+    }, []);
+
+    const handleResetDemo = async () => {
+        if (confirm('Reset your inventory back to default sample items?')) {
+            setResetting(true);
+            localStore.resetToDemoData();
+            await refetchItems();
+            setResetting(false);
+        }
+    };
 
     const handleSendTestEmail = async () => {
         if (!testEmail) {
@@ -202,6 +225,43 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
                                     <span>{statusMessage}</span>
                                 </div>
                             )}
+                        </div>
+                    </section>
+
+                    {/* Database & Storage Section */}
+                    <section className="space-y-3">
+                        <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Database & Storage</h3>
+
+                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl space-y-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2.5">
+                                    <div className={`p-2 rounded-xl ${syncMode === 'cloud' ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400' : 'bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400'}`}>
+                                        {syncMode === 'cloud' ? <Cloud size={18} /> : <Database size={18} />}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                            {syncMode === 'cloud' ? 'Firebase Firestore' : 'Persistent Local Storage'}
+                                        </p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            {syncMode === 'cloud' ? 'Cloud synced (Never expires)' : 'Safe in your browser (Never deleted)'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${syncMode === 'cloud' ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300' : 'bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300'}`}>
+                                    {syncMode === 'cloud' ? 'Online' : 'Active'}
+                                </span>
+                            </div>
+
+                            <div className="pt-2 border-t border-gray-200 dark:border-gray-700/60">
+                                <button
+                                    onClick={handleResetDemo}
+                                    disabled={resetting}
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-xs font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                >
+                                    <RotateCcw size={14} className={resetting ? 'animate-spin' : ''} />
+                                    <span>Reset to Default Demo Pantry</span>
+                                </button>
+                            </div>
                         </div>
                     </section>
 

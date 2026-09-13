@@ -58,11 +58,11 @@
 
 | Category | Technologies |
 |----------|-------------|
-| **Frontend** | React 18, TypeScript, Tailwind CSS, Vite |
+| **Frontend** | React 19, TypeScript, Tailwind CSS, Vite |
 | **Backend** | Vercel Serverless Functions |
-| **Database** | MongoDB Atlas |
-| **Authentication** | JWT, bcryptjs |
-| **APIs** | TheMealDB, Open Food Facts, EmailJS |
+| **Database** | Firebase Firestore (Permanent / Never-Expiring) + Resilient Local-First Store |
+| **Authentication** | JWT, bcryptjs, Google OAuth 2.0 |
+| **APIs** | TheMealDB, Open Food Facts, EmailJS, Twilio WhatsApp, Google Cloud Vision |
 | **Deployment** | Vercel |
 | **Icons** | Lucide React |
 
@@ -73,15 +73,15 @@
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
-- MongoDB Atlas account
-- EmailJS account (for reminders)
+- Firebase account (Free Spark Plan) or run in Zero-Config Local Mode
+- EmailJS account (for email reminders)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/saimani1232/SmartBite.git
-   cd SmartBite
+   git clone https://github.com/saimani1232/Smart-Bite.git
+   cd Smart-Bite
    ```
 
 2. **Install dependencies**
@@ -89,12 +89,15 @@
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Set up environment variables (Optional)**
    
-   Create a `.env` file in the root directory:
+   The app works **out-of-the-box in Local-First Mode** without any configuration!
+   To connect cloud synchronization, copy `.env.example` to `.env`:
    ```env
-   # MongoDB
-   MONGODB_URI=mongodb+srv://your_user:your_password@cluster.mongodb.net/smartbite
+   # Permanent Cloud Database (Firebase Firestore)
+   FIREBASE_PROJECT_ID=your-firebase-project-id
+   FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
+   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
    
    # JWT Secret
    JWT_SECRET=your-super-secret-key

@@ -1,6 +1,5 @@
-// Inventory Items API - GET all, POST new
-import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '../lib/mongodb.js';
+// Inventory Items API - GET all, POST new (Firebase Firestore)
+import { getFirestoreDb } from '../lib/firestore.js';
 import { authenticateRequest } from '../lib/auth.js';
 
 export default async function handler(req, res) {
@@ -21,32 +20,53 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { db } = await connectToDatabase();
+        let db;
+        try {
+            db = getFirestoreDb();
+        } catch (dbErr) {
+            console.error('Database connection error in /items:', dbErr.message);
+            return res.status(503).json({
+                error: 'Cloud database not configured',
+                details: dbErr.message
+            });
+        }
+
         const itemsCollection = db.collection('items');
 
         // GET - Fetch all items for user
         if (req.method === 'GET') {
-            const items = await itemsCollection
-                .find({ userId: user.userId })
-                .sort({ createdAt: -1 })
-                .toArray();
+            const snapshot = await itemsCollection
+                .where('userId', '==', user.userId)
+                .get();
 
-            // Transform _id to id for frontend compatibility
-            const transformedItems = items.map(item => ({
-                id: item._id.toString(),
-                name: item.name,
-                quantity: item.quantity,
-                unit: item.unit,
-                category: item.category,
-                expiryDate: item.expiryDate,
-                isOpened: item.isOpened || false,
-                reminderDays: item.reminderDays || 0,
-                reminderEmail: item.reminderEmail || '',
-                reminderPhone: item.reminderPhone || '',
-                reminderSent: item.reminderSent || false
-            }));
+            const items = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                items.push({
+                    id: doc.id,
+                    name: data.name,
+                    quantity: data.quantity,
+                    unit: data.unit,
+                    category: data.category,
+                    expiryDate: data.expiryDate,
+                    isOpened: data.isOpened || false,
+                    openedDate: data.openedDate || undefined,
+                    reminderDays: data.reminderDays || 0,
+                    reminderEmail: data.reminderEmail || '',
+                    reminderPhone: data.reminderPhone || '',
+                    reminderSent: data.reminderSent || false,
+                    createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt
+                });
+            });
 
-            return res.status(200).json(transformedItems);
+            // Sort by createdAt descending
+            items.sort((a, b) => {
+                const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                return timeB - timeA;
+            });
+
+            return res.status(200).json(items);
         }
 
         // POST - Create new item
@@ -57,7 +77,8 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Missing required fields' });
             }
 
-            const newItem = {
+            const now = new Date();
+            const newItemData = {
                 userId: user.userId,
                 name,
                 quantity: parseFloat(quantity),
@@ -69,15 +90,17 @@ export default async function handler(req, res) {
                 reminderEmail: reminderEmail || '',
                 reminderPhone: reminderPhone || '',
                 reminderSent: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
+                createdAt: now,
+                updatedAt: now
             };
 
-            const result = await itemsCollection.insertOne(newItem);
+            const docRef = await itemsCollection.add(newItemData);
 
             return res.status(201).json({
-                id: result.insertedId.toString(),
-                ...newItem
+                id: docRef.id,
+                ...newItemData,
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
             });
         }
 

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Leaf, Bell, Settings, Home, BarChart2, Book, LogOut, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Leaf, Bell, Settings, Home, BarChart2, Book, LogOut, User, Cloud, Database } from 'lucide-react';
 import { SettingsPanel } from './SettingsPanel';
 import { NotificationsPanel, getNotificationCount } from './NotificationsPanel';
 import { useInventory } from '../context/InventoryContext';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { localStore } from '../services/localStore';
 import type { PageType } from '../App';
 
 interface LayoutProps {
@@ -17,9 +18,19 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigate, onOpenRecipes }) => {
     const [showSettings, setShowSettings] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [syncMode, setSyncMode] = useState<'cloud' | 'local'>(localStore.getSyncMode());
     const { items } = useInventory();
     const { isDarkMode } = useTheme();
     const { user, logout } = useAuth();
+
+    useEffect(() => {
+        const handleSyncChange = (e: Event) => {
+            const customEvent = e as CustomEvent<'cloud' | 'local'>;
+            setSyncMode(customEvent.detail || localStore.getSyncMode());
+        };
+        window.addEventListener('smartbite_sync_changed', handleSyncChange);
+        return () => window.removeEventListener('smartbite_sync_changed', handleSyncChange);
+    }, []);
 
     const notificationCount = getNotificationCount(items);
 
@@ -83,6 +94,28 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-2">
+                        {/* Storage Status Badge */}
+                        <div 
+                            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+                                syncMode === 'cloud'
+                                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50'
+                                    : 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/50'
+                            }`}
+                            title={syncMode === 'cloud' ? 'Connected to permanent Cloud Database' : 'Saved permanently in Browser Local Storage'}
+                        >
+                            {syncMode === 'cloud' ? (
+                                <>
+                                    <Cloud size={13} className="text-emerald-500 animate-pulse" />
+                                    <span>Cloud Sync</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Database size={13} className="text-sky-500" />
+                                    <span>Local Storage</span>
+                                </>
+                            )}
+                        </div>
+
                         {/* Notifications Button */}
                         <button
                             onClick={() => setShowNotifications(true)}
