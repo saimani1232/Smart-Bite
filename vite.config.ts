@@ -91,10 +91,6 @@ function vercelApiPlugin(): Plugin {
             const mod = await loadHandler('./api/health.js');
             return mod.default(req as any, res as any);
           }
-          if (pathname === '/api/whatsapp/send') {
-            const mod = await loadHandler('./api/whatsapp/send.js');
-            return mod.default(req as any, res as any);
-          }
 
           next();
         } catch (err: any) {

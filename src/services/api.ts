@@ -98,7 +98,6 @@ export const itemsAPI = {
         isOpened?: boolean;
         reminderDays?: number;
         reminderEmail?: string;
-        reminderPhone?: string;
     }): Promise<InventoryItem> => {
         const data = await fetchWithAuth('/items', {
             method: 'POST',

@@ -12,7 +12,6 @@ export type InventoryItem = {
   // Reminder settings
   reminderDays: number;      // Days before expiry to send reminder (0 = no reminder)
   reminderEmail?: string;    // Email address for notifications
-  reminderPhone?: string;    // Phone number for WhatsApp notifications
   reminderSent?: boolean;    // Track if reminder was sent for this cycle
 };
 

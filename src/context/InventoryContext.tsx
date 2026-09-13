@@ -3,7 +3,6 @@ import type { InventoryItem } from '../types';
 import { calculateExpiryStatus, getOpenedExpiryDate } from '../utils/logic';
 import { findBestRecipes } from '../services/recipeService';
 import { sendExpiryReminder, isEmailConfigured } from '../services/emailService';
-import { sendWhatsAppReminder } from '../services/whatsappService';
 import { sendPushNotification, isPushEnabled, getPushPermission } from '../services/pushService';
 import { itemsAPI } from '../services/api';
 import { useAuth } from './AuthContext';
@@ -68,7 +67,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         })));
     }, []);
 
-    // Check all items for reminders that need to be sent (Email + WhatsApp)
+    // Check all items for reminders that need to be sent (Email + Push)
     const checkReminders = useCallback(async () => {
         console.log('🔔 [REMINDER CHECK] Starting reminder check...');
         console.log('📦 Total items:', items.length);
@@ -77,7 +76,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         today.setHours(0, 0, 0, 0);
         console.log('📅 Today:', today.toISOString().split('T')[0]);
 
-        // Find items that need reminders (either email OR whatsapp)
+        // Find items that need reminders (email configured)
         const itemsToRemind = items.filter(item => {
             console.log(`\n--- Checking: ${item.name} ---`);
 
@@ -96,11 +95,11 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             console.log(`  ✓ reminderSent: false`);
 
             // Check 3: Contact info provided?
-            if (!item.reminderEmail && !item.reminderPhone) {
-                console.log(`  ❌ SKIP: No email or phone set`);
+            if (!item.reminderEmail) {
+                console.log(`  ❌ SKIP: No email set`);
                 return false;
             }
-            console.log(`  ✓ Contact: Email=${item.reminderEmail || 'none'}, Phone=${item.reminderPhone || 'none'}`);
+            console.log(`  ✓ Contact: Email=${item.reminderEmail}`);
 
             // Check 4: Within reminder window?
             const expiry = new Date(item.expiryDate);
@@ -135,20 +134,12 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             console.log(`🍳 Found ${recipes.length} recipes`);
 
             let emailSent = false;
-            let whatsAppSent = false;
 
             // Send Email if configured
             if (item.reminderEmail && isEmailConfigured()) {
                 console.log(`📧 Sending email to: ${item.reminderEmail}`);
                 emailSent = await sendExpiryReminder(item, recipes);
                 console.log(`📧 Email sent: ${emailSent}`);
-            }
-
-            // Send WhatsApp if phone is set
-            if (item.reminderPhone) {
-                console.log(`📱 Sending WhatsApp to: ${item.reminderPhone}`);
-                whatsAppSent = await sendWhatsAppReminder(item, recipes);
-                console.log(`📱 WhatsApp sent: ${whatsAppSent}`);
             }
 
             // Send Push Notification if enabled
@@ -160,7 +151,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             }
 
             // Mark as sent if any channel succeeded
-            if (emailSent || whatsAppSent || pushSent) {
+            if (emailSent || pushSent) {
                 console.log(`✅ Marking ${item.name} reminder as sent`);
                 try {
                     await itemsAPI.update(item.id, { reminderSent: true });
@@ -208,8 +199,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
                 expiryDate: newItem.expiryDate,
                 isOpened: false,
                 reminderDays: newItem.reminderDays || 0,
-                reminderEmail: newItem.reminderEmail || '',
-                reminderPhone: newItem.reminderPhone || ''
+                reminderEmail: newItem.reminderEmail || ''
             });
 
             const itemWithStatus = {

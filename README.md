@@ -62,7 +62,7 @@
 | **Backend** | Vercel Serverless Functions |
 | **Database** | Firebase Firestore (Permanent / Never-Expiring) + Resilient Local-First Store |
 | **Authentication** | JWT, bcryptjs, Google OAuth 2.0 |
-| **APIs** | TheMealDB, Open Food Facts, EmailJS, Twilio WhatsApp, Google Cloud Vision |
+| **APIs** | TheMealDB, Open Food Facts, EmailJS, Google Cloud Vision |
 | **Deployment** | Vercel |
 | **Icons** | Lucide React |
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useInventory } from '../context/InventoryContext';
 import { CameraModal } from './CameraModal';
-import { Calendar, Save, Upload, Camera, Loader, Sparkles, Barcode, Bell, Mail, Phone } from 'lucide-react';
+import { Calendar, Save, Upload, Camera, Loader, Sparkles, Barcode, Bell, Mail } from 'lucide-react';
 import { isBulkItem } from '../utils/logic';
 import type { InventoryItem } from '../types';
 import { extractTextFromImage, extractExpiryDate, detectBarcode, lookupProduct } from '../services/visionService';
@@ -27,7 +27,6 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     // Reminder settings
     const [reminderDays, setReminderDays] = useState<number>(3);
     const [reminderEmail, setReminderEmail] = useState<string>('');
-    const [reminderPhone, setReminderPhone] = useState<string>('');
 
     const isBulk = isBulkItem(quantity, unit);
 
@@ -42,8 +41,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             category,
             image: '',
             reminderDays,
-            reminderEmail: reminderEmail || undefined,
-            reminderPhone: reminderPhone || undefined
+            reminderEmail: reminderEmail || undefined
         });
         onClose();
     };
@@ -383,22 +381,8 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         </div>
                     </div>
 
-                    {/* WhatsApp Phone */}
-                    <div className="mt-3">
-                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                            <Phone size={12} className="inline mr-1" />WhatsApp Number
-                        </label>
-                        <input
-                            type="tel"
-                            value={reminderPhone}
-                            onChange={e => setReminderPhone(e.target.value)}
-                            className="input-field text-sm"
-                            placeholder="+91 98765 43210"
-                        />
-                    </div>
-
-                    {reminderDays > 0 && !reminderEmail && !reminderPhone && (
-                        <p className="text-xs text-violet-600 dark:text-violet-400 mt-2">💡 Enter email or WhatsApp to receive recipe suggestions when item is expiring</p>
+                    {reminderDays > 0 && !reminderEmail && (
+                        <p className="text-xs text-violet-600 dark:text-violet-400 mt-2">💡 Enter email to receive recipe suggestions when item is expiring</p>
                     )}
                 </div>
 
