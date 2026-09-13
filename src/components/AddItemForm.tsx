@@ -212,7 +212,7 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {/* Barcode Scanner Tool */}
                         <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
                             <div className="flex items-center gap-2 mb-2">

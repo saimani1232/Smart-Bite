@@ -574,15 +574,15 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
 
             {/* In-App Recipe Cooking Modal */}
             {activeRecipeModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
                     <div
                         className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
                         onClick={() => setActiveRecipeModal(null)}
                     />
 
-                    <div className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col z-10 animate-slide-up">
+                    <div className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col z-10 animate-slide-up">
                         {/* Header Image */}
-                        <div className="relative h-56 sm:h-64 w-full bg-slate-100 dark:bg-slate-800 shrink-0">
+                        <div className="relative h-48 sm:h-64 w-full bg-slate-100 dark:bg-slate-800 shrink-0">
                             {activeRecipeModal.image ? (
                                 <img
                                     src={activeRecipeModal.image}
@@ -598,24 +598,24 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
                             {/* Close button */}
                             <button
                                 onClick={() => setActiveRecipeModal(null)}
-                                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 backdrop-blur-md transition-colors cursor-pointer"
+                                className="absolute top-3 right-3 sm:top-4 sm:right-4 w-9 h-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 backdrop-blur-md transition-colors cursor-pointer"
                             >
                                 <X size={18} />
                             </button>
 
                             {/* Quick Badges */}
-                            <div className="absolute bottom-3 left-4 right-4 flex flex-wrap gap-2">
-                                <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-semibold">
+                            <div className="absolute bottom-3 left-3 right-3 sm:left-4 sm:right-4 flex flex-wrap gap-1.5 sm:gap-2">
+                                <span className="px-2.5 sm:px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold">
                                     {activeRecipeModal.category || 'Main Dish'}
                                 </span>
                                 {activeRecipeModal.readyInMinutes && (
-                                    <span className="px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
+                                    <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1">
                                         <Clock size={12} />
                                         {activeRecipeModal.readyInMinutes} mins
                                     </span>
                                 )}
                                 {activeRecipeModal.servings && (
-                                    <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
+                                    <span className="px-2.5 sm:px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1">
                                         <Utensils size={12} />
                                         {activeRecipeModal.servings} servings
                                     </span>
@@ -624,7 +624,7 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
                         </div>
 
                         {/* Modal Body */}
-                        <div className="p-6 overflow-y-auto space-y-6">
+                        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6">
                             <div>
                                 <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
                                     {activeRecipeModal.name}

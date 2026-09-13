@@ -84,8 +84,8 @@ const EditModal: React.FC<{
     const decrementQuantity = () => setEditQuantity(prev => Math.max(0.1, Number((prev - 1).toFixed(1))));
 
     return (
-        <div className="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-scale-in">
-            <div className="surface-card w-full max-w-md overflow-hidden shadow-2xl max-h-[92vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-scale-in">
+            <div className="surface-card w-full max-w-md overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
                 {/* Header */}
                 <div className="p-5 border-b border-slate-100 dark:border-slate-700/70 flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -431,16 +431,16 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/50 flex items-center gap-2">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/50 flex items-center gap-1.5 sm:gap-2">
                     {/* Mark Opened Toggle */}
                     {!item.isOpened && left >= 0 && (
                         <button
                             onClick={() => toggleOpened(item.id)}
-                            className="flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                            className="flex-1 py-2 px-1.5 sm:px-2.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors flex items-center justify-center gap-1 cursor-pointer truncate"
                             title={getOpenedExpiryInfo(item.category)}
                         >
-                            <Package size={13} />
-                            <span>Opened</span>
+                            <Package size={13} className="shrink-0" />
+                            <span className="truncate">Opened</span>
                         </button>
                     )}
 
@@ -448,20 +448,20 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onPreserve }
                     {left >= 0 && left <= 7 && onPreserve && (
                         <button
                             onClick={() => onPreserve(item)}
-                            className="flex-1 py-2 px-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-sm transition-all flex items-center justify-center gap-1 cursor-pointer"
+                            className="flex-1 py-2 px-1.5 sm:px-2.5 rounded-xl text-[11px] sm:text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-sm transition-all flex items-center justify-center gap-1 cursor-pointer truncate"
                         >
-                            <ChefHat size={13} />
-                            <span>Recipes</span>
+                            <ChefHat size={13} className="shrink-0" />
+                            <span className="truncate">Recipes</span>
                         </button>
                     )}
 
                     {/* Used Up / Eaten CTA */}
                     <button
                         onClick={() => removeItem(item.id)}
-                        className="py-2 px-3 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors flex items-center justify-center gap-1 cursor-pointer ml-auto"
+                        className="py-2 px-2.5 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors flex items-center justify-center gap-1 cursor-pointer shrink-0 ml-auto"
                         title="Mark item as consumed"
                     >
-                        <Sparkles size={13} />
+                        <Sparkles size={13} className="shrink-0" />
                         <span>Used</span>
                     </button>
                 </div>

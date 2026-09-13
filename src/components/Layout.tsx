@@ -51,18 +51,18 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
         <div className="min-h-screen flex flex-col transition-colors duration-200">
             {/* Top Navigation Bar */}
             <header className="sticky top-0 z-40 glass-panel border-b border-slate-200/80 dark:border-slate-800/80">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Brand Mark */}
                     <button
                         onClick={() => onNavigate('home')}
-                        className="flex items-center gap-3 group text-left cursor-pointer focus:outline-none"
+                        className="flex items-center gap-2 sm:gap-3 group text-left cursor-pointer focus:outline-none shrink-0"
                     >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/25 group-hover:scale-105 group-hover:shadow-emerald-500/40 transition-all duration-200">
-                            <Leaf size={22} className="text-white transform group-hover:rotate-6 transition-transform" />
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/25 group-hover:scale-105 group-hover:shadow-emerald-500/40 transition-all duration-200">
+                            <Leaf size={20} className="text-white transform group-hover:rotate-6 transition-transform" />
                         </div>
                         <div>
                             <div className="flex items-center gap-1.5">
-                                <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                <span className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                                     Smart<span className="text-emerald-500">Bite</span>
                                 </span>
                                 <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
@@ -98,7 +98,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                     </nav>
 
                     {/* Right Utility Actions */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2">
                         {/* Storage Sync Status Pill */}
                         <div
                             className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
@@ -127,11 +127,11 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                         <button
                             onClick={() => setShowNotifications(true)}
                             aria-label="View notifications"
-                            className="relative p-2.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
+                            className="relative p-2 sm:p-2.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
                         >
-                            <Bell size={20} />
+                            <Bell size={19} />
                             {notificationCount > 0 && (
-                                <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center px-1 shadow-md shadow-rose-500/30 animate-pulse">
+                                <span className="absolute top-1 right-1 min-w-[17px] h-[17px] bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center px-1 shadow-md shadow-rose-500/30 animate-pulse">
                                     {notificationCount > 9 ? '9+' : notificationCount}
                                 </span>
                             )}
@@ -141,25 +141,25 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                         <button
                             onClick={toggleDarkMode}
                             aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                            className="p-2.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
+                            className="p-2 sm:p-2.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
                             title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                         >
-                            {isDarkMode ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-slate-600" />}
+                            {isDarkMode ? <Sun size={19} className="text-amber-400" /> : <Moon size={19} className="text-slate-600" />}
                         </button>
 
                         {/* Settings Button */}
                         <button
                             onClick={() => setShowSettings(true)}
                             aria-label="Open settings"
-                            className="p-2.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
+                            className="p-2 sm:p-2.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
                         >
-                            <Settings size={20} />
+                            <Settings size={19} />
                         </button>
 
                         {/* User Profile Chip & Logout */}
                         {user && (
-                            <div className="flex items-center gap-1.5 pl-2 ml-1 border-l border-slate-200 dark:border-slate-800">
-                                <div className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                            <div className="flex items-center gap-1 pl-1 sm:pl-2 ml-0.5 sm:ml-1 border-l border-slate-200 dark:border-slate-800">
+                                <div className="hidden sm:flex items-center gap-2 px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl">
                                     <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold uppercase">
                                         {user.username.charAt(0)}
                                     </div>
@@ -170,7 +170,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
                                 <button
                                     onClick={logout}
                                     className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-all cursor-pointer"
-                                    title="Sign out"
+                                    title={`Sign out (${user.username})`}
                                 >
                                     <LogOut size={18} />
                                 </button>
@@ -181,12 +181,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onNavigat
             </header>
 
             {/* Main Application Area */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12 animate-slide-up">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-36 md:pb-14 animate-slide-up">
                 {children}
             </main>
 
             {/* Mobile Bottom Navigation Dock */}
-            <nav className="md:hidden fixed bottom-3 left-4 right-4 z-40 glass-panel rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-1.5">
+            <nav className="md:hidden fixed bottom-3 left-3 right-3 max-w-md mx-auto z-30 glass-panel rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-1.5">
                 <div className="grid grid-cols-3 gap-1">
                     {navItems.map((item) => {
                         const Icon = item.icon;

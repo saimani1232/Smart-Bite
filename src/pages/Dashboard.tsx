@@ -547,8 +547,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenRecipes }) => {
 
             {/* Add Item Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-scale-in">
-                    <div className="surface-card p-6 w-full max-w-lg max-h-[92vh] overflow-y-auto shadow-2xl relative">
+                <div className="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 animate-scale-in">
+                    <div className="surface-card p-4 sm:p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative">
                         <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-slate-700/60">
                             <div className="flex items-center gap-2.5">
                                 <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
