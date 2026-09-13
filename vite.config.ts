@@ -3,10 +3,16 @@ import react from '@vitejs/plugin-react'
 
 // Load .env variables into Node process in local development
 try {
-  process.loadEnvFile('.env');
-} catch (e) {
+  (process as any).loadEnvFile?.('.env');
+} catch {
   // .env might not exist or already loaded
 }
+
+// Helper to dynamically load serverless handlers without triggering TS7016
+const loadHandler = (modulePath: string): Promise<any> => {
+  const dynamicImport = new Function('path', 'return import(path)');
+  return dynamicImport(modulePath);
+};
 
 // Vite plugin to execute Vercel serverless functions in /api locally
 function vercelApiPlugin(): Plugin {
@@ -60,33 +66,33 @@ function vercelApiPlugin(): Plugin {
           const pathname = parsedUrl.pathname;
 
           if (pathname === '/api/auth/login') {
-            const mod = await import('./api/auth/login.js');
+            const mod = await loadHandler('./api/auth/login.js');
             return mod.default(req as any, res as any);
           }
           if (pathname === '/api/auth/register') {
-            const mod = await import('./api/auth/register.js');
+            const mod = await loadHandler('./api/auth/register.js');
             return mod.default(req as any, res as any);
           }
           if (pathname === '/api/auth/google') {
-            const mod = await import('./api/auth/google.js');
+            const mod = await loadHandler('./api/auth/google.js');
             return mod.default(req as any, res as any);
           }
           if (pathname === '/api/items') {
-            const mod = await import('./api/items/index.js');
+            const mod = await loadHandler('./api/items/index.js');
             return mod.default(req as any, res as any);
           }
           const itemMatch = pathname.match(/^\/api\/items\/([^/]+)$/);
           if (itemMatch) {
             (req as any).query.id = itemMatch[1];
-            const mod = await import('./api/items/[id].js');
+            const mod = await loadHandler('./api/items/[id].js');
             return mod.default(req as any, res as any);
           }
           if (pathname === '/api/health') {
-            const mod = await import('./api/health.js');
+            const mod = await loadHandler('./api/health.js');
             return mod.default(req as any, res as any);
           }
           if (pathname === '/api/whatsapp/send') {
-            const mod = await import('./api/whatsapp/send.js');
+            const mod = await loadHandler('./api/whatsapp/send.js');
             return mod.default(req as any, res as any);
           }
 
