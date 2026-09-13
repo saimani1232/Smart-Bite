@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import type { InventoryItem } from '../types';
-import { X, Snowflake, Heart, Loader, ExternalLink, Clock, ChefHat, RefreshCw, Check, Trash2, Package } from 'lucide-react';
+import {
+    X,
+    Snowflake,
+    Heart,
+    ExternalLink,
+    Clock,
+    ChefHat,
+    RefreshCw,
+    Sparkles,
+    Package,
+    AlertTriangle,
+    CheckCircle2,
+} from 'lucide-react';
 import { findBestRecipes, type Recipe } from '../services/recipeService';
 import { useInventory } from '../context/InventoryContext';
 
 interface ActionModalProps {
     item: InventoryItem;
     onClose: () => void;
+    onExploreAllRecipes?: (itemName: string) => void;
 }
 
 const getCategoryEmoji = (category: string) => {
@@ -14,19 +27,19 @@ const getCategoryEmoji = (category: string) => {
         case 'Dairy': return '🥛';
         case 'Grain': return '🌾';
         case 'Vegetable': return '🥬';
-        case 'Meat': return '🍖';
-        default: return '📦';
+        case 'Meat': return '🥩';
+        case 'Snacks': return '🍿';
+        default: return '🥫';
     }
 };
 
-export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
+export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose, onExploreAllRecipes }) => {
     const { items, removeItem, toggleOpened } = useInventory();
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isOpened, setIsOpened] = useState(item.isOpened || false);
-
-    const isBulk = item.quantity >= 2 || (item.unit === 'pkg' && item.quantity >= 3);
+    const [activeTab, setActiveTab] = useState<'recipes' | 'tips'>('recipes');
 
     // Calculate days left
     const getDaysLeft = () => {
@@ -39,25 +52,16 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
 
     const daysLeft = getDaysLeft();
 
-    const getStatusConfig = () => {
-        if (daysLeft < 0) return { label: 'Expired', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300', textColor: 'text-rose-600 dark:text-rose-400' };
-        if (daysLeft <= 3) return { label: 'Expiring Soon', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300', textColor: 'text-amber-600 dark:text-amber-400' };
-        if (daysLeft <= 7) return { label: 'Use Soon', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300', textColor: 'text-orange-600 dark:text-orange-400' };
-        return { label: 'Fresh', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300', textColor: 'text-emerald-600 dark:text-emerald-400' };
+    const getStatusTheme = () => {
+        if (daysLeft < 0) return { label: 'Expired', badge: 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300', icon: <AlertTriangle size={13} /> };
+        if (daysLeft <= 3) return { label: 'Expiring Soon', badge: 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300', icon: <Clock size={13} /> };
+        if (daysLeft <= 7) return { label: 'Use Soon', badge: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300', icon: <Clock size={13} /> };
+        return { label: 'Fresh', badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300', icon: <CheckCircle2 size={13} /> };
     };
 
-    const statusConfig = getStatusConfig();
+    const statusTheme = getStatusTheme();
 
-    // Format date
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    };
-
-    // Progress bar width
-    const progressPercent = Math.max(0, Math.min(100, (daysLeft / 30) * 100));
-
-    // Fetch recipes - now always fetch, even for bulk items
+    // Fetch recipes for this ingredient
     useEffect(() => {
         const fetchRecipes = async () => {
             setLoading(true);
@@ -65,12 +69,12 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
 
             try {
                 const allItemNames = items.map(i => i.name);
-                const fetchedRecipes = await findBestRecipes(item.name, allItemNames);
+                const fetched = await findBestRecipes(item.name, allItemNames);
 
-                if (fetchedRecipes.length === 0) {
-                    setError('No recipes found for this ingredient.');
+                if (fetched.length === 0) {
+                    setError('No specific recipes found for this ingredient. Check preservation tips!');
                 } else {
-                    setRecipes(fetchedRecipes);
+                    setRecipes(fetched);
                 }
             } catch (err) {
                 console.error('Recipe fetch error:', err);
@@ -86,18 +90,16 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
     const handleRefresh = async () => {
         setLoading(true);
         setError(null);
-
         try {
             const allItemNames = items.map(i => i.name);
-            const fetchedRecipes = await findBestRecipes(item.name, allItemNames);
-
-            if (fetchedRecipes.length === 0) {
+            const fetched = await findBestRecipes(item.name, allItemNames);
+            if (fetched.length === 0) {
                 setError('No recipes found for this ingredient.');
             } else {
-                setRecipes(fetchedRecipes);
+                setRecipes(fetched);
             }
-        } catch (err) {
-            setError('Failed to fetch recipes.');
+        } catch {
+            setError('Failed to refresh recipes.');
         } finally {
             setLoading(false);
         }
@@ -113,69 +115,49 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
         onClose();
     };
 
-    const handleThrowAway = () => {
-        removeItem(item.id);
-        onClose();
-    };
-
-    // Category-specific preservation tips
+    // Category preservation tips
     const getPreservationTips = () => {
-        const tips: { title: string; desc: string; icon: React.ReactNode; color: string }[] = [];
+        const tips: { title: string; desc: string; icon: React.ReactNode }[] = [];
         const itemLower = item.name.toLowerCase();
 
         switch (item.category) {
             case 'Dairy':
                 if (itemLower.includes('milk')) {
-                    tips.push({ title: 'Freeze in Ice Cube Trays', desc: 'Perfect for smoothies & cooking', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
-                    tips.push({ title: 'Make Paneer or Ricotta', desc: 'Homemade cheese lasts longer', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                    tips.push({ title: 'Freeze in Ice Trays', desc: 'Pre-portion into cubes for smoothies and baking.', icon: <Snowflake size={16} /> });
+                    tips.push({ title: 'Simmer into Homemade Ricotta', desc: 'Curdle with lemon juice or vinegar for fresh cheese.', icon: <ChefHat size={16} /> });
                 } else if (itemLower.includes('cheese')) {
-                    tips.push({ title: 'Grate & Freeze', desc: 'Ready-to-use for pizza & pasta', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
-                    tips.push({ title: 'Make a Cheese Dip', desc: 'Great for batch entertaining', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
-                } else if (itemLower.includes('yogurt') || itemLower.includes('curd')) {
-                    tips.push({ title: 'Freeze for Smoothies', desc: 'Blend directly from frozen', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
-                    tips.push({ title: 'Marinate Meat', desc: 'Yogurt tenderizes proteins', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                    tips.push({ title: 'Grate & Freeze in Bags', desc: 'Sprinkle directly onto warm pasta, pizza, or casseroles.', icon: <Snowflake size={16} /> });
+                    tips.push({ title: 'Melt into Rich Cheese Dip', desc: 'Whisk with a bit of milk or cream for nachos and veggies.', icon: <ChefHat size={16} /> });
                 } else {
-                    tips.push({ title: 'Freeze Before Expiry', desc: 'Most dairy freezes well', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                    tips.push({ title: 'Freeze Before Expiry Date', desc: 'Dairy maintains culinary quality for 2-3 months when frozen.', icon: <Snowflake size={16} /> });
                 }
                 break;
-
             case 'Meat':
-                tips.push({ title: 'Portion & Freeze', desc: `Divide ${item.quantity} ${item.unit} into meal-sized portions`, icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
-                tips.push({ title: 'Marinate & Store', desc: 'Pre-marinated meat is ready to cook', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
-                if (itemLower.includes('chicken') || itemLower.includes('beef')) {
-                    tips.push({ title: 'Meal Prep Batch', desc: 'Cook all at once, portion for week', icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' });
-                }
+                tips.push({ title: 'Portion & Freeze in Foil/Bags', desc: `Divide your ${item.quantity} ${item.unit} into individual meal portions.`, icon: <Snowflake size={16} /> });
+                tips.push({ title: 'Pre-Marinate and Chill', desc: 'Acidic marinades (yogurt, citrus, vinegar) extend tenderness.', icon: <ChefHat size={16} /> });
                 break;
-
             case 'Vegetable':
-                tips.push({ title: 'Blanch & Freeze', desc: 'Quick boil, ice bath, then freeze', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                tips.push({ title: 'Blanch & Freeze', desc: 'Boil for 2 minutes, shock in ice water, dry thoroughly, and freeze.', icon: <Snowflake size={16} /> });
                 if (itemLower.includes('tomato')) {
-                    tips.push({ title: 'Make Tomato Sauce', desc: 'Freezes well for months', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
-                } else if (itemLower.includes('onion') || itemLower.includes('garlic')) {
-                    tips.push({ title: 'Caramelize & Freeze', desc: 'Ready base for soups & sauces', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                    tips.push({ title: 'Cook Down into Pasta Sauce', desc: 'Roast with olive oil and garlic; freezes for up to 6 months.', icon: <ChefHat size={16} /> });
                 } else if (itemLower.includes('spinach') || itemLower.includes('kale')) {
-                    tips.push({ title: 'Make Green Smoothie Packs', desc: 'Pre-portioned for quick blending', icon: <ChefHat size={20} />, color: 'from-emerald-500 to-green-500' });
+                    tips.push({ title: 'Blend into Green Cubes', desc: 'Puree with water and freeze for morning smoothies.', icon: <ChefHat size={16} /> });
                 } else {
-                    tips.push({ title: 'Pickle or Ferment', desc: 'Extends shelf life significantly', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                    tips.push({ title: 'Quick Pickle with Vinegar & Herbs', desc: 'Submerge sliced vegetables in salted brine for crunchy snacks.', icon: <ChefHat size={16} /> });
                 }
-                tips.push({ title: 'Share with Neighbors', desc: `${item.quantity} ${item.unit} is a lot!`, icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' });
                 break;
-
             case 'Grain':
-                tips.push({ title: 'Store in Airtight Container', desc: 'Keeps fresh for months', icon: <Package size={20} />, color: 'from-amber-500 to-yellow-500' });
                 if (itemLower.includes('bread')) {
-                    tips.push({ title: 'Slice & Freeze', desc: 'Toast directly from frozen', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
-                    tips.push({ title: 'Make Breadcrumbs', desc: 'Dry, blend, and store', icon: <ChefHat size={20} />, color: 'from-amber-500 to-orange-500' });
+                    tips.push({ title: 'Slice & Freeze', desc: 'Pop frozen slices directly into the toaster.', icon: <Snowflake size={16} /> });
+                    tips.push({ title: 'Toast into Golden Croutons', desc: 'Toss with olive oil and herbs, bake at 375°F until crisp.', icon: <ChefHat size={16} /> });
                 } else {
-                    tips.push({ title: 'Freeze for Long Storage', desc: 'Prevents pantry bugs', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
+                    tips.push({ title: 'Store in Airtight Glass Jars', desc: 'Shields grains from moisture and maintains pantry freshness.', icon: <Package size={16} /> });
                 }
                 break;
-
             default:
-                tips.push({ title: 'Freeze if Possible', desc: 'Check if this item freezes well', icon: <Snowflake size={20} />, color: 'from-blue-500 to-cyan-500' });
-                tips.push({ title: 'Share with Others', desc: 'Help your community', icon: <Heart size={20} />, color: 'from-rose-500 to-pink-500' });
+                tips.push({ title: 'Inspect & Freeze if Suitable', desc: 'Most pantry ingredients preserve flavor well in the freezer.', icon: <Snowflake size={16} /> });
+                tips.push({ title: 'Share with Friends or Neighbors', desc: 'Give surplus food to friends before it expires.', icon: <Heart size={16} /> });
         }
-
         return tips;
     };
 
@@ -185,251 +167,205 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-gray-900/30 dark:bg-black/60 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm"
                 onClick={onClose}
             />
 
-            {/* Modal */}
-            <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
-                {/* Header - Compact on mobile */}
-                <div className="relative p-4 md:p-6 pb-3 md:pb-4">
+            {/* Dialog */}
+            <div className="surface-card relative w-full max-w-lg shadow-2xl flex flex-col max-h-[88vh] overflow-hidden animate-scale-in">
+                {/* Header */}
+                <div className="p-5 border-b border-slate-100 dark:border-slate-700/70 flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-2xl flex-shrink-0 shadow-sm">
+                            {getCategoryEmoji(item.category)}
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide flex items-center gap-1 ${statusTheme.badge}`}>
+                                    {statusTheme.icon}
+                                    {statusTheme.label}
+                                </span>
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                    {daysLeft < 0 ? `${Math.abs(daysLeft)}d ago` : `${daysLeft}d left`}
+                                </span>
+                            </div>
+                            <h2 className="text-lg font-extrabold text-slate-900 dark:text-white mt-1">
+                                {item.name}
+                            </h2>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {item.quantity} {item.unit} • {item.category}
+                            </p>
+                        </div>
+                    </div>
+
                     <button
                         onClick={onClose}
-                        className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 md:p-2 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg cursor-pointer"
                     >
                         <X size={18} />
                     </button>
-
-                    <div className="flex items-start gap-3 md:gap-5">
-                        {/* Emoji Icon - smaller on mobile */}
-                        <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-orange-100 to-amber-50 dark:from-amber-900/30 dark:to-orange-900/20 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner border border-amber-100 dark:border-amber-800/30 shrink-0">
-                            <span className="text-3xl md:text-5xl drop-shadow-sm">{getCategoryEmoji(item.category)}</span>
-                        </div>
-
-                        <div className="flex-1 pt-0.5 md:pt-1 pr-6">
-                            {/* Status Badge */}
-                            <div className="flex items-center gap-2 mb-0.5 md:mb-1">
-                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-xs font-semibold ${statusConfig.color}`}>
-                                    <Clock size={10} className="md:hidden" />
-                                    <Clock size={12} className="hidden md:block" />
-                                    {statusConfig.label}
-                                </span>
-                            </div>
-
-                            {/* Item Name */}
-                            <h2 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white leading-tight">{item.name}</h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-0.5 md:mt-1">
-                                {item.quantity} {item.unit} • {formatDate(item.expiryDate)}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="mt-6">
-                        <div className="flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
-                            <span>{isOpened ? 'Opened' : 'Packaged'}</span>
-                            <span className={`font-bold ${statusConfig.textColor}`}>
-                                {daysLeft < 0
-                                    ? `${Math.abs(daysLeft)} days overdue`
-                                    : daysLeft === 0
-                                        ? 'Expires today!'
-                                        : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`
-                                }
-                            </span>
-                        </div>
-                        <div className="w-full h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div
-                                className={`h-full rounded-full transition-all duration-500 ${daysLeft < 0 ? 'bg-rose-500' :
-                                    daysLeft <= 3 ? 'bg-amber-500' :
-                                        daysLeft <= 7 ? 'bg-orange-400' :
-                                            'bg-emerald-500'
-                                    }`}
-                                style={{ width: `${progressPercent}%` }}
-                            />
-                        </div>
-                    </div>
                 </div>
 
-                {/* Toggle Section - Responsive */}
-                <div className="px-4 md:px-6 py-3 md:py-4 bg-gray-50 dark:bg-gray-700/50 border-y border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center justify-between gap-3">
-                        <div className="shrink-0">
-                            <p className="text-xs md:text-sm font-medium text-gray-900 dark:text-white">Product Status</p>
-                            <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 mt-0.5 hidden sm:block">Updates expiry prediction</p>
-                        </div>
-
-                        {/* Custom Toggle - Smaller on mobile */}
-                        <button
-                            onClick={handleToggleOpened}
-                            className="relative w-28 md:w-36 h-8 md:h-10 bg-gray-200 dark:bg-gray-600 rounded-lg p-0.5 md:p-1 flex shrink-0"
-                        >
-                            <div
-                                className={`absolute w-1/2 h-7 md:h-8 bg-white dark:bg-gray-800 rounded-md shadow-sm transition-all duration-300 ${isOpened ? 'left-[calc(50%-2px)]' : 'left-0.5 md:left-1'}`}
-                            />
-                            <div className={`z-10 w-1/2 flex items-center justify-center text-[10px] md:text-xs font-semibold transition-colors ${!isOpened ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'}`}>
-                                <Package size={10} className="mr-0.5 md:mr-1" />
-                                Sealed
-                            </div>
-                            <div className={`z-10 w-1/2 flex items-center justify-center text-[10px] md:text-xs font-semibold transition-colors ${isOpened ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500'}`}>
-                                Opened
-                            </div>
-                        </button>
-                    </div>
+                {/* Tab Navigation */}
+                <div className="flex border-b border-slate-100 dark:border-slate-700/70 bg-slate-50 dark:bg-slate-900/40 p-1">
+                    <button
+                        onClick={() => setActiveTab('recipes')}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                            activeTab === 'recipes'
+                                ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                    >
+                        <ChefHat size={14} />
+                        <span>Recipes ({recipes.length})</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('tips')}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                            activeTab === 'tips'
+                                ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                    >
+                        <Snowflake size={14} />
+                        <span>Preservation Tips ({preservationTips.length})</span>
+                    </button>
                 </div>
 
-                {/* Recipe Section */}
-                <div className="flex-1 overflow-y-auto px-6 py-6">
-                    <div className="flex justify-between items-end mb-4">
-                        <div>
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <ChefHat size={20} className="text-emerald-500" />
-                                {isBulk ? 'Ways to preserve it' : 'Ideas to use it up'}
-                            </h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                {isBulk ? 'You have a lot! Here are options.' : 'Recommended based on quantity'}
-                            </p>
-                        </div>
-                        {!isBulk && !loading && (
-                            <button
-                                onClick={handleRefresh}
-                                className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 flex items-center"
-                            >
-                                <RefreshCw size={12} className="mr-1" />
-                                Refresh
-                            </button>
-                        )}
-                    </div>
-
-                    {isBulk && (
-                        // Show preservation tips first for bulk items
-                        <div className="mb-6">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Package size={18} className="text-amber-500" />
-                                <h4 className="font-bold text-gray-900 dark:text-white text-sm">Bulk Item Tips</h4>
-                                <span className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">
-                                    {item.quantity} {item.unit}
-                                </span>
-                            </div>
-                            <div className="space-y-2">
-                                {preservationTips.slice(0, 2).map((opt, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl"
-                                    >
-                                        <div className={`p-2 rounded-lg bg-gradient-to-br ${opt.color} text-white shadow-sm`}>
-                                            {opt.icon}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{opt.title}</h4>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{opt.desc}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Recipes Section - always shown now */}
-                    {loading ? (
-                        <div className="text-center py-12">
-                            <Loader size={32} className="animate-spin text-emerald-500 mx-auto mb-4" />
-                            <p className="text-gray-500 dark:text-gray-400">Finding delicious recipes...</p>
-                        </div>
-                    ) : error ? (
-                        <div className="text-center py-12">
-                            <ChefHat size={40} className="text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                            <p className="text-gray-500 dark:text-gray-400">{error}</p>
-                            <button
-                                onClick={handleRefresh}
-                                className="mt-4 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium text-sm"
-                            >
-                                Try Again
-                            </button>
-                        </div>
-                    ) : (
-                        // Horizontal scrollable recipe carousel
-                        <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 snap-x scrollbar-hide">
-                            {recipes.map((recipe) => (
-                                <a
-                                    key={recipe.id}
-                                    href={recipe.sourceUrl || '#'}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="snap-start min-w-[200px] bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-2xl p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex-shrink-0"
+                {/* Tab Content */}
+                <div className="p-5 overflow-y-auto flex-1 space-y-4">
+                    {activeTab === 'recipes' ? (
+                        <>
+                            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                <span>Curated recipes using <strong>{item.name}</strong></span>
+                                <button
+                                    onClick={handleRefresh}
+                                    className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 font-bold cursor-pointer"
                                 >
-                                    {/* Recipe Image */}
-                                    <div className="relative h-24 mb-3 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-600">
-                                        {recipe.image ? (
-                                            <img
-                                                src={recipe.image}
-                                                alt={recipe.name}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ccc"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>';
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-3xl">🍽️</div>
-                                        )}
-                                        {recipe.readyInMinutes && (
-                                            <div className="absolute bottom-1 right-1 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-white font-medium flex items-center gap-0.5">
-                                                <Clock size={10} />
-                                                {recipe.readyInMinutes}m
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 leading-snug mb-1 line-clamp-2">{recipe.name}</h4>
-
-                                    <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                        <span>{recipe.servings || 2} servings</span>
-                                    </div>
-                                </a>
-                            ))}
-
-                            {/* Find More Card */}
-                            <div className="snap-start min-w-[100px] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-700/50 border border-dashed border-gray-200 dark:border-gray-600 rounded-2xl p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center">
-                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 mb-2">
-                                    <ExternalLink size={18} />
-                                </div>
-                                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Find More</span>
+                                    <RefreshCw size={12} /> Refresh
+                                </button>
                             </div>
+
+                            {loading ? (
+                                <div className="text-center py-10">
+                                    <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">Discovering recipes...</p>
+                                </div>
+                            ) : error ? (
+                                <div className="text-center py-8 p-4 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <ChefHat size={32} className="mx-auto text-slate-400 mb-2" />
+                                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">{error}</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {recipes.map((r) => (
+                                        <div
+                                            key={r.id}
+                                            className="p-3 bg-white dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-3 hover:border-emerald-500/60 transition-colors"
+                                        >
+                                            {r.image ? (
+                                                <img
+                                                    src={r.image}
+                                                    alt={r.name}
+                                                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                                                />
+                                            ) : (
+                                                <div className="w-16 h-16 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-xl flex-shrink-0">
+                                                    🍲
+                                                </div>
+                                            )}
+
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                                                    {r.name}
+                                                </h4>
+                                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                                    {r.category} • {r.area}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                                    <span className="flex items-center gap-0.5">
+                                                        <Clock size={10} /> 30 min
+                                                    </span>
+                                                    <span>•</span>
+                                                    <span>Uses {item.name}</span>
+                                                </div>
+                                            </div>
+
+                                            <a
+                                                href={r.sourceUrl || `https://www.themealdb.com/meal/${r.id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn-ghost p-2 text-emerald-600 dark:text-emerald-400"
+                                                title="View recipe on TheMealDB"
+                                            >
+                                                <ExternalLink size={16} />
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {onExploreAllRecipes && (
+                                <button
+                                    onClick={() => {
+                                        onClose();
+                                        onExploreAllRecipes(item.name);
+                                    }}
+                                    className="w-full btn-brand py-2.5 text-xs flex items-center justify-center gap-2 cursor-pointer mt-3"
+                                >
+                                    <ChefHat size={14} />
+                                    <span>Explore More in Zero-Waste Kitchen →</span>
+                                </button>
+                            )}
+                        </>
+                    ) : (
+                        <div className="space-y-3">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                Reduce food waste with these culinary preservation techniques:
+                            </p>
+                            {preservationTips.map((tip, i) => (
+                                <div
+                                    key={i}
+                                    className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-start gap-3"
+                                >
+                                    <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex-shrink-0">
+                                        {tip.icon}
+                                    </div>
+                                    <div>
+                                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                            {tip.title}
+                                        </h4>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                                            {tip.desc}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="p-6 pt-2 bg-gradient-to-t from-white via-white to-transparent dark:from-gray-800 dark:via-gray-800 mt-auto">
-                    <div className="flex flex-col gap-3">
+                {/* Footer Actions */}
+                <div className="p-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-between gap-3">
+                    <button
+                        onClick={handleToggleOpened}
+                        className="btn-secondary py-2 px-3 text-xs font-bold"
+                    >
+                        <Package size={14} />
+                        <span>{isOpened ? 'Opened ✓' : 'Mark as Opened'}</span>
+                    </button>
+
+                    <div className="flex items-center gap-2">
                         <button
                             onClick={handleMarkConsumed}
-                            className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-emerald-900/30 flex items-center justify-center gap-2 transform transition-all hover:-translate-y-0.5 active:translate-y-0"
+                            className="btn-brand py-2 px-4 text-xs font-bold"
                         >
-                            <Check size={20} />
-                            Mark as Consumed
-                        </button>
-                        <button
-                            onClick={handleThrowAway}
-                            className="w-full group py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-medium text-gray-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
-                        >
-                            <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
-                            Throw away item
+                            <Sparkles size={14} />
+                            <span>Mark Consumed</span>
                         </button>
                     </div>
                 </div>
             </div>
-
-            {/* Hide scrollbar style */}
-            <style>{`
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            `}</style>
         </div>
     );
 };

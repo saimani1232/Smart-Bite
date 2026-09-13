@@ -3,14 +3,26 @@ import { useInventory } from '../context/InventoryContext';
 import { InventoryCard } from '../components/InventoryCard';
 import { AddItemForm } from '../components/AddItemForm';
 import { ActionModal } from '../components/ActionModal';
-import { Plus, Search, AlertTriangle, CheckCircle, Sparkles, TrendingUp, X, Filter, ChevronDown, Trophy, QrCode } from 'lucide-react';
+import {
+    Plus,
+    Search,
+    AlertTriangle,
+    CheckCircle2,
+    Sparkles,
+    Package,
+    X,
+    Filter,
+    ArrowUpDown,
+    Trophy,
+    QrCode,
+    Clock
+} from 'lucide-react';
 import type { InventoryItem } from '../types';
 
 type StatusFilter = 'all' | 'expired' | 'expiring' | 'fresh';
 type CategoryFilter = 'all' | 'Dairy' | 'Grain' | 'Vegetable' | 'Meat' | 'Snacks' | 'Other';
-type SortOption = 'expiry' | 'name' | 'added';
+type SortOption = 'expiry' | 'name' | 'quantity' | 'added';
 
-// Get greeting based on time of day
 const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good Morning';
@@ -18,8 +30,22 @@ const getGreeting = () => {
     return 'Good Evening';
 };
 
-export const Dashboard: React.FC = () => {
-    const { items } = useInventory();
+const CATEGORIES: { id: CategoryFilter; label: string; icon: string }[] = [
+    { id: 'all', label: 'All Pantry', icon: '🥗' },
+    { id: 'Dairy', label: 'Dairy', icon: '🥛' },
+    { id: 'Vegetable', label: 'Produce', icon: '🥬' },
+    { id: 'Meat', label: 'Meat & Protein', icon: '🥩' },
+    { id: 'Grain', label: 'Grains & Bread', icon: '🌾' },
+    { id: 'Snacks', label: 'Snacks', icon: '🍿' },
+    { id: 'Other', label: 'Pantry & Other', icon: '🥫' },
+];
+
+interface DashboardProps {
+    onOpenRecipes?: (itemOrName: string) => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ onOpenRecipes }) => {
+    const { items, isLoading } = useInventory();
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
@@ -47,7 +73,6 @@ export const Dashboard: React.FC = () => {
             else if (daysLeft <= 7) nearExpiry++;
             else fresh++;
         });
-        // Calculate waste score (higher is better - penalize expired items)
         const wasteScore = items.length > 0
             ? Math.max(0, Math.round(100 - (expired * 20) - (nearExpiry * 5)))
             : 100;
@@ -84,7 +109,10 @@ export const Dashboard: React.FC = () => {
             if (sortBy === 'name') {
                 return a.name.localeCompare(b.name);
             }
-            return 0; // 'added' - keep original order
+            if (sortBy === 'quantity') {
+                return b.quantity - a.quantity;
+            }
+            return 0; // 'added'
         });
 
         return result;
@@ -92,288 +120,397 @@ export const Dashboard: React.FC = () => {
 
     const activeFiltersCount = [statusFilter !== 'all', categoryFilter !== 'all'].filter(Boolean).length;
 
+    const clearAllFilters = () => {
+        setStatusFilter('all');
+        setCategoryFilter('all');
+        setSearchQuery('');
+    };
+
     return (
-        <div className="p-4 md:p-6 max-w-7xl mx-auto pb-24">
-            {/* Greeting Header */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-                        {getGreeting()}! 👋
-                    </h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">
-                        {stats.total > 0
-                            ? `You're tracking ${stats.total} item${stats.total !== 1 ? 's' : ''} in your inventory.`
-                            : 'Start by adding items to your inventory.'
-                        }
-                    </p>
+        <div className="space-y-6">
+            {/* Hero Welcome Banner */}
+            <div className="surface-card p-6 sm:p-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white relative overflow-hidden shadow-elevated">
+                {/* Subtle culinary graphic circles in background */}
+                <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+                <div className="absolute -left-12 -bottom-12 w-48 h-48 rounded-full bg-teal-400/20 blur-xl pointer-events-none" />
+
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="max-w-xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-xs font-bold tracking-wide uppercase mb-3">
+                            <Sparkles size={13} className="text-amber-300" />
+                            <span>Zero-Waste Kitchen Intelligence</span>
+                        </div>
+                        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                            {getGreeting()}! 🌱
+                        </h1>
+                        <p className="mt-2 text-sm sm:text-base text-emerald-50/90 leading-relaxed">
+                            {stats.total > 0 ? (
+                                <>
+                                    You have <strong>{stats.total} ingredients</strong> tracked.
+                                    {stats.nearExpiry > 0 && (
+                                        <span className="text-amber-200 font-semibold ml-1">
+                                            {stats.nearExpiry} ingredient{stats.nearExpiry > 1 ? 's need' : ' needs'} cooking soon!
+                                        </span>
+                                    )}
+                                </>
+                            ) : (
+                                'Your pantry is currently empty. Add your first grocery items to begin tracking freshness.'
+                            )}
+                        </p>
+                    </div>
+
+                    {/* Waste Score & Fast Add CTA */}
+                    <div className="flex flex-row md:flex-col items-center md:items-end gap-3 w-full md:w-auto justify-between md:justify-start">
+                        {stats.total > 0 && (
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20">
+                                <Trophy size={18} className="text-amber-300" />
+                                <div className="text-left">
+                                    <div className="text-[10px] uppercase font-bold text-white/75">Pantry Health</div>
+                                    <div className="text-sm font-black text-white">{stats.wasteScore} / 100</div>
+                                </div>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-emerald-800 font-bold text-sm hover:bg-emerald-50 active:scale-95 shadow-lg shadow-black/10 transition-all cursor-pointer"
+                        >
+                            <Plus size={18} />
+                            <span>Add Food Item</span>
+                        </button>
+                    </div>
                 </div>
-                {stats.total > 0 && (
-                    <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 px-4 py-2 rounded-full border border-emerald-200 dark:border-emerald-800">
-                        <Trophy size={18} className="text-emerald-600 dark:text-emerald-400" />
-                        <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
-                            Waste Score: {stats.wasteScore}/100
+            </div>
+
+            {/* Quick Metrics Bar (Click to Filter) */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {/* Expired Metric */}
+                <button
+                    onClick={() => setStatusFilter(statusFilter === 'expired' ? 'all' : 'expired')}
+                    className={`stat-card text-left cursor-pointer relative overflow-hidden transition-all duration-200 ${
+                        statusFilter === 'expired'
+                            ? 'ring-2 ring-rose-500 bg-rose-50/70 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800'
+                            : 'hover:border-rose-300 dark:hover:border-rose-900/60'
+                    }`}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Expired
                         </span>
-                    </div>
-                )}
-            </header>
-
-            {/* Hero Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <button
-                    onClick={() => { setStatusFilter('expired'); setShowFilters(true); }}
-                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
-                        bg-red-50 dark:bg-red-900/10 
-                        ${statusFilter === 'expired' ? 'border-red-400 ring-2 ring-red-200 dark:ring-red-800' : 'border-red-100 dark:border-red-800/30'}`}
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <AlertTriangle size={24} />
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">{stats.expired}</h3>
-                            <p className="text-sm text-red-400 dark:text-red-300 font-medium">Expired</p>
+                        <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                            <AlertTriangle size={17} />
                         </div>
                     </div>
+                    <div className="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 mt-2">
+                        {stats.expired}
+                    </div>
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">
+                        {stats.expired > 0 ? 'Needs immediate attention' : 'Zero expired items 🎉'}
+                    </p>
                 </button>
 
+                {/* Expiring Soon Metric */}
                 <button
-                    onClick={() => { setStatusFilter('expiring'); setShowFilters(true); }}
-                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
-                        bg-amber-50 dark:bg-amber-900/10 
-                        ${statusFilter === 'expiring' ? 'border-amber-400 ring-2 ring-amber-200 dark:ring-amber-800' : 'border-amber-100 dark:border-amber-800/30'}`}
+                    onClick={() => setStatusFilter(statusFilter === 'expiring' ? 'all' : 'expiring')}
+                    className={`stat-card text-left cursor-pointer relative overflow-hidden transition-all duration-200 ${
+                        statusFilter === 'expiring'
+                            ? 'ring-2 ring-amber-500 bg-amber-50/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800'
+                            : 'hover:border-amber-300 dark:hover:border-amber-900/60'
+                    }`}
                 >
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Sparkles size={24} />
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-amber-400">{stats.nearExpiry}</h3>
-                            <p className="text-sm text-amber-500 dark:text-amber-300 font-medium">Expiring Soon</p>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Expiring Soon
+                        </span>
+                        <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                            <Clock size={17} />
                         </div>
                     </div>
+                    <div className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-2">
+                        {stats.nearExpiry}
+                    </div>
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">
+                        Cook within 7 days
+                    </p>
                 </button>
 
+                {/* Fresh & Good Metric */}
                 <button
-                    onClick={() => { setStatusFilter('fresh'); setShowFilters(true); }}
-                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
-                        bg-emerald-50 dark:bg-emerald-900/10 
-                        ${statusFilter === 'fresh' ? 'border-emerald-400 ring-2 ring-emerald-200 dark:ring-emerald-800' : 'border-emerald-100 dark:border-emerald-800/30'}`}
+                    onClick={() => setStatusFilter(statusFilter === 'fresh' ? 'all' : 'fresh')}
+                    className={`stat-card text-left cursor-pointer relative overflow-hidden transition-all duration-200 ${
+                        statusFilter === 'fresh'
+                            ? 'ring-2 ring-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800'
+                            : 'hover:border-emerald-300 dark:hover:border-emerald-900/60'
+                    }`}
                 >
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <CheckCircle size={24} />
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.fresh}</h3>
-                            <p className="text-sm text-emerald-500 dark:text-emerald-300 font-medium">Fresh Items</p>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Fresh
+                        </span>
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                            <CheckCircle2 size={17} />
                         </div>
                     </div>
+                    <div className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-2">
+                        {stats.fresh}
+                    </div>
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">
+                        Peak freshness
+                    </p>
                 </button>
 
+                {/* Total Inventory Metric */}
                 <button
                     onClick={() => { setStatusFilter('all'); setCategoryFilter('all'); }}
-                    className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group
-                        bg-violet-50 dark:bg-violet-900/10 
-                        ${statusFilter === 'all' && categoryFilter === 'all' ? 'border-violet-400 ring-2 ring-violet-200 dark:ring-violet-800' : 'border-violet-100 dark:border-violet-800/30'}`}
+                    className={`stat-card text-left cursor-pointer relative overflow-hidden transition-all duration-200 ${
+                        statusFilter === 'all' && categoryFilter === 'all'
+                            ? 'ring-2 ring-slate-800 dark:ring-slate-400 border-slate-300 dark:border-slate-600'
+                            : 'hover:border-slate-300 dark:hover:border-slate-700'
+                    }`}
                 >
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-900/50 text-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <TrendingUp size={24} />
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-2xl md:text-3xl font-bold text-violet-600 dark:text-violet-400">{stats.total}</h3>
-                            <p className="text-sm text-violet-500 dark:text-violet-300 font-medium">Total Items</p>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Total Items
+                        </span>
+                        <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                            <Package size={17} />
                         </div>
                     </div>
+                    <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-2">
+                        {stats.total}
+                    </div>
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">
+                        Across {Object.keys(CATEGORIES).length - 1} categories
+                    </p>
                 </button>
             </div>
 
-            {/* Search and Filters */}
-            <div className="space-y-3 mb-6">
-                <div className="flex gap-3">
-                    <div className="flex-1 relative">
-                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+            {/* Search, Filter Bar & Category Chips */}
+            <div className="space-y-3">
+                {/* Search & Action Row */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                    {/* Search Field */}
+                    <div className="relative flex-1">
+                        <Search
+                            size={18}
+                            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500"
+                        />
                         <input
                             type="text"
-                            placeholder="Search inventory..."
+                            placeholder="Search food by name (e.g. Milk, Apples, Bread)..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 shadow-sm transition-all"
+                            className="input-field pl-10 pr-10"
                         />
-                    </div>
-                    <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${showFilters || activeFiltersCount > 0
-                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-300 dark:hover:border-emerald-600'
-                            }`}
-                    >
-                        <Filter size={18} />
-                        <span className="hidden sm:inline">Filters</span>
-                        {activeFiltersCount > 0 && (
-                            <span className="w-5 h-5 bg-white/20 rounded-full text-xs flex items-center justify-center">
-                                {activeFiltersCount}
-                            </span>
-                        )}
-                        <ChevronDown size={16} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-                    </button>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setShowAddModal(true)}
-                            className="hidden md:flex bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg shadow-emerald-500/30 font-semibold items-center gap-2 transition-all active:scale-95"
-                        >
-                            <Plus size={20} />
-                            Add Item
-                        </button>
-                        <button
-                            onClick={() => setShowAddModal(true)}
-                            aria-label="Scan Barcode"
-                            className="hidden md:flex bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all items-center justify-center"
-                        >
-                            <QrCode size={20} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Filter Panel */}
-                {showFilters && (
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm animate-fade-in">
-                        <div className="flex flex-wrap gap-4">
-                            {/* Status Filter */}
-                            <div className="flex-1 min-w-[150px]">
-                                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Status</label>
-                                <div className="flex flex-wrap gap-2">
-                                    {(['all', 'expired', 'expiring', 'fresh'] as StatusFilter[]).map(status => (
-                                        <button
-                                            key={status}
-                                            onClick={() => setStatusFilter(status)}
-                                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${statusFilter === status
-                                                ? status === 'expired' ? 'bg-rose-500 text-white'
-                                                    : status === 'expiring' ? 'bg-amber-500 text-white'
-                                                        : status === 'fresh' ? 'bg-emerald-500 text-white'
-                                                            : 'bg-gray-800 dark:bg-white text-white dark:text-gray-800'
-                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                                                }`}
-                                        >
-                                            {status === 'all' ? 'All' : status === 'expiring' ? 'Expiring Soon' : status.charAt(0).toUpperCase() + status.slice(1)}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Category Filter */}
-                            <div className="flex-1 min-w-[150px]">
-                                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Category</label>
-                                <div className="flex flex-wrap gap-2">
-                                    {(['all', 'Dairy', 'Grain', 'Vegetable', 'Meat', 'Snacks', 'Other'] as CategoryFilter[]).map(cat => (
-                                        <button
-                                            key={cat}
-                                            onClick={() => setCategoryFilter(cat)}
-                                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${categoryFilter === cat
-                                                ? 'bg-emerald-500 text-white'
-                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                                                }`}
-                                        >
-                                            {cat === 'all' ? 'All' : cat}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Sort */}
-                            <div className="min-w-[120px]">
-                                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 block">Sort by</label>
-                                <select
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value as SortOption)}
-                                    className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                                >
-                                    <option value="expiry">Expiry Date</option>
-                                    <option value="name">Name</option>
-                                    <option value="added">Recently Added</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Clear Filters */}
-                        {activeFiltersCount > 0 && (
+                        {searchQuery && (
                             <button
-                                onClick={() => { setStatusFilter('all'); setCategoryFilter('all'); }}
-                                className="mt-3 text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium"
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                             >
-                                ✕ Clear all filters
+                                <X size={16} />
                             </button>
                         )}
                     </div>
+
+                    {/* Filter Toggle */}
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={`btn-secondary ${showFilters || activeFiltersCount > 0 ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : ''}`}
+                    >
+                        <Filter size={16} />
+                        <span>Filter & Sort</span>
+                        {activeFiltersCount > 0 && (
+                            <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center">
+                                {activeFiltersCount}
+                            </span>
+                        )}
+                    </button>
+
+                    {/* Scan Action */}
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="btn-secondary hidden sm:inline-flex"
+                        title="Scan product barcode or capture expiry"
+                    >
+                        <QrCode size={16} className="text-emerald-600 dark:text-emerald-400" />
+                        <span>Scan</span>
+                    </button>
+                </div>
+
+                {/* Category Horizontal Scroll Pills */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide pt-1">
+                    {CATEGORIES.map((cat) => {
+                        const isSelected = categoryFilter === cat.id;
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => setCategoryFilter(cat.id)}
+                                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                                    isSelected
+                                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                                        : 'bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                }`}
+                            >
+                                <span>{cat.icon}</span>
+                                <span>{cat.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Collapsible Filter & Sort Drawer */}
+                {showFilters && (
+                    <div className="surface-card p-4 sm:p-5 animate-scale-in">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {/* Freshness Status Filter */}
+                            <div>
+                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block">
+                                    Freshness Status
+                                </label>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {(['all', 'expired', 'expiring', 'fresh'] as StatusFilter[]).map((status) => (
+                                        <button
+                                            key={status}
+                                            onClick={() => setStatusFilter(status)}
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                                statusFilter === status
+                                                    ? 'bg-emerald-600 text-white shadow-sm'
+                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                            }`}
+                                        >
+                                            {status === 'all'
+                                                ? 'All Statuses'
+                                                : status === 'expiring'
+                                                ? 'Expiring (<7d)'
+                                                : status.charAt(0).toUpperCase() + status.slice(1)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sort Ordering */}
+                            <div>
+                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block flex items-center gap-1">
+                                    <ArrowUpDown size={12} /> Sort Inventory
+                                </label>
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                                    className="input-field text-xs font-semibold py-2"
+                                >
+                                    <option value="expiry">Expiry Date (Urgent First)</option>
+                                    <option value="name">Name (A-Z)</option>
+                                    <option value="quantity">Highest Quantity</option>
+                                    <option value="added">Recently Added</option>
+                                </select>
+                            </div>
+
+                            {/* Clear All Action */}
+                            <div className="flex items-end">
+                                <button
+                                    onClick={clearAllFilters}
+                                    className="w-full py-2 px-3 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-xl transition-colors cursor-pointer"
+                                >
+                                    Reset All Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 )}
 
-                {/* Active Filters Summary */}
-                {!showFilters && activeFiltersCount > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Active filters:</span>
+                {/* Active Filter Indicators */}
+                {activeFiltersCount > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap text-xs pt-1">
+                        <span className="text-slate-400 font-medium">Filtering by:</span>
                         {statusFilter !== 'all' && (
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${statusFilter === 'expired' ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300'
-                                : statusFilter === 'expiring' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
-                                    : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-                                }`}>
-                                {statusFilter === 'expiring' ? 'Expiring Soon' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
-                                <button onClick={() => setStatusFilter('all')} className="hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5">
+                            <span className="badge badge-warning">
+                                {statusFilter.toUpperCase()}
+                                <button onClick={() => setStatusFilter('all')} className="hover:opacity-75">
                                     <X size={12} />
                                 </button>
                             </span>
                         )}
                         {categoryFilter !== 'all' && (
-                            <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium flex items-center gap-1">
+                            <span className="badge badge-neutral">
                                 {categoryFilter}
-                                <button onClick={() => setCategoryFilter('all')} className="hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5">
+                                <button onClick={() => setCategoryFilter('all')} className="hover:opacity-75">
                                     <X size={12} />
                                 </button>
                             </span>
                         )}
+                        <button
+                            onClick={clearAllFilters}
+                            className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline ml-1"
+                        >
+                            Clear
+                        </button>
                     </div>
                 )}
             </div>
 
-            {/* Results Count */}
-            {(searchQuery || activeFiltersCount > 0) && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    Showing {filteredItems.length} of {items.length} items
-                </p>
-            )}
+            {/* Inventory Results Header */}
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
+                <span>
+                    Showing {filteredItems.length} of {items.length} pantry items
+                </span>
+                {sortBy === 'expiry' && (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                        Sorted by Expiry
+                    </span>
+                )}
+            </div>
 
             {/* Inventory Grid */}
-            {filteredItems.length === 0 ? (
-                <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
-                    <div className="text-6xl mb-4">{activeFiltersCount > 0 ? '🔍' : '🥗'}</div>
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-                        {activeFiltersCount > 0 ? 'No matching items' : 'No items yet!'}
+            {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((idx) => (
+                        <div key={idx} className="surface-card p-5 animate-pulse space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700" />
+                                <div className="flex-1 space-y-2">
+                                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-2/3" />
+                                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/3" />
+                                </div>
+                            </div>
+                            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                            <div className="h-9 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+                        </div>
+                    ))}
+                </div>
+            ) : filteredItems.length === 0 ? (
+                <div className="surface-card p-12 text-center max-w-lg mx-auto">
+                    <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl mx-auto mb-4">
+                        {activeFiltersCount > 0 ? '🔍' : '🌱'}
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                        {activeFiltersCount > 0 ? 'No matching items' : 'Your pantry is looking clean!'}
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
                         {activeFiltersCount > 0
-                            ? 'Try adjusting your filters'
-                            : 'Add your first item to start tracking'
-                        }
+                            ? 'No ingredients match your current filters. Try changing search terms or resetting filters.'
+                            : 'Start tracking your groceries to reduce food waste and receive smart recipe ideas.'}
                     </p>
-                    {activeFiltersCount > 0 ? (
-                        <button
-                            onClick={() => { setStatusFilter('all'); setCategoryFilter('all'); setSearchQuery(''); }}
-                            className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
-                        >
-                            Clear Filters
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => setShowAddModal(true)}
-                            className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all"
-                        >
-                            <Plus size={18} className="inline mr-2" />
-                            Add Your First Item
-                        </button>
-                    )}
+                    <div className="mt-6 flex items-center justify-center gap-3">
+                        {activeFiltersCount > 0 ? (
+                            <button
+                                onClick={clearAllFilters}
+                                className="btn-secondary text-xs font-bold"
+                            >
+                                Clear All Filters
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="btn-brand text-xs font-bold"
+                            >
+                                <Plus size={16} />
+                                Add Your First Ingredient
+                            </button>
+                        )}
+                    </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredItems.map(item => (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                    {filteredItems.map((item) => (
                         <InventoryCard
                             key={item.id}
                             item={item}
@@ -381,41 +518,51 @@ export const Dashboard: React.FC = () => {
                         />
                     ))}
 
-                    {/* Scan New Item Card */}
+                    {/* Quick Add Card Slot */}
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 group transition-all min-h-[200px]"
+                        className="surface-card border-2 border-dashed border-slate-200 dark:border-slate-700/80 hover:border-emerald-500 dark:hover:border-emerald-500/80 p-6 flex flex-col items-center justify-center text-center group cursor-pointer transition-all duration-200 min-h-[190px]"
                     >
-                        <div className="w-14 h-14 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
-                            <Plus size={24} className="text-gray-400 dark:text-gray-500 group-hover:text-emerald-500 transition-colors" />
+                        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-950/60 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center justify-center mb-3 transition-colors">
+                            <Plus size={24} />
                         </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Scan New Item</h3>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[150px]">Add more groceries to track their freshness.</p>
+                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                            Add Another Item
+                        </h4>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-[180px]">
+                            Scan or type to keep freshness up to date.
+                        </p>
                     </button>
                 </div>
             )}
 
-            {/* Floating Action Button (Mobile) */}
+            {/* Mobile Floating Action Button (FAB) */}
             <button
                 onClick={() => setShowAddModal(true)}
-                className="fixed bottom-24 right-6 md:hidden w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full shadow-2xl shadow-emerald-500/40 flex items-center justify-center active:scale-95 transition-transform z-50"
+                aria-label="Add new item"
+                className="fab"
             >
-                <Plus size={28} />
+                <Plus size={26} />
             </button>
 
             {/* Add Item Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
-                                Add New Item
-                            </h2>
+                <div className="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-scale-in">
+                    <div className="surface-card p-6 w-full max-w-lg max-h-[92vh] overflow-y-auto shadow-2xl relative">
+                        <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-slate-700/60">
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                    <Plus size={18} />
+                                </div>
+                                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                                    Add New Food Item
+                                </h2>
+                            </div>
                             <button
                                 onClick={() => setShowAddModal(false)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl transition-colors cursor-pointer"
                             >
-                                <X size={20} className="text-gray-500 dark:text-gray-400" />
+                                <X size={18} />
                             </button>
                         </div>
                         <AddItemForm onClose={() => setShowAddModal(false)} />
@@ -423,24 +570,14 @@ export const Dashboard: React.FC = () => {
                 </div>
             )}
 
-            {/* Action Modal */}
+            {/* Action / Preservation Recipes Modal */}
             {selectedItem && (
                 <ActionModal
                     item={selectedItem}
                     onClose={() => setSelectedItem(null)}
+                    onExploreAllRecipes={onOpenRecipes}
                 />
             )}
-
-            {/* Animation Style */}
-            <style>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: translateY(-10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.2s ease-out;
-                }
-            `}</style>
         </div>
     );
 };

@@ -1,10 +1,36 @@
 import React, { useState, useRef } from 'react';
 import { useInventory } from '../context/InventoryContext';
 import { CameraModal } from './CameraModal';
-import { Calendar, Save, Upload, Camera, Loader, Sparkles, Barcode, Bell, Mail } from 'lucide-react';
+import {
+    Calendar,
+    Save,
+    Upload,
+    Camera,
+    Loader,
+    Sparkles,
+    Barcode,
+    Bell,
+    Mail,
+    Plus,
+    Minus,
+} from 'lucide-react';
 import { isBulkItem } from '../utils/logic';
 import type { InventoryItem } from '../types';
-import { extractTextFromImage, extractExpiryDate, detectBarcode, lookupProduct } from '../services/visionService';
+import {
+    extractTextFromImage,
+    extractExpiryDate,
+    detectBarcode,
+    lookupProduct,
+} from '../services/visionService';
+
+const COMMON_SUGGESTIONS = [
+    { name: 'Fresh Milk', category: 'Dairy' as const, days: 7, unit: 'l' as const, emoji: '🥛' },
+    { name: 'Eggs (Dozen)', category: 'Dairy' as const, days: 14, unit: 'pkg' as const, emoji: '🥚' },
+    { name: 'Whole Wheat Bread', category: 'Grain' as const, days: 5, unit: 'pkg' as const, emoji: '🍞' },
+    { name: 'Fresh Tomatoes', category: 'Vegetable' as const, days: 7, unit: 'kg' as const, emoji: '🍅' },
+    { name: 'Chicken Breast', category: 'Meat' as const, days: 3, unit: 'g' as const, emoji: '🍗' },
+    { name: 'Crisp Apples', category: 'Vegetable' as const, days: 12, unit: 'kg' as const, emoji: '🍎' },
+];
 
 export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { addItem } = useInventory();
@@ -51,6 +77,13 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         setShowCamera(true);
     };
 
+    // Apply quick expiry preset helper
+    const applyExpiryPreset = (daysFromNow: number) => {
+        const d = new Date();
+        d.setDate(d.getDate() + daysFromNow);
+        setExpiryDate(d.toISOString().split('T')[0]);
+    };
+
     // Process barcode image - detect barcode and lookup product
     const processBarcodeImage = async (imageSrc: string) => {
         setScanningType('product');
@@ -84,7 +117,6 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                 setScanStatus(`Found: ${productInfo.name} (${productInfo.category})`);
 
-                // Show info to user
                 if (productInfo.name === 'Unknown Product') {
                     alert(`Barcode ${barcode} detected but not found in database.\nCategory: ${productInfo.category}\nEstimated expiry: ${productInfo.estimatedExpiryDays} days\n\nPlease enter the product name manually.`);
                 }
@@ -108,8 +140,6 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
             setScanStatus('Extracting text...');
             const extractedText = await extractTextFromImage(base64Data);
-
-            console.log('Extracted Text:\n', extractedText);
 
             if (!extractedText || extractedText.trim().length < 3) {
                 alert("No text found in image. Please try a clearer image.");
@@ -170,225 +200,322 @@ export const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 />
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6 relative">
-                {/* AI Mode Banner */}
-                <div className="absolute -top-10 left-0 right-0 text-center">
-                    <span className="text-[10px] px-3 py-1 rounded-full font-medium inline-flex items-center gap-1 bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300">
-                        <Sparkles size={10} /> Cloud Vision AI + Smart Parsing
-                    </span>
-                </div>
-
-                {/* Scanner Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Product/Barcode Scanner */}
-                    <div className={`p-4 rounded-2xl border transition-all ${name ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-100 dark:border-gray-600'}`}>
-                        <div className="flex items-center gap-2 mb-3">
-                            <Barcode size={18} className={name ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-gray-400"} />
-                            <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Scan Barcode</span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                type="button"
-                                onClick={() => openCamera('product')}
-                                disabled={!!scanningType}
-                                className="flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 shadow-sm text-center active:scale-95 disabled:opacity-50"
-                            >
-                                <Camera size={20} className="text-emerald-600 dark:text-emerald-400 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Camera</span>
-                            </button>
-
-                            <label className={`flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
-                                <input
-                                    ref={productFileRef}
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={(e) => handleFileUpload(e, 'product')}
-                                />
-                                <Upload size={20} className="text-gray-500 dark:text-gray-300 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Upload</span>
-                            </label>
-                        </div>
-
-                        {detectedBarcode && (
-                            <div className="mt-2 text-center text-[10px] text-gray-500 font-mono bg-gray-100 rounded px-2 py-1">
-                                Barcode: {detectedBarcode}
-                            </div>
-                        )}
-
-                        {scanningType === 'product' && (
-                            <div className="mt-3 text-center text-xs text-emerald-600 font-medium">
-                                <Loader size={14} className="animate-spin inline mr-1" />
-                                {scanStatus || 'Processing...'}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Expiry Scanner */}
-                    <div className={`p-4 rounded-2xl border transition-all ${expiryDate ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700' : 'bg-gray-50 dark:bg-gray-700/50 border-gray-100 dark:border-gray-600'}`}>
-                        <div className="flex items-center gap-2 mb-3">
-                            <Calendar size={18} className={expiryDate ? "text-amber-600 dark:text-amber-400" : "text-gray-500 dark:text-gray-400"} />
-                            <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Expiry Date</span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                type="button"
-                                onClick={() => openCamera('expiry')}
-                                disabled={!!scanningType}
-                                className="flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 shadow-sm text-center active:scale-95 disabled:opacity-50"
-                            >
-                                <Camera size={20} className="text-amber-600 dark:text-amber-400 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Camera</span>
-                            </button>
-
-                            <label className={`flex flex-col items-center justify-center p-3 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer shadow-sm text-center active:scale-95 ${scanningType ? 'opacity-50 pointer-events-none' : ''}`}>
-                                <input
-                                    ref={expiryFileRef}
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={(e) => handleFileUpload(e, 'expiry')}
-                                />
-                                <Upload size={20} className="text-gray-500 dark:text-gray-300 mb-1" />
-                                <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 uppercase">Upload</span>
-                            </label>
-                        </div>
-
-                        {scanningType === 'expiry' && (
-                            <div className="mt-3 text-center text-xs text-amber-600 font-medium">
-                                <Loader size={14} className="animate-spin inline mr-1" />
-                                {scanStatus || 'Processing...'}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Form Fields */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Vision AI Quick Tools */}
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Product Name</label>
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Smart Scanning (Optional)
+                        </span>
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <Sparkles size={10} /> Cloud Vision OCR
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        {/* Barcode Scanner Tool */}
+                        <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Barcode size={16} className="text-emerald-600 dark:text-emerald-400" />
+                                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Barcode</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1.5">
+                                <button
+                                    type="button"
+                                    onClick={() => openCamera('product')}
+                                    disabled={!!scanningType}
+                                    className="py-1.5 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                    <Camera size={13} className="text-emerald-600 dark:text-emerald-400" />
+                                    <span>Camera</span>
+                                </button>
+                                <label className="py-1.5 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center gap-1 cursor-pointer">
+                                    <input
+                                        ref={productFileRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleFileUpload(e, 'product')}
+                                    />
+                                    <Upload size={13} className="text-slate-500" />
+                                    <span>Upload</span>
+                                </label>
+                            </div>
+                            {detectedBarcode && (
+                                <div className="mt-2 text-[10px] text-slate-500 font-mono bg-white dark:bg-slate-800 rounded px-1.5 py-0.5 truncate">
+                                    {detectedBarcode}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Expiry OCR Tool */}
+                        <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Calendar size={16} className="text-amber-500" />
+                                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Expiry Date</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1.5">
+                                <button
+                                    type="button"
+                                    onClick={() => openCamera('expiry')}
+                                    disabled={!!scanningType}
+                                    className="py-1.5 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                    <Camera size={13} className="text-amber-500" />
+                                    <span>Camera</span>
+                                </button>
+                                <label className="py-1.5 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center gap-1 cursor-pointer">
+                                    <input
+                                        ref={expiryFileRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleFileUpload(e, 'expiry')}
+                                    />
+                                    <Upload size={13} className="text-slate-500" />
+                                    <span>Upload</span>
+                                </label>
+                            </div>
+                            {expiryDate && (
+                                <div className="mt-2 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-white dark:bg-slate-800 rounded px-1.5 py-0.5 truncate">
+                                    Parsed: {expiryDate}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {scanningType && (
+                        <div className="mt-2 text-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 animate-pulse">
+                            <Loader size={14} className="animate-spin inline mr-1" />
+                            {scanStatus || 'Processing...'}
+                        </div>
+                    )}
+                </div>
+
+                {/* Quick Food Suggestions */}
+                <div>
+                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                        Quick Add Common Food
+                    </label>
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                        {COMMON_SUGGESTIONS.map((item) => (
+                            <button
+                                key={item.name}
+                                type="button"
+                                onClick={() => {
+                                    setName(item.name);
+                                    setCategory(item.category);
+                                    setUnit(item.unit);
+                                    applyExpiryPreset(item.days);
+                                }}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200/60 dark:border-slate-700/60 whitespace-nowrap cursor-pointer transition-colors"
+                            >
+                                <span>{item.emoji}</span>
+                                <span>{item.name}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Food Name Field */}
+                <div>
+                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                        Ingredient Name *
+                    </label>
                     <input
                         type="text"
                         value={name}
-                        onChange={e => setName(e.target.value)}
-                        className="input-field"
-                        placeholder="Scan barcode or enter manually"
+                        onChange={(e) => setName(e.target.value)}
+                        className="input-field font-semibold text-base"
+                        placeholder="e.g. Sourdough Bread, Almond Milk..."
                         required
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Quantity & Unit Stepper */}
+                <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Quantity</label>
-                        <input
-                            type="number"
-                            value={quantity}
-                            onChange={e => setQuantity(Number(e.target.value))}
-                            className="input-field"
-                            min={0.1}
-                            step={0.1}
-                        />
+                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                            Quantity
+                        </label>
+                        <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/80 p-1">
+                            <button
+                                type="button"
+                                onClick={() => setQuantity(prev => Math.max(0.1, Number((prev - 1).toFixed(1))))}
+                                className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg cursor-pointer"
+                            >
+                                <Minus size={14} />
+                            </button>
+                            <input
+                                type="number"
+                                step="any"
+                                value={quantity}
+                                onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
+                                className="w-full text-center bg-transparent text-sm font-bold text-slate-900 dark:text-white outline-none"
+                                min={0.1}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setQuantity(prev => Number((prev + 1).toFixed(1)))}
+                                className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg cursor-pointer"
+                            >
+                                <Plus size={14} />
+                            </button>
+                        </div>
                     </div>
+
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Unit</label>
-                        <select value={unit} onChange={e => setUnit(e.target.value as any)} className="input-field">
-                            <option value="pkg">Packets</option>
-                            <option value="kg">Kilograms</option>
-                            <option value="l">Liters</option>
+                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                            Unit
+                        </label>
+                        <select
+                            value={unit}
+                            onChange={(e) => setUnit(e.target.value as InventoryItem['unit'])}
+                            className="input-field font-semibold"
+                        >
+                            <option value="pkg">Packets (pkg)</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="g">Grams (g)</option>
+                            <option value="l">Liters (l)</option>
+                            <option value="ml">Milliliters (ml)</option>
+                            <option value="pcs">Pieces (pcs)</option>
                         </select>
                     </div>
                 </div>
 
                 {isBulk && (
-                    <div className="bg-blue-50 border border-blue-100 text-blue-800 p-3 text-sm rounded-xl flex items-start gap-2">
-                        <span>ℹ️</span>
-                        <span><strong>Bulk Item:</strong> 14-day early reminder.</span>
+                    <div className="bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 p-2.5 rounded-xl text-xs text-sky-800 dark:text-sky-300 font-medium">
+                        💡 <strong>Bulk Food Item:</strong> Expiry reminder window automatically extended for large volumes.
                     </div>
                 )}
 
+                {/* Expiry Date with Presets */}
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Expiration</label>
+                    <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Expiry Date *
+                        </label>
+                        <div className="flex gap-1 text-[11px] font-bold">
+                            <button
+                                type="button"
+                                onClick={() => applyExpiryPreset(3)}
+                                className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                            >
+                                +3d
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => applyExpiryPreset(7)}
+                                className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                            >
+                                +1w
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => applyExpiryPreset(14)}
+                                className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                            >
+                                +2w
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => applyExpiryPreset(30)}
+                                className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                            >
+                                +1m
+                            </button>
+                        </div>
+                    </div>
                     <input
                         type="date"
                         value={expiryDate}
-                        onChange={e => setExpiryDate(e.target.value)}
-                        className="input-field"
+                        onChange={(e) => setExpiryDate(e.target.value)}
+                        className="input-field font-semibold"
                         required
                     />
                 </div>
 
+                {/* Category Grid */}
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Category</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {([
-                            { value: 'Dairy', label: 'Dairy', emoji: '🥛', color: 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300', active: 'bg-blue-100 border-blue-400 ring-2 ring-blue-300 dark:bg-blue-800/50 dark:border-blue-500 dark:ring-blue-600' },
-                            { value: 'Grain', label: 'Grain', emoji: '🌾', color: 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300', active: 'bg-amber-100 border-amber-400 ring-2 ring-amber-300 dark:bg-amber-800/50 dark:border-amber-500 dark:ring-amber-600' },
-                            { value: 'Vegetable', label: 'Veggie', emoji: '🥬', color: 'bg-green-50 border-green-200 text-green-700 dark:bg-green-900/30 dark:border-green-700 dark:text-green-300', active: 'bg-green-100 border-green-400 ring-2 ring-green-300 dark:bg-green-800/50 dark:border-green-500 dark:ring-green-600' },
-                            { value: 'Meat', label: 'Meat', emoji: '🍖', color: 'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/30 dark:border-red-700 dark:text-red-300', active: 'bg-red-100 border-red-400 ring-2 ring-red-300 dark:bg-red-800/50 dark:border-red-500 dark:ring-red-600' },
-                            { value: 'Snacks', label: 'Snacks', emoji: '🍿', color: 'bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-900/30 dark:border-orange-700 dark:text-orange-300', active: 'bg-orange-100 border-orange-400 ring-2 ring-orange-300 dark:bg-orange-800/50 dark:border-orange-500 dark:ring-orange-600' },
-                            { value: 'Other', label: 'Other', emoji: '📦', color: 'bg-gray-50 border-gray-200 text-gray-700 dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-300', active: 'bg-gray-100 border-gray-400 ring-2 ring-gray-300 dark:bg-gray-600/50 dark:border-gray-500 dark:ring-gray-500' },
-                        ] as const).map(cat => (
+                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                        Food Category
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                        {[
+                            { value: 'Dairy', label: 'Dairy', emoji: '🥛' },
+                            { value: 'Vegetable', label: 'Produce', emoji: '🥬' },
+                            { value: 'Meat', label: 'Meat', emoji: '🥩' },
+                            { value: 'Grain', label: 'Grains', emoji: '🌾' },
+                            { value: 'Snacks', label: 'Snacks', emoji: '🍿' },
+                            { value: 'Other', label: 'Other', emoji: '🥫' },
+                        ].map((cat) => (
                             <button
                                 key={cat.value}
                                 type="button"
-                                onClick={() => setCategory(cat.value as any)}
-                                className={`flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer
-                                    ${category === cat.value ? cat.active : cat.color}
-                                    hover:scale-[1.03] active:scale-95`}
+                                onClick={() => setCategory(cat.value as InventoryItem['category'])}
+                                className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                                    category === cat.value
+                                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm scale-[1.02]'
+                                        : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                }`}
                             >
-                                <span className="text-sm sm:text-base">{cat.emoji}</span>
+                                <span className="text-base">{cat.emoji}</span>
                                 <span>{cat.label}</span>
                             </button>
                         ))}
                     </div>
                 </div>
 
-                {/* Reminder Settings */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 border border-violet-200 dark:border-violet-700">
-                    <div className="flex items-center gap-2 mb-3">
-                        <Bell size={18} className="text-violet-600 dark:text-violet-400" />
-                        <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Expiry Reminder</span>
+                {/* Reminder Settings Box */}
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-3">
+                    <div className="flex items-center gap-2">
+                        <Bell size={15} className="text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                            Freshness Alerts
+                        </span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Remind Before</label>
+                            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                                Remind me before
+                            </label>
                             <select
                                 value={reminderDays}
-                                onChange={e => setReminderDays(Number(e.target.value))}
-                                className="input-field text-sm"
+                                onChange={(e) => setReminderDays(Number(e.target.value))}
+                                className="input-field text-xs font-semibold py-2"
                             >
                                 <option value="0">No Reminder</option>
-                                <option value="1">1 day</option>
-                                <option value="3">3 days</option>
-                                <option value="5">5 days</option>
-                                <option value="7">7 days</option>
-                                <option value="14">14 days</option>
+                                <option value="1">1 day before</option>
+                                <option value="3">3 days before</option>
+                                <option value="5">5 days before</option>
+                                <option value="7">7 days before</option>
+                                <option value="14">14 days before</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                                <Mail size={12} className="inline mr-1" />Email
+                            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                                <Mail size={12} className="inline mr-1" />
+                                Alert Email
                             </label>
                             <input
                                 type="email"
                                 value={reminderEmail}
-                                onChange={e => setReminderEmail(e.target.value)}
-                                className="input-field text-sm"
+                                onChange={(e) => setReminderEmail(e.target.value)}
+                                className="input-field text-xs py-2"
                                 placeholder="your@email.com"
                             />
                         </div>
                     </div>
-
-                    {reminderDays > 0 && !reminderEmail && (
-                        <p className="text-xs text-violet-600 dark:text-violet-400 mt-2">💡 Enter email to receive recipe suggestions when item is expiring</p>
-                    )}
                 </div>
 
-                <button type="submit" className="btn-primary mt-6">
-                    <Save size={18} className="mr-2" />
-                    Add to Inventory
+                {/* Primary Submit Button */}
+                <button
+                    type="submit"
+                    className="w-full btn-brand py-3.5 text-sm font-bold shadow-lg shadow-emerald-600/20"
+                >
+                    <Save size={18} />
+                    <span>Save to Inventory</span>
                 </button>
             </form>
         </>

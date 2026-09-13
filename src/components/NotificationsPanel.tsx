@@ -1,5 +1,14 @@
-import React from 'react';
-import { X, AlertTriangle, Clock, Timer, Bell, ChefHat, Mail, CheckCircle2, Sparkles, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+    X,
+    AlertTriangle,
+    Clock,
+    Timer,
+    Bell,
+    ChefHat,
+    Mail,
+    CheckCircle2
+} from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 
 interface NotificationsPanelProps {
@@ -14,6 +23,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
     onOpenRecipes
 }) => {
     const { items } = useInventory();
+    const [selectedTab, setSelectedTab] = useState<'all' | 'urgent' | 'soon'>('all');
 
     // Calculate days left for each item
     const getDaysLeft = (expiryDate: string) => {
@@ -38,6 +48,8 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
     const expiringSoon = notifications.filter(n => n.daysLeft > 0 && n.daysLeft <= 3);
     const expiringLater = notifications.filter(n => n.daysLeft > 3 && n.daysLeft <= 7);
 
+    const urgentCount = expiredItems.length + expiringToday.length + expiringSoon.length;
+
     if (!isOpen) return null;
 
     const getCategoryEmoji = (category: string) => {
@@ -46,119 +58,133 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             case 'Grain': return '🌾';
             case 'Vegetable': return '🥬';
             case 'Meat': return '🍖';
+            case 'Snacks': return '🍿';
             default: return '📦';
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50 flex justify-end">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-md"
+                className="fixed inset-0 bg-slate-900/50 dark:bg-black/70 backdrop-blur-sm transition-opacity duration-300"
                 onClick={onClose}
             />
 
-            {/* Panel */}
-            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl animate-in slide-in-from-right duration-300 overflow-hidden">
-                {/* Header with gradient and glow effect */}
-                <div className="relative overflow-hidden">
-                    {/* Background gradient - emerald/teal to match branding */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500" />
-
-                    {/* Animated glow effect */}
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-300/30 rounded-full blur-2xl" />
-
-                    {/* Content */}
-                    <div className="relative p-6 pb-8">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg shadow-emerald-500/20">
-                                    <Bell size={24} className="text-white" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-black text-white tracking-tight">Alerts</h2>
-                                    <p className="text-white/70 text-sm font-medium">
-                                        {notifications.length === 0
-                                            ? '✨ All fresh!'
-                                            : `${notifications.length} items need attention`
-                                        }
-                                    </p>
-                                </div>
+            {/* Slide-Over Drawer */}
+            <div className="relative w-full max-w-md h-full bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col z-10 animate-slide-in">
+                {/* Header */}
+                <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20">
+                                <Bell size={20} />
                             </div>
-                            <button
-                                onClick={onClose}
-                                className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                            >
-                                <X size={22} className="text-white" />
-                            </button>
+                            <div>
+                                <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                                    Freshness Alerts
+                                </h2>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    {notifications.length === 0
+                                        ? '✨ Everything is fresh'
+                                        : `${notifications.length} item${notifications.length !== 1 ? 's' : ''} need attention`
+                                    }
+                                </p>
+                            </div>
                         </div>
 
-                        {/* Quick stats */}
-                        {notifications.length > 0 && (
-                            <div className="flex gap-3 mt-2">
-                                {expiredItems.length > 0 && (
-                                    <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                                        <AlertTriangle size={14} className="text-red-200" />
-                                        <span className="text-white text-xs font-bold">{expiredItems.length} expired</span>
-                                    </div>
-                                )}
-                                {(expiringToday.length + expiringSoon.length) > 0 && (
-                                    <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                                        <Zap size={14} className="text-yellow-200" />
-                                        <span className="text-white text-xs font-bold">{expiringToday.length + expiringSoon.length} urgent</span>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <button
+                            onClick={onClose}
+                            className="w-8 h-8 rounded-lg bg-slate-200/60 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                            <X size={18} />
+                        </button>
                     </div>
+
+                    {/* Quick filter tabs */}
+                    {notifications.length > 0 && (
+                        <div className="flex gap-2 mt-4 pt-1">
+                            <button
+                                onClick={() => setSelectedTab('all')}
+                                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    selectedTab === 'all'
+                                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
+                                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                                }`}
+                            >
+                                All ({notifications.length})
+                            </button>
+                            <button
+                                onClick={() => setSelectedTab('urgent')}
+                                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    selectedTab === 'urgent'
+                                        ? 'bg-rose-500 text-white shadow-sm'
+                                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                                }`}
+                            >
+                                Urgent ({urgentCount})
+                            </button>
+                            <button
+                                onClick={() => setSelectedTab('soon')}
+                                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    selectedTab === 'soon'
+                                        ? 'bg-amber-500 text-white shadow-sm'
+                                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                                }`}
+                            >
+                                Soon ({expiringLater.length})
+                            </button>
+                        </div>
+                    )}
                 </div>
 
-                {/* Content */}
-                <div className="p-4 overflow-y-auto h-[calc(100%-180px)]">
+                {/* Body Content */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-6">
                     {notifications.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-16 text-center">
-                            <div className="relative mb-6">
-                                <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center">
-                                    <CheckCircle2 size={48} className="text-emerald-500" />
-                                </div>
-                                <div className="absolute -top-1 -right-1">
-                                    <Sparkles size={24} className="text-amber-400" />
-                                </div>
+                        <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                            <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+                                <CheckCircle2 size={32} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">All Clear!</h3>
-                            <p className="text-gray-500 dark:text-gray-400 max-w-[250px]">
-                                No items expiring soon. You're doing great managing your inventory!
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+                                No Expiry Alerts!
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs leading-relaxed">
+                                All your food items have plenty of shelf life remaining. Keep up the good work managing your kitchen inventory!
                             </p>
                         </div>
                     ) : (
-                        <div className="space-y-6">
+                        <>
                             {/* Expired Section */}
-                            {expiredItems.length > 0 && (
-                                <div>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="p-1.5 bg-rose-100 dark:bg-rose-900/30 rounded-lg">
-                                            <AlertTriangle size={16} className="text-rose-500" />
+                            {(selectedTab === 'all' || selectedTab === 'urgent') && expiredItems.length > 0 && (
+                                <div className="space-y-2.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-lg bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                            <AlertTriangle size={14} />
                                         </div>
-                                        <h3 className="font-bold text-rose-600 dark:text-rose-400 text-sm">EXPIRED</h3>
-                                        <span className="text-rose-500 text-xs font-medium bg-rose-100 dark:bg-rose-900/30 px-2 py-0.5 rounded-full">{expiredItems.length}</span>
+                                        <h3 className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+                                            Expired Items ({expiredItems.length})
+                                        </h3>
                                     </div>
                                     <div className="space-y-2">
                                         {expiredItems.map(item => (
                                             <div
                                                 key={item.id}
-                                                className="p-4 bg-gradient-to-r from-rose-50 to-red-50 dark:from-rose-900/20 dark:to-red-900/20 border border-rose-100 dark:border-rose-800/50 rounded-2xl flex items-center gap-3"
+                                                className="p-3.5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 flex items-center justify-between gap-3"
                                             >
-                                                <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm">
-                                                    <span className="text-2xl">{getCategoryEmoji(item.category)}</span>
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-xs shrink-0">
+                                                        {getCategoryEmoji(item.category)}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                                            {item.name}
+                                                        </p>
+                                                        <p className="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                                                            {Math.abs(item.daysLeft)} day{Math.abs(item.daysLeft) !== 1 ? 's' : ''} overdue
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-bold text-gray-900 dark:text-gray-100 truncate">{item.name}</p>
-                                                    <p className="text-xs text-rose-600 dark:text-rose-400 font-medium">
-                                                        {Math.abs(item.daysLeft)} day{Math.abs(item.daysLeft) !== 1 ? 's' : ''} overdue
-                                                    </p>
-                                                </div>
-                                                <span className="px-2.5 py-1 bg-rose-500 text-white text-xs font-bold rounded-lg shadow-sm">
+                                                <span className="px-2 py-1 rounded-md text-[10px] font-bold bg-rose-600 text-white shrink-0">
                                                     Expired
                                                 </span>
                                             </div>
@@ -168,34 +194,41 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                             )}
 
                             {/* Expiring Today */}
-                            {expiringToday.length > 0 && (
-                                <div>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                                            <Timer size={16} className="text-orange-500" />
+                            {(selectedTab === 'all' || selectedTab === 'urgent') && expiringToday.length > 0 && (
+                                <div className="space-y-2.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                            <Timer size={14} />
                                         </div>
-                                        <h3 className="font-bold text-orange-600 dark:text-orange-400 text-sm">TODAY</h3>
-                                        <span className="text-orange-500 text-xs font-medium bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 rounded-full">{expiringToday.length}</span>
+                                        <h3 className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+                                            Expiring Today ({expiringToday.length})
+                                        </h3>
                                     </div>
                                     <div className="space-y-2">
                                         {expiringToday.map(item => (
                                             <div
                                                 key={item.id}
-                                                className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-100 dark:border-orange-800/50 rounded-2xl flex items-center gap-3"
+                                                className="p-3.5 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/50 flex items-center justify-between gap-3"
                                             >
-                                                <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm">
-                                                    <span className="text-2xl">{getCategoryEmoji(item.category)}</span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-bold text-gray-900 dark:text-gray-100 truncate">{item.name}</p>
-                                                    <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">Use it today!</p>
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-xs shrink-0">
+                                                        {getCategoryEmoji(item.category)}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                                            {item.name}
+                                                        </p>
+                                                        <p className="text-xs font-semibold text-orange-600 dark:text-orange-400">
+                                                            Expires today!
+                                                        </p>
+                                                    </div>
                                                 </div>
                                                 <button
                                                     onClick={() => onOpenRecipes(item.id)}
-                                                    className="px-3 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-orange-500/25 transition-all hover:scale-105 active:scale-95"
+                                                    className="btn-brand py-1.5 px-3 text-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
                                                 >
-                                                    <ChefHat size={14} />
-                                                    Cook
+                                                    <ChefHat size={13} />
+                                                    <span>Cook</span>
                                                 </button>
                                             </div>
                                         ))}
@@ -203,37 +236,42 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                                 </div>
                             )}
 
-                            {/* Expiring in 1-3 days */}
-                            {expiringSoon.length > 0 && (
-                                <div>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                                            <Clock size={16} className="text-amber-500" />
+                            {/* Expiring Soon (1-3 Days) */}
+                            {(selectedTab === 'all' || selectedTab === 'urgent') && expiringSoon.length > 0 && (
+                                <div className="space-y-2.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                            <Clock size={14} />
                                         </div>
-                                        <h3 className="font-bold text-amber-600 dark:text-amber-400 text-sm">USE SOON</h3>
-                                        <span className="text-amber-500 text-xs font-medium bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">{expiringSoon.length}</span>
+                                        <h3 className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                                            Use Soon (1-3 Days)
+                                        </h3>
                                     </div>
                                     <div className="space-y-2">
                                         {expiringSoon.map(item => (
                                             <div
                                                 key={item.id}
-                                                className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-100 dark:border-amber-800/50 rounded-2xl flex items-center gap-3"
+                                                className="p-3.5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 flex items-center justify-between gap-3"
                                             >
-                                                <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm">
-                                                    <span className="text-2xl">{getCategoryEmoji(item.category)}</span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-bold text-gray-900 dark:text-gray-100 truncate">{item.name}</p>
-                                                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                                                        {item.daysLeft} day{item.daysLeft !== 1 ? 's' : ''} left
-                                                    </p>
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-xs shrink-0">
+                                                        {getCategoryEmoji(item.category)}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                                            {item.name}
+                                                        </p>
+                                                        <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                                                            {item.daysLeft} day{item.daysLeft !== 1 ? 's' : ''} left
+                                                        </p>
+                                                    </div>
                                                 </div>
                                                 <button
                                                     onClick={() => onOpenRecipes(item.id)}
-                                                    className="px-3 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-amber-500/25 transition-all hover:scale-105 active:scale-95"
+                                                    className="btn-brand py-1.5 px-3 text-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
                                                 >
-                                                    <ChefHat size={14} />
-                                                    Ideas
+                                                    <ChefHat size={13} />
+                                                    <span>Recipes</span>
                                                 </button>
                                             </div>
                                         ))}
@@ -241,45 +279,60 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                                 </div>
                             )}
 
-                            {/* Expiring in 4-7 days */}
-                            {expiringLater.length > 0 && (
-                                <div>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                            <Bell size={16} className="text-blue-500" />
+                            {/* Upcoming (4-7 Days) */}
+                            {(selectedTab === 'all' || selectedTab === 'soon') && expiringLater.length > 0 && (
+                                <div className="space-y-2.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                                            <Bell size={14} />
                                         </div>
-                                        <h3 className="font-bold text-blue-600 dark:text-blue-400 text-sm">UPCOMING</h3>
-                                        <span className="text-blue-500 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">{expiringLater.length}</span>
+                                        <h3 className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+                                            Upcoming (4-7 Days)
+                                        </h3>
                                     </div>
                                     <div className="space-y-2">
                                         {expiringLater.map(item => (
                                             <div
                                                 key={item.id}
-                                                className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/50 rounded-2xl flex items-center gap-3"
+                                                className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3"
                                             >
-                                                <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center shadow-sm">
-                                                    <span className="text-xl">{getCategoryEmoji(item.category)}</span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-semibold text-gray-900 dark:text-gray-100 truncate text-sm">{item.name}</p>
-                                                    <p className="text-xs text-blue-600 dark:text-blue-400">
-                                                        {item.daysLeft} days left
-                                                    </p>
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-lg shadow-xs shrink-0">
+                                                        {getCategoryEmoji(item.category)}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                                                            {item.name}
+                                                        </p>
+                                                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                                            {item.daysLeft} days left
+                                                        </p>
+                                                    </div>
                                                 </div>
                                                 {item.reminderEmail && (
-                                                    <div className="flex items-center gap-1 text-xs text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-lg">
-                                                        <Mail size={12} />
-                                                    </div>
+                                                    <span className="p-1.5 rounded-lg bg-sky-100 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400" title="Email reminder enabled">
+                                                        <Mail size={13} />
+                                                    </span>
                                                 )}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
-                        </div>
+                        </>
                     )}
                 </div>
             </div>
+
+            <style>{`
+                @keyframes slideIn {
+                    from { transform: translateX(100%); }
+                    to { transform: translateX(0); }
+                }
+                .animate-slide-in {
+                    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+            `}</style>
         </div>
     );
 };

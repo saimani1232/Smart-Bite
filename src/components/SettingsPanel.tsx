@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Send, CheckCircle, AlertCircle, Loader2, Leaf, Bell, Moon, Sun, Shield, Heart, Database, RotateCcw, Cloud } from 'lucide-react';
+import {
+    X,
+    Mail,
+    Send,
+    CheckCircle,
+    AlertCircle,
+    Loader2,
+    Leaf,
+    Bell,
+    Moon,
+    Sun,
+    Shield,
+    Heart,
+    Database,
+    RotateCcw,
+    Cloud,
+    Sparkles
+} from 'lucide-react';
 import { isEmailConfigured, sendTestEmail } from '../services/emailService';
 import { useTheme } from '../context/ThemeContext';
 import { isPushSupported, isPushEnabled, setPushEnabled, requestPushPermission, getPushPermission } from '../services/pushService';
@@ -35,7 +52,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
     }, []);
 
     const handleResetDemo = async () => {
-        if (confirm('Reset your inventory back to default sample items?')) {
+        if (confirm('Reset your inventory back to the default sample pantry items?')) {
             setResetting(true);
             localStore.resetToDemoData();
             await refetchItems();
@@ -51,7 +68,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
         }
 
         setSendStatus('loading');
-        setStatusMessage('Sending test email...');
+        setStatusMessage('Sending test email alert...');
 
         const result = await sendTestEmail(testEmail);
 
@@ -72,78 +89,104 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
     if (!isOpen) return null;
 
     return (
-        <>
+        <div className="fixed inset-0 z-50 flex justify-end">
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-50"
+                className="fixed inset-0 bg-slate-900/50 dark:bg-black/70 backdrop-blur-sm transition-opacity duration-300"
                 onClick={onClose}
             />
 
-            {/* Panel */}
-            <div className="fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-gray-900 shadow-2xl z-50 overflow-y-auto animate-slide-in">
+            {/* Slide-Over Drawer */}
+            <div className="relative w-full max-w-sm h-full bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col z-10 animate-slide-in">
                 {/* Header */}
-                <div className="sticky top-0 bg-gradient-to-r from-emerald-500 to-teal-500 p-5">
+                <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
-                                <Leaf size={22} className="text-white" />
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20">
+                                <Leaf size={20} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-white">Settings</h2>
-                                <p className="text-xs text-white/80">Smart Bite v1.0</p>
+                                <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                                    Settings & Preferences
+                                </h2>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    SmartBite v1.0
+                                </p>
                             </div>
                         </div>
+
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                            className="w-8 h-8 rounded-lg bg-slate-200/60 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
                         >
-                            <X size={20} className="text-white" />
+                            <X size={18} />
                         </button>
                     </div>
                 </div>
 
-                <div className="p-5 space-y-4">
-                    {/* Preferences Section */}
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                    {/* Appearance Section */}
                     <section className="space-y-3">
-                        <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Preferences</h3>
+                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                            Appearance
+                        </h3>
 
-                        {/* Dark Mode Toggle */}
-                        <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
+                        <button
+                            onClick={toggleDarkMode}
+                            className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-left cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        >
                             <div className="flex items-center gap-3">
-                                {isDarkMode ? <Moon size={20} className="text-indigo-400" /> : <Sun size={20} className="text-amber-500" />}
+                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-500' : 'bg-amber-100 text-amber-500'}`}>
+                                    {isDarkMode ? <Moon size={18} /> : <Sun size={18} />}
+                                </div>
                                 <div>
-                                    <p className="font-medium text-gray-800 dark:text-gray-200">Dark Mode</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {isDarkMode ? 'Currently enabled' : 'Currently disabled'}
+                                    <p className="text-sm font-bold text-slate-900 dark:text-white">Dark Theme</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        {isDarkMode ? 'Dark mode enabled' : 'Light mode enabled'}
                                     </p>
                                 </div>
                             </div>
-                            <button
-                                onClick={toggleDarkMode}
-                                className={`w-12 h-7 rounded-full transition-colors relative ${isDarkMode ? 'bg-indigo-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+
+                            <div
+                                className={`w-12 h-7 rounded-full transition-colors relative flex-shrink-0 ${
+                                    isDarkMode ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
+                                }`}
                             >
-                                <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${isDarkMode ? 'left-6' : 'left-1'}`} />
-                            </button>
-                        </div>
+                                <span
+                                    className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                                        isDarkMode ? 'left-6' : 'left-1'
+                                    }`}
+                                />
+                            </div>
+                        </button>
+                    </section>
 
-                        {/* Push Notifications Toggle */}
-                        <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
+                    {/* Notifications Section */}
+                    <section className="space-y-3">
+                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                            Notifications
+                        </h3>
+
+                        {/* Push Notification Toggle */}
+                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Bell size={20} className={pushEnabled && pushPermission === 'granted' ? 'text-emerald-500' : 'text-gray-400'} />
+                                <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                    <Bell size={18} />
+                                </div>
                                 <div>
-                                    <p className="font-medium text-gray-800 dark:text-gray-200">Push Notifications</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {!pushSupported ? 'Not supported in this browser' :
-                                            pushPermission === 'denied' ? 'Blocked by browser' :
-                                                pushPermission === 'granted' && pushEnabled ? 'Enabled' :
-                                                    'Click to enable'}
+                                    <p className="text-sm font-bold text-slate-900 dark:text-white">Push Alerts</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        {!pushSupported ? 'Not supported in browser' :
+                                            pushPermission === 'denied' ? 'Permission denied' :
+                                                pushPermission === 'granted' && pushEnabled ? 'Enabled' : 'Click to enable'}
                                     </p>
                                 </div>
                             </div>
+
                             <button
                                 onClick={async () => {
                                     if (!pushSupported) return;
-
                                     if (pushPermission !== 'granted') {
                                         const granted = await requestPushPermission();
                                         setPushPermission(getPushPermission());
@@ -158,105 +201,118 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
                                     }
                                 }}
                                 disabled={!pushSupported || pushPermission === 'denied'}
-                                className={`w-12 h-7 rounded-full transition-colors relative ${!pushSupported || pushPermission === 'denied' ? 'bg-gray-200 dark:bg-gray-700 cursor-not-allowed' :
-                                    pushEnabled && pushPermission === 'granted' ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
-                                    }`}
+                                aria-label="Toggle push notifications"
+                                className={`w-12 h-6.5 rounded-full transition-colors relative cursor-pointer ${
+                                    !pushSupported || pushPermission === 'denied'
+                                        ? 'bg-slate-200 dark:bg-slate-800 opacity-50 cursor-not-allowed'
+                                        : pushEnabled && pushPermission === 'granted'
+                                            ? 'bg-emerald-500'
+                                            : 'bg-slate-300 dark:bg-slate-700'
+                                }`}
                             >
-                                <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${pushEnabled && pushPermission === 'granted' ? 'left-6' : 'left-1'
-                                    }`} />
+                                <span
+                                    className={`absolute top-0.5 w-5.5 h-5.5 bg-white rounded-full shadow-sm transition-transform ${
+                                        pushEnabled && pushPermission === 'granted' ? 'left-6' : 'left-0.5'
+                                    }`}
+                                />
                             </button>
                         </div>
-                    </section>
 
-                    {/* Test Email Section */}
-                    <section className="space-y-3">
-                        <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Email Test</h3>
-
-                        <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-2xl border border-emerald-100 dark:border-emerald-800/50">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Mail size={18} className="text-emerald-600 dark:text-emerald-400" />
-                                <p className="font-medium text-gray-800 dark:text-gray-200">Send Test Reminder</p>
+                        {/* Email Reminder Test Box */}
+                        <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Mail size={16} className="text-emerald-600 dark:text-emerald-400" />
+                                    <span className="text-xs font-bold text-slate-900 dark:text-white">
+                                        Email Notification Test
+                                    </span>
+                                </div>
                                 {emailConfigured && (
-                                    <span className="ml-auto px-2 py-0.5 bg-emerald-100 dark:bg-emerald-800/50 text-emerald-700 dark:text-emerald-300 text-[10px] font-medium rounded-full">
-                                        Ready
+                                    <span className="px-2 py-0.5 bg-emerald-200/80 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold rounded-full">
+                                        Active
                                     </span>
                                 )}
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                                Receive a sample expiry alert with recipe suggestions
+
+                            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Test email delivery for upcoming food expiry alerts and recipe suggestions.
                             </p>
 
                             <div className="flex gap-2">
                                 <input
                                     type="email"
-                                    placeholder="your@email.com"
+                                    placeholder="Enter your email"
                                     value={testEmail}
                                     onChange={(e) => setTestEmail(e.target.value)}
-                                    className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                                    className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                                     disabled={sendStatus === 'loading'}
                                 />
                                 <button
                                     onClick={handleSendTestEmail}
                                     disabled={sendStatus === 'loading' || !emailConfigured}
-                                    className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${sendStatus === 'loading' || !emailConfigured
-                                        ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
-                                        : 'bg-emerald-500 text-white hover:bg-emerald-600 active:scale-95'
-                                        }`}
+                                    className="btn-brand py-2 px-3 text-xs flex items-center justify-center cursor-pointer disabled:opacity-50"
                                 >
                                     {sendStatus === 'loading' ? (
-                                        <Loader2 size={16} className="animate-spin" />
+                                        <Loader2 size={15} className="animate-spin" />
                                     ) : (
-                                        <Send size={16} />
+                                        <Send size={15} />
                                     )}
                                 </button>
                             </div>
 
-                            {/* Status Message */}
                             {statusMessage && (
-                                <div className={`flex items-center gap-2 mt-3 p-2 rounded-lg text-xs ${sendStatus === 'success'
-                                    ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300'
-                                    : sendStatus === 'error'
-                                        ? 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300'
-                                        : 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
-                                    }`}>
+                                <div className={`flex items-center gap-2 p-2 rounded-xl text-xs font-medium ${
+                                    sendStatus === 'success'
+                                        ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300'
+                                        : sendStatus === 'error'
+                                            ? 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300'
+                                            : 'bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300'
+                                }`}>
                                     {sendStatus === 'success' && <CheckCircle size={14} />}
                                     {sendStatus === 'error' && <AlertCircle size={14} />}
-                                    {sendStatus === 'loading' && <Loader2 size={14} className="animate-spin" />}
                                     <span>{statusMessage}</span>
                                 </div>
                             )}
                         </div>
                     </section>
 
-                    {/* Database & Storage Section */}
+                    {/* Database & Cloud Persistence */}
                     <section className="space-y-3">
-                        <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Database & Storage</h3>
+                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                            Database & Persistence
+                        </h3>
 
-                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl space-y-3">
+                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-3">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2.5">
-                                    <div className={`p-2 rounded-xl ${syncMode === 'cloud' ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400' : 'bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400'}`}>
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                                        syncMode === 'cloud'
+                                            ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400'
+                                            : 'bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400'
+                                    }`}>
                                         {syncMode === 'cloud' ? <Cloud size={18} /> : <Database size={18} />}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                            {syncMode === 'cloud' ? 'Firebase Firestore' : 'Persistent Local Storage'}
+                                        <p className="text-sm font-bold text-slate-900 dark:text-white">
+                                            {syncMode === 'cloud' ? 'Google Firebase Cloud' : 'Local Storage'}
                                         </p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                            {syncMode === 'cloud' ? 'Cloud synced (Never expires)' : 'Safe in your browser (Never deleted)'}
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                                            {syncMode === 'cloud' ? 'Persistent across all devices' : 'Stored safely in browser'}
                                         </p>
                                     </div>
                                 </div>
-                                <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${syncMode === 'cloud' ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300' : 'bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300'}`}>
-                                    {syncMode === 'cloud' ? 'Online' : 'Active'}
+
+                                <span className="px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                                    Active
                                 </span>
                             </div>
 
-                            <div className="pt-2 border-t border-gray-200 dark:border-gray-700/60">
+                            {/* Reset to sample pantry */}
+                            <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                                 <button
                                     onClick={handleResetDemo}
                                     disabled={resetting}
-                                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-xs font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                    className="w-full btn-secondary py-2 px-3 text-xs flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     <RotateCcw size={14} className={resetting ? 'animate-spin' : ''} />
                                     <span>Reset to Default Demo Pantry</span>
@@ -267,27 +323,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
 
                     {/* About Section */}
                     <section className="space-y-3">
-                        <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">About</h3>
+                        <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                            About
+                        </h3>
 
-                        <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl space-y-3">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl">
-                                    <Leaf size={18} className="text-white" />
-                                </div>
-                                <div>
-                                    <p className="font-bold text-gray-800 dark:text-gray-200">Smart Bite</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Reduce food waste, save money</p>
-                                </div>
+                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-3 text-xs text-slate-600 dark:text-slate-400">
+                            <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                                <Sparkles size={16} className="text-emerald-500" />
+                                <span>SmartBite Mission</span>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-2 pt-2">
-                                <div className="flex items-center gap-2 p-2 bg-white dark:bg-gray-700 rounded-xl">
-                                    <Shield size={14} className="text-emerald-500" />
-                                    <span className="text-xs text-gray-600 dark:text-gray-300">Privacy First</span>
+                            <p className="text-[11px] leading-relaxed">
+                                SmartBite is built to eradicate household food waste by combining predictive expiry dates, barcode recognition, and instant recipe pairing.
+                            </p>
+                            <div className="flex items-center gap-4 pt-1 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-700">
+                                <div className="flex items-center gap-1">
+                                    <Shield size={13} className="text-emerald-500" />
+                                    <span>Zero Tracking</span>
                                 </div>
-                                <div className="flex items-center gap-2 p-2 bg-white dark:bg-gray-700 rounded-xl">
-                                    <Heart size={14} className="text-rose-500" />
-                                    <span className="text-xs text-gray-600 dark:text-gray-300">Made with ❤️</span>
+                                <div className="flex items-center gap-1">
+                                    <Heart size={13} className="text-rose-500" />
+                                    <span>Food Tech</span>
                                 </div>
                             </div>
                         </div>
@@ -296,14 +351,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
             </div>
 
             <style>{`
-                @keyframes slide-in {
+                @keyframes slideIn {
                     from { transform: translateX(100%); }
                     to { transform: translateX(0); }
                 }
                 .animate-slide-in {
-                    animation: slide-in 0.25s ease-out;
+                    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
                 }
             `}</style>
-        </>
+        </div>
     );
 };
