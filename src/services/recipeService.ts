@@ -1,5 +1,8 @@
-// TheMealDB API - Free Recipe Database (No API key required!)
-// https://www.themealdb.com/api.php
+// TheMealDB API - Intelligent Recipe Engine & Caching Layer for SmartBite
+// Provides pantry-aware matching, multi-factor zero-waste scoring, and food-safe recommendations.
+
+import { normalizeIngredient, isIngredientMatch } from '../utils/ingredientNormalizer';
+import type { InventoryItem } from '../types';
 
 export interface Recipe {
     id: string;
@@ -11,6 +14,18 @@ export interface Recipe {
     ingredients: string[];
     matchedIngredients: string[];
     matchScore: number;
+    // Intelligent scoring & match metrics
+    matchPercentage: number;
+    missingIngredients: string[];
+    expiringMatchCount: number;
+    matchTier: 'can_make' | 'almost_can_make' | 'missing_items';
+    scoreBreakdown?: {
+        matchScore: number;
+        utilizationScore: number;
+        expiringBonus: number;
+        missingPenalty: number;
+        totalScore: number;
+    };
     readyInMinutes?: number;
     servings?: number;
     sourceUrl?: string;
@@ -25,9 +40,13 @@ interface MealDBRecipe {
     strMealThumb: string;
     strSource?: string;
     strYoutube?: string;
-    // Ingredients and measures come as strIngredient1-20 and strMeasure1-20
     [key: string]: string | undefined;
 }
+
+// In-Memory Caches for performance & rate-limit reduction
+const mealDetailsCache = new Map<string, Recipe>();
+const queryCache = new Map<string, { timestamp: number; recipes: Recipe[] }>();
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
 
 // Extract ingredients from MealDB recipe format
 function extractIngredients(meal: MealDBRecipe): string[] {
@@ -35,106 +54,47 @@ function extractIngredients(meal: MealDBRecipe): string[] {
     for (let i = 1; i <= 20; i++) {
         const ingredient = meal[`strIngredient${i}`];
         if (ingredient && ingredient.trim()) {
-            ingredients.push(ingredient.trim().toLowerCase());
+            ingredients.push(ingredient.trim());
         }
     }
     return ingredients;
 }
 
-// Convert MealDB recipe to our Recipe format
-function convertToRecipe(meal: MealDBRecipe, matchedIngredients: string[] = []): Recipe {
-    const ingredients = extractIngredients(meal);
+// Convert MealDB raw object to canonical base Recipe
+function convertToRecipe(meal: MealDBRecipe): Recipe {
+    const rawIngredients = extractIngredients(meal);
 
     return {
         id: meal.idMeal,
-        name: meal.strMeal,
-        image: meal.strMealThumb,
+        name: meal.strMeal || 'Untitled Recipe',
+        image: meal.strMealThumb || '',
         category: meal.strCategory || 'Main Course',
         area: meal.strArea || 'International',
         instructions: meal.strInstructions || '',
-        ingredients: ingredients,
-        matchedIngredients: matchedIngredients.length > 0 ? matchedIngredients : ingredients.slice(0, 3),
-        matchScore: matchedIngredients.length,
-        readyInMinutes: 30, // MealDB doesn't provide this, estimate
-        servings: 4, // MealDB doesn't provide this, estimate
-        sourceUrl: meal.strSource || `https://www.themealdb.com/meal/${meal.idMeal}`
+        ingredients: rawIngredients,
+        matchedIngredients: [],
+        matchScore: 0,
+        matchPercentage: 0,
+        missingIngredients: [...rawIngredients],
+        expiringMatchCount: 0,
+        matchTier: 'missing_items',
+        readyInMinutes: 30, // Fallback estimate
+        servings: 4,
+        sourceUrl: meal.strSource || (meal.idMeal ? `https://www.themealdb.com/meal/${meal.idMeal}` : undefined)
     };
 }
 
-// Search recipes by meal NAME (what the MealDB website search uses)
-export async function searchRecipesByName(searchTerm: string): Promise<Recipe[]> {
-    try {
-        console.log('🔍 Searching TheMealDB by NAME for:', searchTerm);
-
-        const response = await fetch(
-            `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(searchTerm)}`
-        );
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.meals) {
-            console.log('No meals found by name for:', searchTerm);
-            return [];
-        }
-
-        // Convert meals to our Recipe format (already has full details from search.php)
-        const recipes = data.meals.slice(0, 5).map((meal: MealDBRecipe) => convertToRecipe(meal));
-        console.log(`✅ Found ${recipes.length} recipes by name search`);
-        return recipes;
-    } catch (error) {
-        console.error('Error searching recipes by name:', error);
-        return [];
-    }
-}
-
-// Search recipes by INGREDIENT (filter endpoint)
-export async function getRecipesByIngredient(ingredient: string): Promise<Recipe[]> {
-    try {
-        console.log('🔍 Searching TheMealDB by INGREDIENT for:', ingredient);
-
-        const response = await fetch(
-            `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ingredient)}`
-        );
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.meals) {
-            console.log('No meals found by ingredient for:', ingredient);
-            return [];
-        }
-
-        // Get basic recipe info, then fetch full details for top 5
-        const meals = data.meals.slice(0, 5);
-        const recipes: Recipe[] = [];
-
-        for (const meal of meals) {
-            const fullRecipe = await getRecipeById(meal.idMeal);
-            if (fullRecipe) {
-                recipes.push(fullRecipe);
-            }
-        }
-
-        console.log(`✅ Found ${recipes.length} recipes by ingredient`);
-        return recipes;
-    } catch (error) {
-        console.error('Error fetching recipes from TheMealDB:', error);
-        return [];
-    }
-}
-
-// Get full recipe details by ID
+// Fetch recipe details by ID with memoization
 export async function getRecipeById(id: string): Promise<Recipe | null> {
+    if (!id) return null;
+
+    if (mealDetailsCache.has(id)) {
+        return mealDetailsCache.get(id)!;
+    }
+
     try {
         const response = await fetch(
-            `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+            `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`
         );
 
         if (!response.ok) {
@@ -147,26 +107,116 @@ export async function getRecipeById(id: string): Promise<Recipe | null> {
             return null;
         }
 
-        return convertToRecipe(data.meals[0]);
+        const recipe = convertToRecipe(data.meals[0]);
+        mealDetailsCache.set(id, recipe);
+        return recipe;
     } catch (error) {
-        console.error('Error fetching recipe details:', error);
+        console.error('Error fetching recipe details for ID:', id, error);
         return null;
     }
 }
 
-// Hardcoded recipes for specific items that don't get good API results
+// Search recipes by meal title
+export async function searchRecipesByName(searchTerm: string): Promise<Recipe[]> {
+    if (!searchTerm || !searchTerm.trim()) return [];
+
+    const cleanTerm = searchTerm.trim().toLowerCase();
+    const cacheKey = `name:${cleanTerm}`;
+
+    const cached = queryCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+        return cached.recipes;
+    }
+
+    try {
+        const response = await fetch(
+            `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(cleanTerm)}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.meals) {
+            queryCache.set(cacheKey, { timestamp: Date.now(), recipes: [] });
+            return [];
+        }
+
+        const recipes: Recipe[] = data.meals.slice(0, 10).map((meal: MealDBRecipe) => {
+            const converted = convertToRecipe(meal);
+            mealDetailsCache.set(converted.id, converted);
+            return converted;
+        });
+
+        queryCache.set(cacheKey, { timestamp: Date.now(), recipes });
+        return recipes;
+    } catch (error) {
+        console.error('Error searching recipes by name:', error);
+        return [];
+    }
+}
+
+// Search recipes by INGREDIENT with parallel lookup and caching
+export async function getRecipesByIngredient(ingredient: string): Promise<Recipe[]> {
+    if (!ingredient || !ingredient.trim()) return [];
+
+    const cleanIng = normalizeIngredient(ingredient) || ingredient.trim().toLowerCase();
+    const cacheKey = `ing:${cleanIng}`;
+
+    const cached = queryCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+        return cached.recipes;
+    }
+
+    try {
+        const response = await fetch(
+            `https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(cleanIng)}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.meals || data.meals.length === 0) {
+            queryCache.set(cacheKey, { timestamp: Date.now(), recipes: [] });
+            return [];
+        }
+
+        // Fetch up to 8 meals in parallel
+        const candidateMeals = data.meals.slice(0, 8);
+        const recipePromises = candidateMeals.map((meal: { idMeal: string }) => getRecipeById(meal.idMeal));
+        const resolvedRecipes = await Promise.all(recipePromises);
+
+        const recipes = resolvedRecipes.filter((r): r is Recipe => r !== null);
+        queryCache.set(cacheKey, { timestamp: Date.now(), recipes });
+        return recipes;
+    } catch (error) {
+        console.error('Error fetching recipes by ingredient:', error);
+        return [];
+    }
+}
+
+// Curated recipes for specialty items that lack comprehensive free API endpoints (e.g. chips/snacks)
 const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
-    'lays': [
+    'potato chips': [
         {
             id: 'custom-lays-1',
             name: 'Crispy Chips Bhel Puri',
             image: '/i1.jpeg',
             category: 'Snack',
             area: 'Indian',
-            instructions: '1. Crush the Lays chips into bite-sized pieces in a bowl.\n2. Add finely chopped onion, tomato, green chili, and coriander.\n3. Squeeze fresh lemon juice over the mixture.\n4. Add tamarind chutney and green chutney.\n5. Toss everything together and serve immediately while crispy.',
-            ingredients: ['lays chips', 'onion', 'tomato', 'green chili', 'coriander', 'lemon juice', 'tamarind chutney', 'green chutney', 'sev'],
-            matchedIngredients: ['lays chips', 'onion', 'tomato'],
-            matchScore: 3,
+            instructions: '1. Crush the potato chips into bite-sized pieces in a bowl.\n2. Add finely chopped onion, tomato, green chili, and coriander.\n3. Squeeze fresh lemon juice over the mixture.\n4. Add tamarind chutney and green chutney.\n5. Toss everything together and serve immediately while crispy.',
+            ingredients: ['potato chips', 'onion', 'tomato', 'green chili', 'coriander', 'lemon juice', 'tamarind chutney', 'green chutney', 'sev'],
+            matchedIngredients: [],
+            matchScore: 0,
+            matchPercentage: 0,
+            missingIngredients: [],
+            expiringMatchCount: 0,
+            matchTier: 'can_make',
             readyInMinutes: 10,
             servings: 2,
             sourceUrl: 'https://www.youtube.com/watch?v=92gHUzeeOI8'
@@ -177,10 +227,14 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
             image: '/i2.jpeg',
             category: 'Starter',
             area: 'Mexican',
-            instructions: '1. Arrange Lays chips on a baking tray in a single layer.\n2. Make cheese sauce: melt butter, add flour, stir in milk, then add grated cheese until smooth.\n3. Pour hot cheese sauce over the chips.\n4. Top with diced tomatoes, jalapeños, and corn kernels.\n5. Bake at 180°C for 5 minutes until cheese is bubbly.\n6. Garnish with sour cream and coriander.',
-            ingredients: ['lays chips', 'cheese', 'butter', 'flour', 'milk', 'tomato', 'jalapeño', 'corn', 'sour cream', 'coriander'],
-            matchedIngredients: ['lays chips', 'cheese', 'tomato'],
-            matchScore: 3,
+            instructions: '1. Arrange potato chips on a baking tray in a single layer.\n2. Make cheese sauce: melt butter, add flour, stir in milk, then add grated cheese until smooth.\n3. Pour hot cheese sauce over the chips.\n4. Top with diced tomatoes, jalapeños, and corn.\n5. Bake at 180°C for 5 minutes until cheese is bubbly.\n6. Garnish with sour cream and coriander.',
+            ingredients: ['potato chips', 'cheese', 'butter', 'flour', 'milk', 'tomato', 'jalapeno', 'corn', 'sour cream', 'coriander'],
+            matchedIngredients: [],
+            matchScore: 0,
+            matchPercentage: 0,
+            missingIngredients: [],
+            expiringMatchCount: 0,
+            matchTier: 'can_make',
             readyInMinutes: 15,
             servings: 4,
             sourceUrl: 'https://www.youtube.com/watch?v=X2effcTdCZY'
@@ -191,10 +245,14 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
             image: '/i3.jpeg',
             category: 'Side',
             area: 'Indian',
-            instructions: '1. Boil and mash potatoes. Mix with chopped onion, green chili, ginger, garam masala, and salt.\n2. Crush Lays chips finely to make a crispy coating.\n3. Shape potato mixture into flat round patties.\n4. Coat each patty generously with crushed chips.\n5. Shallow fry on medium heat until golden and crispy on both sides.\n6. Serve hot with mint chutney and tamarind chutney.',
-            ingredients: ['lays chips', 'potato', 'onion', 'green chili', 'ginger', 'garam masala', 'salt', 'oil', 'mint chutney'],
-            matchedIngredients: ['lays chips', 'potato', 'onion'],
-            matchScore: 3,
+            instructions: '1. Boil and mash potatoes. Mix with chopped onion, green chili, ginger, garam masala, and salt.\n2. Crush chips finely to make a crispy coating.\n3. Shape potato mixture into flat round patties.\n4. Coat each patty generously with crushed chips.\n5. Shallow fry on medium heat until golden and crispy on both sides.\n6. Serve hot with mint chutney and tamarind chutney.',
+            ingredients: ['potato chips', 'potato', 'onion', 'green chili', 'ginger', 'garam masala', 'salt', 'oil', 'mint chutney'],
+            matchedIngredients: [],
+            matchScore: 0,
+            matchPercentage: 0,
+            missingIngredients: [],
+            expiringMatchCount: 0,
+            matchTier: 'can_make',
             readyInMinutes: 25,
             servings: 4,
             sourceUrl: 'https://www.youtube.com/watch?v=qkM7HwvclCU'
@@ -202,119 +260,238 @@ const KNOWN_ITEM_RECIPES: Record<string, Recipe[]> = {
     ]
 };
 
-// Check if an item name matches any known recipe key
 function getKnownRecipes(itemName: string): Recipe[] | null {
-    const normalized = itemName.toLowerCase();
+    const normalized = normalizeIngredient(itemName).toLowerCase();
     for (const [key, recipes] of Object.entries(KNOWN_ITEM_RECIPES)) {
-        if (normalized.includes(key)) {
+        if (normalized.includes(key) || key.includes(normalized)) {
             return recipes;
         }
     }
     return null;
 }
 
-// Find best recipes that use expiring item + other inventory items
-export async function findBestRecipes(
-    expiringItemName: string,
-    allInventoryItems: string[]
-): Promise<Recipe[]> {
-    console.log('🍳 Finding recipes for:', expiringItemName, 'with inventory:', allInventoryItems);
+// Normalized internal inventory representation
+export interface CleanInventoryItem {
+    name: string;
+    daysLeft: number;
+    isExpired: boolean;
+    isExpiringSoon: boolean;
+}
 
-    // Check hardcoded recipes first (for items like Lays that don't have good API results)
-    const knownRecipes = getKnownRecipes(expiringItemName);
-    if (knownRecipes) {
-        console.log('✅ Found hardcoded recipes for:', expiringItemName);
-        // Update matched ingredients with actual inventory items
-        const inventoryNormalized = allInventoryItems.map(s => s.toLowerCase().trim());
-        return knownRecipes.map(recipe => {
-            const matched = recipe.ingredients.filter(ing =>
-                inventoryNormalized.some(inv => ing.includes(inv) || inv.includes(ing))
-            );
-            if (!matched.some(m => m.includes(expiringItemName.toLowerCase()))) {
-                matched.unshift(expiringItemName.toLowerCase());
+function parseInventoryItems(
+    rawInventory: (string | InventoryItem | { name: string; expiryDate?: string; status?: string; daysLeft?: number })[]
+): CleanInventoryItem[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return rawInventory
+        .map(item => {
+            if (typeof item === 'string') {
+                return {
+                    name: item.trim(),
+                    daysLeft: 99,
+                    isExpired: false,
+                    isExpiringSoon: false
+                };
             }
-            return { ...recipe, matchedIngredients: matched, matchScore: matched.length };
-        });
+
+            let daysLeft = 99;
+            const itemAny = item as { daysLeft?: number; expiryDate?: string; status?: string };
+            if (typeof itemAny.daysLeft === 'number') {
+                daysLeft = itemAny.daysLeft;
+            } else if (itemAny.expiryDate) {
+                const expiry = new Date(itemAny.expiryDate);
+                expiry.setHours(0, 0, 0, 0);
+                daysLeft = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            }
+
+            const isExpired = item.status === 'Expired' || daysLeft < 0;
+            const isExpiringSoon = !isExpired && daysLeft >= 0 && daysLeft <= 7;
+
+            return {
+                name: item.name.trim(),
+                daysLeft,
+                isExpired,
+                isExpiringSoon
+            };
+        })
+        .filter(item => item.name.length > 0 && !item.isExpired); // Filter out expired items for food safety
+}
+
+/**
+ * Intelligent Multi-Factor Recipe Scorer:
+ * 1. Ingredient Match % (40% weight)
+ * 2. Inventory Utilization % (20% weight)
+ * 3. Expiring-Soon Urgency Boost (up to +25 points)
+ * 4. Missing Ingredients Penalty (-5 points per missing item, max -30)
+ * 5. Can Make / Almost Can Make categorization
+ */
+export function scoreAndRankRecipe(recipe: Recipe, activeInventory: CleanInventoryItem[]): Recipe {
+    const matchedIngredients: string[] = [];
+    const missingIngredients: string[] = [];
+    const matchedInventoryNames = new Set<string>();
+    let expiringMatchCount = 0;
+
+    const recipeIngredients = recipe.ingredients.length > 0 ? recipe.ingredients : ['Ingredient'];
+
+    for (const recipeIng of recipeIngredients) {
+        let isMatched = false;
+        let matchedInvItem: CleanInventoryItem | null = null;
+
+        for (const invItem of activeInventory) {
+            if (isIngredientMatch(invItem.name, recipeIng)) {
+                isMatched = true;
+                matchedInvItem = invItem;
+                break;
+            }
+        }
+
+        if (isMatched && matchedInvItem) {
+            matchedIngredients.push(recipeIng);
+            matchedInventoryNames.add(matchedInvItem.name.toLowerCase());
+            if (matchedInvItem.isExpiringSoon) {
+                expiringMatchCount++;
+            }
+        } else {
+            missingIngredients.push(recipeIng);
+        }
     }
 
-    // Normalize ingredient names
-    const normalize = (s: string) => s.toLowerCase().trim();
-    const expiringNormalized = normalize(expiringItemName);
-    const inventoryNormalized = allInventoryItems.map(normalize);
+    const totalIngs = recipeIngredients.length;
+    const matchPercentage = totalIngs > 0 ? Math.round((matchedIngredients.length / totalIngs) * 100) : 0;
+    const inventoryUtilization = activeInventory.length > 0 ? Math.round((matchedInventoryNames.size / activeInventory.length) * 100) : 0;
+
+    // Expiring Urgency Boost
+    let expiringBonus = 0;
+    if (expiringMatchCount === 1) expiringBonus = 15;
+    else if (expiringMatchCount >= 2) expiringBonus = 25;
+
+    // Missing Ingredient Penalty
+    const missingPenalty = Math.min(30, missingIngredients.length * 5);
+
+    // Multi-factor composite score
+    const totalScore = Math.round(
+        (matchPercentage * 0.40) +
+        (inventoryUtilization * 0.20) +
+        expiringBonus -
+        missingPenalty
+    );
+
+    // Determine match tier
+    let matchTier: 'can_make' | 'almost_can_make' | 'missing_items' = 'missing_items';
+    if (matchPercentage >= 80 || missingIngredients.length <= 1) {
+        matchTier = 'can_make';
+    } else if (matchPercentage >= 50 || missingIngredients.length <= 3) {
+        matchTier = 'almost_can_make';
+    }
+
+    return {
+        ...recipe,
+        matchedIngredients,
+        missingIngredients,
+        matchScore: matchedIngredients.length,
+        matchPercentage,
+        expiringMatchCount,
+        matchTier,
+        scoreBreakdown: {
+            matchScore: matchPercentage,
+            utilizationScore: inventoryUtilization,
+            expiringBonus,
+            missingPenalty,
+            totalScore
+        }
+    };
+}
+
+/**
+ * Common culinary dish terms to distinguish title searches from ingredient searches
+ */
+const COMMON_DISH_TERMS = new Set([
+    'soup', 'salad', 'curry', 'pie', 'cake', 'pizza', 'burger', 'stew',
+    'casserole', 'taco', 'pancake', 'cookie', 'bread', 'sandwich', 'pasta',
+    'roast', 'tart', 'wrap', 'bowl', 'dip', 'omelette', 'omelet', 'lasagna'
+]);
+
+/**
+ * Primary Engine Function: Finds the best recipes matching the user's inventory
+ * Handles both string[] and rich InventoryItem[] inputs for backward compatibility.
+ */
+export async function findBestRecipes(
+    targetQueryOrItem: string,
+    rawInventory: (string | InventoryItem | { name: string; expiryDate?: string; status?: string; daysLeft?: number })[]
+): Promise<Recipe[]> {
+    const cleanTarget = (targetQueryOrItem || '').trim();
+    const activeInventory = parseInventoryItems(rawInventory);
+
+    // Check if target matches specialty known items (e.g. chips/lays)
+    const known = getKnownRecipes(cleanTarget);
+    if (known) {
+        return known
+            .map(r => scoreAndRankRecipe(r, activeInventory))
+            .sort((a, b) => (b.scoreBreakdown?.totalScore || 0) - (a.scoreBreakdown?.totalScore || 0));
+    }
+
+    const isDishQuery = COMMON_DISH_TERMS.has(cleanTarget.toLowerCase());
+    let rawCandidates: Recipe[] = [];
 
     try {
-        // FIRST: Try searching by NAME (like MealDB website search bar)
-        // This finds recipes WITH that name (e.g., "cookies" -> "Peanut Butter Cookies")
-        console.log('📛 Step 1: Searching by NAME for:', expiringItemName);
-        let recipes = await searchRecipesByName(expiringItemName);
-
-        if (recipes.length > 0) {
-            console.log(`✅ Found ${recipes.length} recipes by name!`);
-            return processRecipes(recipes, expiringNormalized, inventoryNormalized);
-        }
-
-        // SECOND: Try searching by INGREDIENT (finds meals that USE this ingredient)
-        console.log('🥘 Step 2: Searching by INGREDIENT for:', expiringItemName);
-        recipes = await getRecipesByIngredient(expiringItemName);
-
-        if (recipes.length > 0) {
-            console.log(`✅ Found ${recipes.length} recipes by ingredient!`);
-            return processRecipes(recipes, expiringNormalized, inventoryNormalized);
-        }
-
-        // THIRD: Try with last word (e.g., "Whole Milk" -> "Milk")
-        const lastWord = expiringItemName.split(' ').pop() || expiringItemName;
-        if (lastWord !== expiringItemName) {
-            console.log('🔄 Step 3: Trying with last word:', lastWord);
-
-            // Try name search first
-            recipes = await searchRecipesByName(lastWord);
-            if (recipes.length > 0) {
-                return processRecipes(recipes, expiringNormalized, inventoryNormalized);
+        if (isDishQuery) {
+            // If user searched for a dish name, search titles first
+            rawCandidates = await searchRecipesByName(cleanTarget);
+            if (rawCandidates.length < 3) {
+                const ingResults = await getRecipesByIngredient(cleanTarget);
+                rawCandidates = [...rawCandidates, ...ingResults];
             }
+        } else {
+            // For food ingredients, prioritize ingredient-based retrieval
+            rawCandidates = await getRecipesByIngredient(cleanTarget);
 
-            // Then ingredient search
-            recipes = await getRecipesByIngredient(lastWord);
-            if (recipes.length > 0) {
-                return processRecipes(recipes, expiringNormalized, inventoryNormalized);
+            // Supplement with name search if results are scarce
+            if (rawCandidates.length < 4) {
+                const nameResults = await searchRecipesByName(cleanTarget);
+                rawCandidates = [...rawCandidates, ...nameResults];
             }
         }
 
-        // FALLBACK: Get random recipes
-        console.log('🎲 No specific recipes found, getting random suggestions...');
-        return await getRandomRecipes(3);
+        // Fallback: If still few or no candidates, try last word (e.g., "Whole Milk" -> "Milk")
+        if (rawCandidates.length === 0 && cleanTarget.includes(' ')) {
+            const lastWord = cleanTarget.split(' ').pop() || '';
+            if (lastWord.length > 2) {
+                rawCandidates = await getRecipesByIngredient(lastWord);
+                if (rawCandidates.length === 0) {
+                    rawCandidates = await searchRecipesByName(lastWord);
+                }
+            }
+        }
 
+        // If completely empty, fetch random recipes as graceful discovery
+        if (rawCandidates.length === 0) {
+            rawCandidates = await getRandomRecipes(4);
+        }
+
+        // Deduplicate recipes by ID
+        const uniqueRecipes = new Map<string, Recipe>();
+        for (const recipe of rawCandidates) {
+            if (recipe && recipe.id && !uniqueRecipes.has(recipe.id)) {
+                uniqueRecipes.set(recipe.id, recipe);
+            }
+        }
+
+        // Score and rank each recipe with multi-factor engine
+        const scored = Array.from(uniqueRecipes.values())
+            .map(recipe => scoreAndRankRecipe(recipe, activeInventory))
+            .sort((a, b) => {
+                const scoreA = a.scoreBreakdown?.totalScore ?? 0;
+                const scoreB = b.scoreBreakdown?.totalScore ?? 0;
+                if (scoreB !== scoreA) return scoreB - scoreA;
+                return b.matchPercentage - a.matchPercentage;
+            });
+
+        return scored.slice(0, 8);
     } catch (error) {
         console.error('Error finding best recipes:', error);
         return [];
     }
-}
-
-// Process recipes to calculate match scores
-function processRecipes(
-    recipes: Recipe[],
-    expiringItem: string,
-    inventory: string[]
-): Recipe[] {
-    return recipes.map(recipe => {
-        // Find which inventory items match this recipe's ingredients
-        const matchedIngredients = recipe.ingredients.filter(ing =>
-            inventory.some(inv =>
-                ing.includes(inv) || inv.includes(ing)
-            )
-        );
-
-        // Make sure the main ingredient is included
-        if (!matchedIngredients.some(m => m.includes(expiringItem) || expiringItem.includes(m))) {
-            matchedIngredients.unshift(expiringItem);
-        }
-
-        return {
-            ...recipe,
-            matchedIngredients: matchedIngredients.slice(0, 5),
-            matchScore: matchedIngredients.length
-        };
-    }).sort((a, b) => b.matchScore - a.matchScore).slice(0, 3);
 }
 
 // Get random recipes (fallback when no specific matches)
@@ -322,16 +499,18 @@ export async function getRandomRecipes(count: number = 3): Promise<Recipe[]> {
     const recipes: Recipe[] = [];
 
     try {
-        for (let i = 0; i < count; i++) {
-            const response = await fetch(
-                'https://www.themealdb.com/api/json/v1/1/random.php'
-            );
+        const promises = Array.from({ length: count }, () =>
+            fetch('https://www.themealdb.com/api/json/v1/1/random.php')
+                .then(res => res.ok ? res.json() : null)
+                .catch(() => null)
+        );
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.meals && data.meals[0]) {
-                    recipes.push(convertToRecipe(data.meals[0]));
-                }
+        const results = await Promise.all(promises);
+        for (const data of results) {
+            if (data?.meals?.[0]) {
+                const recipe = convertToRecipe(data.meals[0]);
+                mealDetailsCache.set(recipe.id, recipe);
+                recipes.push(recipe);
             }
         }
     } catch (error) {
@@ -343,26 +522,6 @@ export async function getRandomRecipes(count: number = 3): Promise<Recipe[]> {
 
 // Get a single random recipe
 export async function getRandomRecipe(): Promise<Recipe | null> {
-    try {
-        const response = await fetch(
-            'https://www.themealdb.com/api/json/v1/1/random.php'
-        );
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.meals || data.meals.length === 0) {
-            return null;
-        }
-
-        return convertToRecipe(data.meals[0]);
-    } catch (error) {
-        console.error('Error fetching random recipe:', error);
-        return null;
-    }
+    const list = await getRandomRecipes(1);
+    return list[0] || null;
 }
-
-

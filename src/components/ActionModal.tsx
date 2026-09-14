@@ -68,8 +68,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose, onExplo
             setError(null);
 
             try {
-                const allItemNames = items.map(i => i.name);
-                const fetched = await findBestRecipes(item.name, allItemNames);
+                const fetched = await findBestRecipes(item.name, items);
 
                 if (fetched.length === 0) {
                     setError('No specific recipes found for this ingredient. Check preservation tips!');
@@ -91,8 +90,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose, onExplo
         setLoading(true);
         setError(null);
         try {
-            const allItemNames = items.map(i => i.name);
-            const fetched = await findBestRecipes(item.name, allItemNames);
+            const fetched = await findBestRecipes(item.name, items);
             if (fetched.length === 0) {
                 setError('No recipes found for this ingredient.');
             } else {
@@ -282,12 +280,22 @@ export const ActionModal: React.FC<ActionModalProps> = ({ item, onClose, onExplo
                                                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                                                     {r.category} • {r.area}
                                                 </p>
-                                                <div className="flex items-center gap-2 mt-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                                                    <span className="flex items-center gap-0.5">
-                                                        <Clock size={10} /> 30 min
+                                                <div className="flex items-center gap-1.5 mt-1 text-[10px] font-semibold flex-wrap">
+                                                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                                                        {r.matchPercentage || 50}% Match
                                                     </span>
-                                                    <span>•</span>
-                                                    <span>Uses {item.name}</span>
+                                                    <span className="text-slate-300 dark:text-slate-600">•</span>
+                                                    <span className="text-slate-500 dark:text-slate-400">
+                                                        {r.matchedIngredients?.length || 1} in pantry
+                                                    </span>
+                                                    {r.missingIngredients && r.missingIngredients.length > 0 && (
+                                                        <>
+                                                            <span className="text-slate-300 dark:text-slate-600">•</span>
+                                                            <span className="text-amber-600 dark:text-amber-400">
+                                                                Missing {r.missingIngredients.length}
+                                                            </span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
 

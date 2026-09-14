@@ -129,8 +129,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
         for (const item of itemsToRemind) {
             console.log(`\n📬 Processing reminder for: ${item.name}`);
 
-            const allItemNames = items.map(i => i.name);
-            const recipes = await findBestRecipes(item.name, allItemNames);
+            const recipes = await findBestRecipes(item.name, items);
             console.log(`🍳 Found ${recipes.length} recipes`);
 
             let emailSent = false;
@@ -174,8 +173,7 @@ export const InventoryProvider = ({ children }: { children: ReactNode }) => {
             return false;
         }
 
-        const allItemNames = items.map(i => i.name);
-        const recipes = await findBestRecipes(item.name, allItemNames);
+        const recipes = await findBestRecipes(item.name, items);
         return await sendExpiryReminder(item, recipes);
     }, [items]);
 

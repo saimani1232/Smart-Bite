@@ -17,8 +17,9 @@ import {
     Flame
 } from 'lucide-react';
 import { findBestRecipes, type Recipe } from '../services/recipeService';
+import { isIngredientMatch } from '../utils/ingredientNormalizer';
 
-type FilterType = 'expiring' | 'quick' | 'vegetarian' | 'protein' | null;
+type FilterType = 'can_make' | 'expiring' | 'quick' | 'vegetarian' | 'protein' | null;
 
 // Get category emoji
 const getCategoryEmoji = (category: string) => {
@@ -40,7 +41,7 @@ interface RecipesProps {
 export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredient }) => {
     const { items } = useInventory();
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeFilter, setActiveFilter] = useState<FilterType>('expiring');
+    const [activeFilter, setActiveFilter] = useState<FilterType>(null);
     const [selectedExpiringIngredient, setSelectedExpiringIngredient] = useState<string | null>(initialIngredient || null);
     const [expiringRecipes, setExpiringRecipes] = useState<Recipe[]>([]);
     const [recommendedRecipes, setRecommendedRecipes] = useState<Recipe[]>([]);
@@ -81,12 +82,12 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
         const fetchRecipes = async () => {
             setLoading(true);
             try {
-                const allItemNames = items.map(i => i.name);
                 const queryTerm = searchQuery.trim() || targetIngredient;
 
+                // Pass full inventory items to enable expiry-weighting and food safety
                 const [mainResults, recResults] = await Promise.all([
-                    findBestRecipes(queryTerm, allItemNames),
-                    findBestRecipes('pasta', allItemNames)
+                    findBestRecipes(queryTerm, items),
+                    findBestRecipes('pasta', items)
                 ]);
 
                 if (isMounted) {
@@ -110,6 +111,7 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
 
     // Filter chips
     const filterChips = [
+        { id: 'can_make' as FilterType, label: 'Can Make Now', icon: <CheckCircle2 size={15} /> },
         { id: 'expiring' as FilterType, label: 'Uses Expiring Items', icon: <Package size={15} /> },
         { id: 'quick' as FilterType, label: 'Quick Meals (< 30m)', icon: <Clock size={15} /> },
         { id: 'vegetarian' as FilterType, label: 'Vegetarian', icon: <Leaf size={15} /> },
@@ -121,6 +123,12 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
         let recipes = [...expiringRecipes];
 
         switch (activeFilter) {
+            case 'can_make':
+                recipes = recipes.filter(r => r.matchTier === 'can_make' || r.matchPercentage >= 75);
+                break;
+            case 'expiring':
+                recipes = recipes.filter(r => r.expiringMatchCount > 0);
+                break;
             case 'quick':
                 recipes = recipes.filter(r => r.readyInMinutes && r.readyInMinutes <= 30);
                 break;
@@ -339,12 +347,30 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
                                             </div>
                                         )}
 
-                                        {/* Match Badge */}
+                                        {/* Match Tier & Expiry Urgency Badge */}
                                         <div className="absolute top-3 left-3 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm border border-slate-200/60 dark:border-slate-700/60">
-                                            <Sparkles size={13} className="text-emerald-500" />
-                                            <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
-                                                Uses {targetIngredient}
-                                            </span>
+                                            {recipe.expiringMatchCount > 0 ? (
+                                                <>
+                                                    <Flame size={13} className="text-amber-500 animate-pulse" />
+                                                    <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                                                        Uses {recipe.expiringMatchCount} expiring item{recipe.expiringMatchCount > 1 ? 's' : ''}
+                                                    </span>
+                                                </>
+                                            ) : recipe.matchTier === 'can_make' ? (
+                                                <>
+                                                    <CheckCircle2 size={13} className="text-emerald-500" />
+                                                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                                                        Can Make ({recipe.matchPercentage}%)
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Sparkles size={13} className="text-emerald-500" />
+                                                    <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                                                        {recipe.matchPercentage}% Match
+                                                    </span>
+                                                </>
+                                            )}
                                         </div>
 
                                         {/* Prep Time Pill */}
@@ -372,15 +398,35 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
                                             {recipe.name}
                                         </h3>
 
-                                        {/* Pantry Match Indicator */}
-                                        {recipe.matchedIngredients && recipe.matchedIngredients.length > 0 && (
-                                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-1">
+                                        {/* Pantry Match Indicator & Progress */}
+                                        <div className="space-y-1.5 mb-4">
+                                            <div className="flex items-center justify-between text-xs">
                                                 <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                                                    {recipe.matchedIngredients.length} ingredients
-                                                </span>{' '}
-                                                already in your pantry
-                                            </p>
-                                        )}
+                                                    {recipe.matchedIngredients.length} in pantry
+                                                </span>
+                                                {recipe.missingIngredients && recipe.missingIngredients.length > 0 ? (
+                                                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                                                        Missing {recipe.missingIngredients.length} {recipe.missingIngredients.length === 1 ? 'item' : 'items'}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                                                        100% Ready!
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full rounded-full transition-all duration-500 ${
+                                                        recipe.matchPercentage >= 80
+                                                            ? 'bg-emerald-500'
+                                                            : recipe.matchPercentage >= 50
+                                                                ? 'bg-amber-500'
+                                                                : 'bg-slate-400 dark:bg-slate-600'
+                                                    }`}
+                                                    style={{ width: `${Math.max(5, recipe.matchPercentage)}%` }}
+                                                />
+                                            </div>
+                                        </div>
 
                                         {/* Action Buttons */}
                                         <div className="mt-auto pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
@@ -639,18 +685,49 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
                             {/* Ingredients Checklist */}
                             {activeRecipeModal.ingredients && activeRecipeModal.ingredients.length > 0 && (
                                 <div>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <Leaf size={16} className="text-emerald-500" />
-                                        <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                                            Ingredients Checklist
-                                        </h3>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <Leaf size={16} className="text-emerald-500" />
+                                            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                                                Ingredients Checklist
+                                            </h3>
+                                        </div>
                                     </div>
+
+                                    {/* Readiness Summary Banner */}
+                                    <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 mb-3">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                                                activeRecipeModal.matchPercentage >= 80
+                                                    ? 'bg-emerald-500'
+                                                    : activeRecipeModal.matchPercentage >= 50
+                                                        ? 'bg-amber-500'
+                                                        : 'bg-rose-500'
+                                            }`} />
+                                            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                                                {activeRecipeModal.matchedIngredients.length} of {activeRecipeModal.ingredients.length} ingredients in pantry ({activeRecipeModal.matchPercentage}% match)
+                                            </span>
+                                        </div>
+                                        <span className={`text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                                            activeRecipeModal.matchTier === 'can_make'
+                                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                                : activeRecipeModal.matchTier === 'almost_can_make'
+                                                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                                    : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                                        }`}>
+                                            {activeRecipeModal.matchTier === 'can_make' ? 'Ready to Cook' : activeRecipeModal.matchTier === 'almost_can_make' ? 'Almost Ready' : 'Needs Shopping'}
+                                        </span>
+                                    </div>
+
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         {activeRecipeModal.ingredients.map((ing, idx) => {
-                                            const isMatched = activeRecipeModal.matchedIngredients?.some(
-                                                m => ing.toLowerCase().includes(m.toLowerCase())
+                                            const isMatched = activeRecipeModal.matchedIngredients?.includes(ing) ||
+                                                activeRecipeModal.matchedIngredients?.some(m => isIngredientMatch(m, ing));
+                                            const isExpiringMatch = isMatched && expiringItems.some(exp =>
+                                                isIngredientMatch(exp.name, ing)
                                             );
                                             const isDone = !!completedSteps[idx];
+
                                             return (
                                                 <button
                                                     key={idx}
@@ -658,21 +735,32 @@ export const Recipes: React.FC<RecipesProps> = ({ onNavigateHome, initialIngredi
                                                     className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition-all cursor-pointer ${
                                                         isDone
                                                             ? 'bg-slate-100 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-400 line-through'
-                                                            : isMatched
-                                                                ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-slate-900 dark:text-white'
-                                                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200'
+                                                            : isExpiringMatch
+                                                                ? 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/60 text-slate-900 dark:text-white'
+                                                                : isMatched
+                                                                    ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-slate-900 dark:text-white'
+                                                                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200'
                                                     }`}
                                                 >
                                                     <CheckCircle2
                                                         size={16}
-                                                        className={isDone ? 'text-slate-400' : isMatched ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-600'}
+                                                        className={isDone ? 'text-slate-400' : isExpiringMatch ? 'text-amber-500' : isMatched ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-600'}
                                                     />
                                                     <span className="text-xs font-medium truncate flex-1">
                                                         {ing}
                                                     </span>
-                                                    {isMatched && (
+                                                    {isExpiringMatch ? (
+                                                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 shrink-0 flex items-center gap-1">
+                                                            <Flame size={10} />
+                                                            <span>Use Soon</span>
+                                                        </span>
+                                                    ) : isMatched ? (
                                                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 shrink-0">
                                                             In Pantry
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+                                                            Need to buy
                                                         </span>
                                                     )}
                                                 </button>
